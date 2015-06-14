@@ -120,20 +120,6 @@ class EventController extends Zend_Controller_Action
                             $this->view->message .= "<div class='bad'>Failed to send email to group seneschal. Please contact them manually.</div><br />\n";
                         }
                         
-                        //$result = $this->_updateCalendar($values, $groupList[$values['groupid']], null);
-                        //
-                        //if($result === false) {
-                        //    $this->view->message .= "<span class='bad'>Failed to update Kingdom Calendar.</span><br />\n";
-                        //} else {
-                        //    $this->view->message .= "<span class='good'>Updated Kingdom Calendar.</span><br />\n";
-                        //    
-                        //    $changed = $db->update('events',array('googleid' => $result),"eventid={$db->quote($db->lastInsertId(),Zend_Db::INT_TYPE)}");
-                        //    if($changed == 0 || $changed == 1) {
-                        //        $this->view->message .= "<span class='good'>Stored GCal event ID in database.</span><br />\n";
-                        //    } else {
-                        //        $this->view->message .= "<span class='bad'>Failed to store GCal event ID in database.</span><br />\n";
-                        //    }
-                        //}
                     }
                     
                     else $this->view->message .= "<div class='bad'>Creating '{$values['name']}' failed. This is usually caused by a " .
@@ -235,9 +221,6 @@ class EventController extends Zend_Controller_Action
             if($tense == 'past') $sql .= "AND CURDATE() > startdate ";
             $sql .= "ORDER BY {$sort}";
             
-            //if($groupid == 'all') $sql = "SELECT eventid, name, startdate, lastchange FROM events WHERE status={$db->quote($status)} ORDER BY {$sort}";
-            //else $sql = "SELECT eventid, name, startdate, lastchange FROM events WHERE groupid={$db->quote($groupid,Zend_Db::INT_TYPE)} " .
-            //            "AND status={$db->quote($status)} ORDER BY {$sort}";
             $db->setFetchMode(Zend_Db::FETCH_OBJ);
             $events = $db->fetchAll($sql);
         }
@@ -359,91 +342,84 @@ class EventController extends Zend_Controller_Action
         return mail($mailTo, $mailSubj, $mailBody, $mailHead);
     }
     
-    protected function _updateCalendar($values, $hostGroupName, $googleId)
+    protected function _getGoogleCalendarService()
+    {
+        require_once('Google/autoload.php');
+
+        $serviceAccount = json_decode(file_get_contents('google-key.json'));
+
+        $credentials = new Google_Auth_AssertionCredentials(
+            $serviceAccount->client_email,
+            Google_Service_Calendar::CALENDAR,
+            $serviceAccount->private_key
+        );
+
+        $client = new Google_Client();
+        $client->setAssertionCredentials($credentials);
+
+        if ($client->getAuth()->isAccessTokenExpired()) {
+            $client->getAuth()->refreshTokenWithAssertion();
+        }
+
+        return new Google_Service_Calendar($client);
+    }
+
+    protected function _updateCalendar($values, $hostGroupName, $eventId)
     {
         global $config;
-        
-        require_once('Zend/Gdata/Calendar.php');
-        require_once('Zend/Gdata/ClientLogin.php');
-        
-        $client = Zend_Gdata_ClientLogin::getHttpClient($config->google->username,
-                                                        $config->google->password,
-                                                        Zend_Gdata_Calendar::AUTH_SERVICE_NAME);
-        $service = new Zend_Gdata_Calendar($client);
-        
-        if(empty($googleId)) {
-            $event = $service->newEventEntry();
-        } else {
-            try {
-                $event = $service->getCalendarEventEntry($googleId);
-            } catch (Zend_Gdata_App_Exception $e) {
-                $this->view->message .= "GCal error: " . $e->getMessage() . "<br />\n";
-                return false;
+        $calendarId = $config->google->calendarId;
+
+        try {
+            $service = $this->_getGoogleCalendarService();
+
+            if (empty($eventId)) {
+                $event = new Google_Service_Calendar_Event();
+            } else {
+                $event = $service->events->get($calendarId, $eventId);
             }
-        }
-        
-        $event->title = $service->newTitle($values['name'] . " (" . $hostGroupName . ")");
-        $event->where = array($service->newWhere($values['location']));
-        $event->content = $service->newContent("Steward:\t" . $values['stewardname'] . "\n" .
-                                               "Email:\t" . $values['stewardemail'] . "\n\n" .
-                                               $values['description']);
-        
-        $when = $service->newWhen();
-        $when->startTime = $values['startdate'];
-        $when->endTime = date('Y-m-d',strtotime($values['enddate']) + 60*60*24);
-        $event->when = array($when);
-        
-        //if(empty($values['status'])) $values['status'] = 'new';
-        //switch($values['status']) {
-        //    default:
-        //    case 'new':
-        //    case 'rejected':
-        //        $event->visibility = $service->newVisibility('http://schemas.google.com/g/2005#event.private'); break;
-        //    case 'approved':
-        //        $event->visibility = $service->newVisibility('http://schemas.google.com/g/2005#event.public'); break;
-        //}
-        
-        // Only approved events are in GCal at all, now
-        $event->visibility = $service->newVisibility('http://schemas.google.com/g/2005#event.public');
-        
-        if(empty($googleId)) {
-            $newEvent = $service->insertEvent($event);
-        } else {
-            try {
-                $newEvent = $event->save();
-            } catch (Zend_Gdata_App_Exception $e) {
-                $this->view->message .= "GCal error: " . $e->getMessage() . "<br />\n";
-                return false;
+
+            $event->summary = $values['name'] . " (" . $hostGroupName . ")";
+            $event->location = $values['location'];
+            $event->description = "Steward:\t" . $values['stewardname'] . "\n"
+                                . "Email:\t" . $values['stewardemail'] . "\n\n"
+                                . $values['description'];
+            $event->start = array('date' => $values['startdate']);
+            $event->end = array('date' => date('Y-m-d',strtotime($values['enddate']) + 60*60*24));
+
+            if (empty($eventId)) {
+                $event = $service->events->insert($calendarId, $event);
+            } else {
+                $event = $service->events->update($calendarId, $eventId, $event);
             }
+
+            return $event->id;
+
+        } catch (Google_Service_Exception $e) {
+            $this->view->message .= "GCal error: " . $e->getMessage() . "<br />\n";
+            return false;
         }
-        
-        return $newEvent->id->text;
+
     }
     
-    protected function _deleteCalendar($googleId)
+    protected function _deleteCalendar($eventId)
     {
         global $config;
-        
-        require_once('Zend/Gdata/Calendar.php');
-        require_once('Zend/Gdata/ClientLogin.php');
-        
-        $client = Zend_Gdata_ClientLogin::getHttpClient($config->google->username,
-                                                        $config->google->password,
-                                                        Zend_Gdata_Calendar::AUTH_SERVICE_NAME);
-        $service = new Zend_Gdata_Calendar($client);
-        
-        if(empty($googleId)) {
+        $calendarId = $config->google->calendarId;
+
+        if (empty($eventId)) return false;
+
+        try {
+            $service = $this->_getGoogleCalendarService();
+
+            $service->events->delete($calendarId, $eventId);
+
+            return true;
+
+        } catch (Google_Service_Exception $e) {
+            $this->view->message .= "GCal error: " . $e->getMessage() . "<br />\n";
             return false;
-        } else {
-            try {
-                $event = $service->getCalendarEventEntry($googleId);
-                $event->delete();
-                return true;
-            } catch (Zend_Gdata_App_Exception $e) {
-                $this->view->message .= "GCal error: " . $e->getMessage() . "<br />\n";
-                return false;
-            }
         }
+
     }
     
     public function editAction()
@@ -516,7 +492,7 @@ class EventController extends Zend_Controller_Action
                                                                                 'new' => 'New')))
                   ->addElement('multiCheckbox', 'sendto', array('label' => 'Also: (Can only post to Pegasus or Announce if approved)',
                                                                 'multiOptions' => array('pegasus' => 'Advertise in Pegasus',
-                                                                                        //'calendar' => 'Update the Kingdom Calendar',
+                                                                                        'calendar' => 'Update the Kingdom Calendar',
                                                                                         'announce' => 'Post on Lochac-Announce')))
                   ->addElement('submit', 'submit', array('label' => 'Submit'))
                   ->addElement('text', 'googleid', array('hidden' => true))
@@ -580,41 +556,41 @@ class EventController extends Zend_Controller_Action
                     // New behaviour:
                     // -> new|rejected: If $googleId non-empty, delete GCal event.
                     // -> approved: Update (or create) GCal event and store $googleId.
-                    //if($values['status'] != 'approved') {
-                    //    if(!empty($googleId)) {
-                    //        $result = $this->_deleteCalendar($googleId);
-                    //        
-                    //        if($result === false) {
-                    //            $this->view->message .= "<div class='bad'>Failed to remove event from Kingdom Calendar.</div><br />\n";
-                    //        } else {
-                    //            $this->view->message .= "<div class='good'>Removed event from Kingdom Calendar.</div><br />\n";
-                    //            
-                    //            $changed = $db->update('events',array('googleid' => NULL),"eventid={$db->quote($id,Zend_Db::INT_TYPE)}");
-                    //            if($changed == 0 || $changed == 1) {
-                    //                $this->view->message .= "<div class='good'>Stored GCal event ID in database.</div><br />\n";
-                    //            } else {
-                    //                $this->view->message .= "<div class='bad'>Failed to store GCal event ID in database.</div><br />\n";
-                    //            }
-                    //        }
-                    //    }
-                    //} else {
-                    //    if($sendTo != null && in_array('calendar', $sendTo)) {
-                    //        $result = $this->_updateCalendar($values, $groupList[$values['groupid']], $googleId);
-                    //        
-                    //        if($result === false) {
-                    //            $this->view->message .= "<div class='bad'>Failed to update Kingdom Calendar.</div><br />\n";
-                    //        } else {
-                    //            $this->view->message .= "<div class='good'>Updated Kingdom Calendar.</div><br />\n";
-                    //            
-                    //            $changed = $db->update('events',array('googleid' => $result),"eventid={$db->quote($id,Zend_Db::INT_TYPE)}");
-                    //            if($changed == 0 || $changed == 1) {
-                    //                $this->view->message .= "<div class='good'>Stored GCal event ID in database.</div><br />\n";
-                    //            } else {
-                    //                $this->view->message .= "<div class='bad'>Failed to store GCal event ID in database.</div><br />\n";
-                    //            }
-                    //        }
-                    //    }
-                    //}
+                    if($values['status'] != 'approved') {
+                        if(!empty($googleId)) {
+                            $result = $this->_deleteCalendar($googleId);
+                            
+                            if($result === false) {
+                                $this->view->message .= "<div class='bad'>Failed to remove event from Kingdom Calendar.</div><br />\n";
+                            } else {
+                                $this->view->message .= "<div class='good'>Removed event from Kingdom Calendar.</div><br />\n";
+                                
+                                $changed = $db->update('events',array('googleid' => NULL),"eventid={$db->quote($id,Zend_Db::INT_TYPE)}");
+                                if($changed == 0 || $changed == 1) {
+                                    $this->view->message .= "<div class='good'>Stored GCal event ID in database.</div><br />\n";
+                                } else {
+                                    $this->view->message .= "<div class='bad'>Failed to store GCal event ID in database.</div><br />\n";
+                                }
+                            }
+                        }
+                    } else {
+                        if($sendTo != null && in_array('calendar', $sendTo)) {
+                            $result = $this->_updateCalendar($values, $groupList[$values['groupid']], $googleId);
+                            
+                            if($result === false) {
+                                $this->view->message .= "<div class='bad'>Failed to update Kingdom Calendar.</div><br />\n";
+                            } else {
+                                $this->view->message .= "<div class='good'>Updated Kingdom Calendar.</div><br />\n";
+                                
+                                $changed = $db->update('events',array('googleid' => $result),"eventid={$db->quote($id,Zend_Db::INT_TYPE)}");
+                                if($changed == 0 || $changed == 1) {
+                                    $this->view->message .= "<div class='good'>Stored GCal event ID in database.</div><br />\n";
+                                } else {
+                                    $this->view->message .= "<div class='bad'>Failed to store GCal event ID in database.</div><br />\n";
+                                }
+                            }
+                        }
+                    }
                     
                     if($sendTo != null && in_array('announce', $sendTo) && $values['status'] == 'approved') {
                         if($this->_emailAnnounce($values, $groupList[$values['groupid']])) {
