@@ -7,6 +7,16 @@ class ToolsController extends Zend_Controller_Action
         $this->_forward(version);
     }
 
+    public function formtestAction()
+    {
+        $this->_helper->viewRenderer('echoMessage',null,true);
+        $this->view->title = 'Autoloaded Form';
+
+        $form = new SenDb_Form_Test();
+
+        $this->view->message = $form->print();
+    }
+
     public function gcalAction()
     {
         $this->_helper->viewRenderer('echoMessage',null,true);

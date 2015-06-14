@@ -10,6 +10,8 @@ set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path(),
 )));
 
+require_once(APPLICATION_PATH . '/autoload.php');
+
 // Library includes.
 require_once('Zend/Controller/Front.php');
 require_once('Zend/Layout.php');
