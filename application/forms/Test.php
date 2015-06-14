@@ -2,7 +2,7 @@
 
 class SenDb_Form_Test
 {
-    public function print()
+    public function doIt()
     {
         return 'I did it!';
     }

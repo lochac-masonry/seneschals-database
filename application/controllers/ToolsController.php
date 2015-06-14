@@ -14,7 +14,7 @@ class ToolsController extends Zend_Controller_Action
 
         $form = new SenDb_Form_Test();
 
-        $this->view->message = $form->print();
+        $this->view->message = $form->doIt();
     }
 
     public function gcalAction()
