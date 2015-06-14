@@ -7,7 +7,7 @@ defined('APPLICATION_PATH')
 // Make sure PHP's include path will catch the application library.
 set_include_path(implode(PATH_SEPARATOR, array(
     realpath(APPLICATION_PATH . '/../library'),
-    get_include_path(),
+    get_include_path()
 )));
 
 require_once(APPLICATION_PATH . '/autoload.php');
@@ -32,24 +32,36 @@ function authenticate() {
     global $db;
 
     $groupList = $db->fetchPairs("SELECT id, groupname FROM scagroup");
-    foreach($groupList as $id => $groupname) $groupList[$id] = strtolower(str_replace(' ','',$groupname));
+    foreach($groupList as $id => $groupname) {
+        $groupList[$id] = strtolower(str_replace(' ', '', $groupname));
+    }
 
-    if(isset($_GET['bypass']) && $_GET['bypass'] == 'true') {
+    if(isset($_GET['bypass'])
+      && $_GET['bypass'] == 'true') {
         $auth['level'] = 'anyone';
-    } elseif(isset($_SERVER['PHP_AUTH_USER']) && ($_SERVER['PHP_AUTH_USER'] == $config->auth->admin->username) &&
-             (hash('sha256',$_SERVER['PHP_AUTH_PW']) == $config->auth->admin->passhash)) {
+
+    } elseif(isset($_SERVER['PHP_AUTH_USER'])
+      && ($_SERVER['PHP_AUTH_USER'] == $config->auth->admin->username)
+      && (hash('sha256', $_SERVER['PHP_AUTH_PW']) == $config->auth->admin->passhash)) {
         $auth['level'] = 'admin';
         $auth['id'] = 1;
-    } elseif(isset($_SERVER['PHP_AUTH_USER']) && ($_SERVER['PHP_AUTH_USER'] == $config->auth->wheel->username) &&
-             (hash('sha256',$_SERVER['PHP_AUTH_PW']) == $config->auth->wheel->passhash)) {
+
+    } elseif(isset($_SERVER['PHP_AUTH_USER'])
+      && ($_SERVER['PHP_AUTH_USER'] == $config->auth->wheel->username)
+      && (hash('sha256', $_SERVER['PHP_AUTH_PW']) == $config->auth->wheel->passhash)) {
         $auth['level'] = 'admin';
         $auth['id'] = 1;
-    } elseif(isset($_SERVER['PHP_AUTH_USER']) && (in_array($_SERVER['PHP_AUTH_USER'],$groupList)) &&
-             (hash('sha256',$_SERVER['PHP_AUTH_PW']) == $config->auth->user->passhash)) {
+
+    } elseif(isset($_SERVER['PHP_AUTH_USER'])
+      && (in_array($_SERVER['PHP_AUTH_USER'],$groupList))
+      && (hash('sha256', $_SERVER['PHP_AUTH_PW']) == $config->auth->user->passhash)) {
         $auth['level'] = 'user';
-        $auth['id'] = array_search($_SERVER['PHP_AUTH_USER'],$groupList);
-    } elseif(isset($_SERVER['PHP_AUTH_USER']) && ($_SERVER['PHP_AUTH_USER'] == 'guest')) {
+        $auth['id'] = array_search($_SERVER['PHP_AUTH_USER'], $groupList);
+
+    } elseif(isset($_SERVER['PHP_AUTH_USER'])
+      && ($_SERVER['PHP_AUTH_USER'] == 'guest')) {
         $auth['level'] = 'anyone';
+
     } else {
         Header('WWW-Authenticate: Basic realm="Seneschals\' Database"');
         $auth['level'] = 'anyone';
@@ -66,53 +78,53 @@ function buildMenu($authlevel) {
         case 'admin':
             $menu[] = array(
                 'link' => '/group/edit',
-                'name' => 'Edit Group Details',
+                'name' => 'Edit Group Details'
             );
             $menu[] = array(
                 'link' => '/group/close',
-                'name' => 'Close a Group',
+                'name' => 'Close a Group'
             );
             $menu[] = array(
                 'link' => '/postcode/assign',
-                'name' => 'Assign Postcodes',
+                'name' => 'Assign Postcodes'
             );
             $menu[] = array(
                 'link' => '/postcode/upload',
-                'name' => 'Upload Postcodes File',
+                'name' => 'Upload Postcodes File'
             );
             $menu[] = array(
                 'link' => '/group/domains',
-                'name' => 'Manage Group Email Domains',
+                'name' => 'Manage Group Email Domains'
             );
         case 'user':
             $menu[] = array(
                 'link' => '/group/aliases',
-                'name' => 'Manage Group Email Aliases',
+                'name' => 'Manage Group Email Aliases'
             );
             $menu[] = array(
                 'link' => '/report',
-                'name' => 'Quarterly Reports',
+                'name' => 'Quarterly Reports'
             );
             $menu[] = array(
                 'link' => '/event/list',
-                'name' => 'Event List',
+                'name' => 'Event List'
             );
             $menu[] = array(
                 'link' => '/group/baron-baroness',
-                'name' => 'Baron and Baroness Details',
+                'name' => 'Baron and Baroness Details'
             );
         default: // Equivalent to case 'anyone'
             $menu[] = array(
                 'link' => '/postcode/query',
-                'name' => 'Postcode Query',
+                'name' => 'Postcode Query'
             );
             $menu[] = array(
                 'link' => '/group/roster',
-                'name' => 'Group Roster',
+                'name' => 'Group Roster'
             );
             $menu[] = array(
                 'link' => '/event/new',
-                'name' => 'Submit Event Proposal',
+                'name' => 'Submit Event Proposal'
             );
             break;
     }
@@ -123,7 +135,7 @@ function buildMenu($authlevel) {
 // Set up the global layout.
 $layoutOptions = array(
     'layoutPath' => APPLICATION_PATH . '/layouts/scripts',
-    'layout'     => 'default',
+    'layout'     => 'default'
 );
 Zend_Layout::startMvc($layoutOptions);
 Zend_Layout::getMvcInstance()->relativeUrl = $config->get('relativeUrl','');
