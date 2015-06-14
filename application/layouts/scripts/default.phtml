@@ -1,0 +1,64 @@
+<?php $url = $this->layout()->relativeUrl; ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<title>Lochac Seneschals' Database</title>
+	<meta http-equiv="content-type" 
+		content="text/html;charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="<?php echo $url; ?>/resources/seneschal.css"/>
+	<link rel="stylesheet" type="text/css" href="<?php echo $url; ?>/resources/sen-print.css" media="print"/>
+	<style type="text/css">.center {text-align: center;}</style>
+</head>
+
+<body>
+
+<div id="Container">
+    <div class="Navigation">
+        <img src="<?php echo $url; ?>/resources/kingdom-seneschal-device.png" alt="Office of the Seneschal of Lochac" width="250" height="269" usemap="#SenLinks" />
+        <map id="SenLinks" name="SenLinks">
+            <area shape="poly" coords="83,47,165,48,165,104,125,144,83,103" href="http://lochac.sca.org/lochac" target="_blank" alt="Kingdom of Lochac" />
+            <area shape="circle" coords="125,197,33" href="http://lochac.sca.org/seneschal " alt="The Office of the Seneschal" />
+        </map>
+        
+        <p>
+            <a href="http://lochac.sca.org/lochac">Lochac Homepage</a><br />
+            <a href="http://lochac.sca.org/seneschal">From the Seneschal <small>(Home)</small></a><br />
+            <a href="<?php echo $url . '/'; ?>">Database</a><br />
+            <span class="subNav">
+<?php foreach(buildMenu($this->layout()->authlevel) as $item) { ?>
+                <a href="<?php echo $url . $item['link']; ?>"><?php echo $item['name']; ?></a><br />
+<?php } ?>
+            </span>
+        </p>
+        
+        <img alt="Navigation Border" src="<?php echo $url; ?>/resources/nav-bottom.png" width="250" height="59"/>
+    </div>
+    
+    <div class="PageContent">
+        <div class="headerImg">
+            <img alt="The Office of the Seneschal - Kingdom of Lochac" src="<?php echo $url; ?>/resources/office-of-the-seneschal.png" width="555" height="81"/>
+        </div>
+        <a name="top"></a>
+        
+        <h1 class="center"><?php echo $this->escape($this->title); ?></h1>
+        
+        <!-- Start page content -->
+<?php echo $this->layout()->content; ?>
+        
+        <!-- End page content -->
+        
+        <div class="copyright">
+            <hr />
+            <p>This page is maintained by the Publications/Technical Deputy to the Kingdom Seneschal<br />
+            Comments or suggestions to <a href="mailto:information&#64;lochac.sca.org">information&#64;lochac.sca.org</a></p>
+            <p style="font-size: 10px;">Application Code: Lord Edmund Kerr</p>
+            <p style="font-size: 10px;">Site Design: Lord Ronan mac Briain</p>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

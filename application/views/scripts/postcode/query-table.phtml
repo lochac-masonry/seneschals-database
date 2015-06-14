@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>Lochac Seneschals' Database - Postcode Query Results</title>
+</head>
+
+<body>
+<table>
+    <tr>
+        <th>Postcode</th>
+        <th>Locality</th>
+        <th>State</th>
+        <th>Group</th>
+    </tr>
+<?php foreach($this->results as $row) { ?>
+    <tr>
+        <td><?php echo $this->escape($row->postcode); ?></td>
+        <td><?php echo $this->escape($row->localities); ?></td>
+        <td><?php echo $this->escape($row->state); ?></td>
+        <td><?php echo $this->escape($row->groupname); ?></td>
+    </tr>
+<?php } ?>
+</table>
+<?php
+echo 'Number of rows: ' . count($this->results) . "<br />\n";
+echo $this->message;

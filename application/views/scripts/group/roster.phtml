@@ -1,0 +1,36 @@
+<style type="text/css">
+    body {background-image: none;}
+    #Container {width: 100%;}
+    .PageContent {max-width: 100%;}
+</style>
+<table class="colouredTable">
+    <tr class="r1">
+        <th>Group Name</th>
+        <th>Area</th>
+        <th>Seneschal</th>
+        <th>Email</th>
+    </tr>
+<?php $i=0; foreach($this->data as $row) {
+    if($row->status != 'closed' && $row->status != 'dormant') { ?>
+    <tr class="r<?php echo ($i & 1); ?>">
+        <td><?php if($row->website != '') {
+                      echo '<a href="', $this->escape($row->website), '">',
+                           $this->escape($row->groupname), '</a>';
+                  } else echo $this->escape($row->groupname);
+                  
+                  echo ', ', $this->escape($row->type);
+                  
+                  if($row->status != 'live') {
+                      echo ' (', $this->escape($row->status), ')';
+                  } ?></td>
+        <td><?php echo $this->escape($row->area); ?></td>
+        <td><?php echo $this->escape($row->scaname), ' (',
+                       $this->escape($row->realname), ')'; ?></td>
+        <td><?php echo $this->escape($row->email); ?></td>
+    </tr>
+<?php
+    $i++;
+    }
+}
+?>
+</table>
