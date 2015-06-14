@@ -10,16 +10,16 @@ class ReportController extends Zend_Controller_Action
             throw new Exception('User not authorised for this task.');
             return;
         }
-        
+
         $this->_helper->viewRenderer('echoMessage',null,true);
         $this->view->title = 'Submit Quarterly Report';
         $this->view->message = '';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
-        
+
         $groupSelectForm = new Zend_Form();
         $groupSelectForm->setAction('#')
                         ->setMethod('get');
-        
+
         if($auth['level'] == 'admin') {
             $groupSelectForm->addElement('select','groupid',array('label' => 'Select group (Lochac for misc. aliases):',
                                                                   'multiOptions' => $groupList,
@@ -36,12 +36,12 @@ class ReportController extends Zend_Controller_Action
         $groupSelectForm->setDecorators(array('FormElements', 'Form'));
         $groupSelectForm->groupid->setDecorators(array('ViewHelper', 'Label'));
         $groupSelectForm->submit->setDecorators(array('ViewHelper'));
-        
+
         if($groupSelectForm->isValid($_GET)) {
             //Show relevant details for the selected group.
             if($auth['level'] == 'admin') $values['id'] = $groupSelectForm->getValue('groupid');
             else $values['id'] = $auth['id'];
-            
+
             $detailsForm = new Zend_Form();
             $detailsForm->setAction('#')
                         ->setMethod('post')
@@ -130,7 +130,7 @@ class ReportController extends Zend_Controller_Action
                                                                  'cols' => 50, 'rows' => 10, 'wrap' => 'virtual'))
                         ->addDisplayGroup(array('summarshal','sumherald','sumartssci','sumreeve','sumconstable','sumchirurgeon','sumchronicler',
                                                 'sumchatelaine','sumlists'),'officers',array('legend' => 'Summary of Officer Reports'));
-            
+
             // Add fields for subgroups, if any.
             $db->setFetchMode(Zend_Db::FETCH_OBJ);
             $subgroups = $db->fetchAll("SELECT id, type, groupname FROM scagroup WHERE parentid={$db->quote($values['id'],Zend_Db::INT_TYPE)} " .
@@ -141,30 +141,30 @@ class ReportController extends Zend_Controller_Action
                 $subgroupFields[] = 'subgroup'.$subgroup->id;
             }
             if(!empty($subgroupFields)) $detailsForm->addDisplayGroup($subgroupFields,'subgroups',array('legend' => 'Subgroups'));
-            
+
             $detailsForm->addElement('submit','submit',array('label' => 'Submit'))
                         ->addElement('submit','reset',array('label' => 'Reset'));
-            
+
             if($detailsForm->isValid($_POST)) {
                 $values = array_merge($values, $detailsForm->getValues());
-                
+
                 if($detailsForm->reset->isChecked()) $detailsForm->reset();
                 elseif($detailsForm->submit->isChecked()) {
                     // Fetch fixed information.
                     $db->setFetchMode(Zend_Db::FETCH_ASSOC);
                     $values = array_merge($values, $db->fetchRow("SELECT type, groupname, parentid FROM scagroup WHERE id=" .
                                                                  $db->quote($values['id'],Zend_Db::INT_TYPE)));
-                    
+
                     // Update group record.
                     $values['lastreport'] = date('Y-m-d');
                     $keys = array('lastreport','scaname','realname','address','suburb','state','postcode','country','phone','email',
                                   'website','memnum');
-                    
+
                     try { $changed = $db->update('scagroup',array_intersect_key($values,array_flip($keys)),
                                                  "id={$db->quote($values['id'],Zend_Db::INT_TYPE)}");
                     } catch(Exception $e) { $this->view->message .= "<div class='bad'>Possible error updating group details.</div><br />\n"; }
                     $this->view->message .= $changed . " record(s) affected.<br />\n";
-                    
+
                     // Form report email.
                     $mailsubj  = 'Report from the ' . $values['type'] . ' of ' . $values['groupname'];
                     $mailbody  = $mailsubj;
@@ -187,9 +187,9 @@ class ReportController extends Zend_Controller_Action
                     $mailbody .= $values['plans'];
                     $mailbody .= "\n\nGENERAL COMMENTS\n=================\n";
                     $mailbody .= $values['comments'];
-                    
+
                     $mailbody .= "\n\nSUMMARY OF OFFICERS\n====================";
-                    
+
                     $mailbody .= "\n\n== Marshal\n" . $values['summarshal'];
                     $mailbody .= "\n\n== Herald\n" . $values['sumherald'];
                     $mailbody .= "\n\n== Arts and Sciences\n" . $values['sumartssci'];
@@ -199,22 +199,22 @@ class ReportController extends Zend_Controller_Action
                     $mailbody .= "\n\n== Chronicler/Webminister\n" . $values['sumchronicler'];
                     $mailbody .= "\n\n== Chatelaine/Hospitaller\n" . $values['sumchatelaine'];
                     $mailbody .= "\n\n== Lists\n" . $values['sumlists'];
-                    
+
                     $mailbody .= "\n\nSUMMARY OF SUB-GROUPS\n======================";
                     foreach($subgroups as $subgroup) {
                         $mailbody .= "\nSummary report for " . $subgroup->type . " of " . $subgroup->groupname;
                         $mailbody .= "\n" . $values['subgroup'.$subgroup->id] . "\n";
                     }
-                    
+
                     $mailto[] = $db->fetchOne("SELECT email FROM scagroup WHERE id={$db->quote($values['parentid'],Zend_Db::INT_TYPE)}");
                     $mailto[] = $values['email'];
                     if($values['copyhospit']) $mailto[] = "hospitaller@lochac.sca.org";
                     if($values['copychirurgeon']) $mailto[] = "chirurgeon@lochac.sca.org";
                     if(!empty($values['othercopy1'])) $mailto[] = $values['othercopy1'];
                     if(!empty($values['othercopy2'])) $mailto[] = $values['othercopy2'];
-                    
+
                     $mailheaders = "From:" . $values['email'];
-                    
+
                     foreach($mailto as $address) {
                         if(mail($address,$mailsubj,$mailbody,$mailheaders)) {
                             $this->view->message .= "<div class='good'>Report sent to " . $address . "</div><br />\n";
@@ -222,17 +222,17 @@ class ReportController extends Zend_Controller_Action
                             $this->view->message .= "<div class='bad'>Report failed to send to " . $address . "</div><br />\n";
                         }
                     }
-                    
+
                 }
             }
-            
+
             if(!empty($values['id'])) {
                 $db->setFetchMode(Zend_Db::FETCH_ASSOC);
                 $defaults = $db->fetchRow("SELECT * FROM scagroup WHERE id={$db->quote($values['id'],Zend_Db::INT_TYPE)}");
                 $detailsForm->setDefaults($defaults);
             }
         }
-        
+
         if($auth['level'] == 'user') $groupSelectForm->setDefaults(array('groupid' => $auth['id']));
         $this->view->message .= "\n\n" . $groupSelectForm;
         if(!empty($detailsForm)) $this->view->message .= "\n\n" . $detailsForm;

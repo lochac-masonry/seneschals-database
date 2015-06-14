@@ -12,21 +12,21 @@ class PostcodeController extends Zend_Controller_Action
         global $db;
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer('echoMessage', null, true);
-        
+
         $message .= "Postcode, (empty)Locality, State, Group Name<BR />\n";
-        
+
         $sql = "SELECT DISTINCT a.postcode AS postcode, a.state AS state, " .
                "b.groupname AS groupname FROM postcode a JOIN scagroup b " .
                "ON a.groupid=b.id ORDER BY a.postcode, a.state";
         $db->setFetchMode(Zend_Db::FETCH_OBJ);
         try { $results = $db->fetchAll($sql); }
         catch(Exception $e) { die('Database error: ' . $e->getMessage); }
-        
+
         foreach($results as $row) {
             $message .= $row->postcode . ",," . $row->state . "," .
                         $row->groupname . "<BR />\n";
         }
-        
+
         $this->view->message = $message;
     }
 
@@ -35,9 +35,9 @@ class PostcodeController extends Zend_Controller_Action
         global $db;
         $this->view->title = 'Postcode Query';
         $this->view->showResults = false; // Default - will be changed if results are returned.
-        
+
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
-        
+
         $form = new Zend_Form;
         $form->setAction('#')
              ->setMethod('post')
@@ -60,18 +60,18 @@ class PostcodeController extends Zend_Controller_Action
              ->addElement('submit','querybylocality',array('label' => 'Submit'))
              ->addDisplayGroup(array('locality', 'querybylocality'), 'byLocality', array('legend' => 'Search by Suburb Name'))
              ->addElement('submit','reset',array('label' => 'Reset'));
-        
+
         if($form->isValid($_POST)) {
             // Attempt the query.
             $values = $form->getValues();
-            
+
             if($form->printable->isChecked()) {
                 $this->_helper->layout->disableLayout();
                 $this->_helper->viewRenderer('queryTable');
             }
-            
+
             if($form->reset->isChecked()) $form->reset();
-            
+
             $queryExists = true;
             if($form->querybygroup->isChecked()) {
                 // Get listing from database where groupid as given.
@@ -94,7 +94,7 @@ class PostcodeController extends Zend_Controller_Action
                 $queryExists = false;
                 $this->view->showForm = true;
             }
-            
+
             if($queryExists) {
                 $db->setFetchMode(Zend_Db::FETCH_OBJ);
                 try { $results = $db->fetchAll($sql); }
@@ -102,13 +102,13 @@ class PostcodeController extends Zend_Controller_Action
                 foreach ($results as $result) {
                     // Need to find groupname based on groupid.
                     $result->groupname = $groupList[$result->groupid];
-                    
+
                     // Also need a list of locality names with this postcode.
                     $sql = "SELECT locality FROM postcode WHERE postcode={$db->quote($result->postcode)} ORDER BY locality";
                     try { $localities[$result->postcode] = $db->fetchCol($sql); }
                     catch (Exception $e) { $this->view->message .= "<div class='bad'>Possible error getting suburb list for postcode " .
                                                                    "{$result->postcode}.</div><br />\n"; }
-                   
+
                     $result->localities = '';
                     foreach ($localities[$result->postcode] as $locality) {
                         if($result->localities == '') $result->localities = $locality;
@@ -122,7 +122,7 @@ class PostcodeController extends Zend_Controller_Action
             $this->view->message .= "<div class='bad'>Form not valid.</div><br />\n";
             $this->view->showForm = true;
         }
-        
+
         $this->view->form = $form;
     }
 
@@ -134,11 +134,11 @@ class PostcodeController extends Zend_Controller_Action
             throw new Exception('User not authorised for this task.');
             return;
         }
-        
+
         $this->view->title = 'Assign Postcodes';
         $this->view->message = '';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
-        
+
         $form = new Zend_Form();
         $form->setAction('#')
              ->setMethod('post')
@@ -154,23 +154,23 @@ class PostcodeController extends Zend_Controller_Action
                                                  'multiOptions' => $groupList))
              ->addElement('submit','submit',array('label' => 'Submit'))
              ->addDisplayGroup(array('rangestart', 'rangeend', 'group', 'submit'), 'assign');
-        
+
         if($form->isValid($_POST)) {
             // Do the assignment.
             $values = $form->getValues();
-            
+
             try { $updateCount = $db->update('postcode', array('groupid' => $values['group']),
                                              array("postcode>={$db->quote($values['rangestart'],Zend_Db::INT_TYPE)}",
                                                    "postcode<={$db->quote($values['rangeend'],Zend_Db::INT_TYPE)}"));
             } catch(Exception $e) { $this->view->message .= "<div class='bad'>Possible error updating postcodes.</div><br />\n";
             }
-            
+
             $this->view->message .= "<div class='good'>$updateCount row(s) updated.</div><br />\n";
-            
+
         } else {
             // Don't.
         }
-        
+
         $this->view->form = $form;
     }
 
@@ -181,20 +181,20 @@ class PostcodeController extends Zend_Controller_Action
             throw new Exception('User not authorised for this task.');
             return;
         }
-        
+
         $this->view->title = 'Upload Postcodes File';
         $this->view->message = '';
-        
+
         // Library includes.
         require_once('Zend/Filter/BaseName.php');
         require_once('Zend/Filter/StripTags.php');
-        
+
         $form = new Zend_Form;
         $form->setAction('#')
              ->setMethod('post')
              ->addElement('file','userfile',array('required' => true, 'validators' => array(array('Size',false,2560000), array('Extension',false,'csv'))))
              ->addElement('submit','submit',array('label' => 'Submit'));
-        
+
         if($form->isValid($_POST)) {
             // Process uploaded file
             global $db;
@@ -209,19 +209,19 @@ class PostcodeController extends Zend_Controller_Action
             $targetfile = $dir . '/' . $userfile_name;
             if (move_uploaded_file($userfile['tmp_name'], $targetfile)) {
                 $this->view->message .= "<div class='good'>File successfully uploaded.</div><br />\n";
-                
+
                 // Mark all of the existing postcode records as old, and initialise counters.
                 $db->update('postcode',array('current' => 'N'));
                 $updateCount = 0;
                 $insertCount = 0;
                 $deleteCount = 0;
-                
+
                 // We have a CSV file at targetfile - open it.
                 $file = fopen($targetfile,'r');
-                
+
                 // Grab the first row to use as headings.
                 if(!feof($file)) $headRow = fgetcsv($file, 0, ',', '"');
-                
+
                 // Get each row in turn
                 while(!feof($file)) {
                     $rowData = fgetcsv($file, 0, ',', '"');
@@ -229,14 +229,14 @@ class PostcodeController extends Zend_Controller_Action
                     $sql = "SELECT COUNT(*) FROM postcode WHERE postcode={$db->quote($row['Pcode'],Zend_Db::INT_TYPE)} " .
                            "AND locality={$db->quote($row['Locality'])} AND state={$db->quote($row['State'])}";
                     $exists = $db->fetchOne($sql);
-                    
+
                     // Does the entry exist?
                     if($exists === 0) {
                         // Find the group that has the postcode and add to db.
                         $sql = "SELECT groupid FROM postcode WHERE postcode=$row[Pcode]";
                         $groupID = $db->fetchOne($sql);
                         if($groupID == 0) $groupID = 1;
-                        
+
                         try { $db->insert('postcode',array('current' => 'Y',
                                                      'comments' => $row['Comments'],
                                                      'deliveryoffice' => $row['DeliveryOffice'],
@@ -278,12 +278,12 @@ class PostcodeController extends Zend_Controller_Action
                 $this->view->message .= "$insertCount row(s) added.<br />\n" .
                                         "$updateCount row(s) updated.<br />\n" .
                                         "$deleteCount row(s) deleted.<br />\n";
-                
+
                 fclose($file);
             } else {
                 $this->view->message .= "<div class='bad'>File move failed.</div><br />\n";
             }
-            
+
         } else {
             // Display the form
             $this->view->form .= $form;

@@ -30,10 +30,10 @@ $db = Zend_Db::factory($config->database);
 function authenticate() {
     global $config;
     global $db;
-    
+
     $groupList = $db->fetchPairs("SELECT id, groupname FROM scagroup");
     foreach($groupList as $id => $groupname) $groupList[$id] = strtolower(str_replace(' ','',$groupname));
-    
+
     if(isset($_GET['bypass']) && $_GET['bypass'] == 'true') {
         $auth['level'] = 'anyone';
     } elseif(isset($_SERVER['PHP_AUTH_USER']) && ($_SERVER['PHP_AUTH_USER'] == $config->auth->admin->username) &&
@@ -54,7 +54,7 @@ function authenticate() {
         Header('WWW-Authenticate: Basic realm="Seneschals\' Database"');
         $auth['level'] = 'anyone';
     }
-    
+
     Zend_Layout::getMvcInstance()->authlevel = $auth['level'];
     return $auth;
 }
@@ -116,7 +116,7 @@ function buildMenu($authlevel) {
             );
             break;
     }
-    
+
     return $menu;
 }
 

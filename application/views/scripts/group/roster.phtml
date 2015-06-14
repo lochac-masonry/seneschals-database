@@ -17,9 +17,9 @@
                       echo '<a href="', $this->escape($row->website), '">',
                            $this->escape($row->groupname), '</a>';
                   } else echo $this->escape($row->groupname);
-                  
+
                   echo ', ', $this->escape($row->type);
-                  
+
                   if($row->status != 'live') {
                       echo ' (', $this->escape($row->status), ')';
                   } ?></td>
