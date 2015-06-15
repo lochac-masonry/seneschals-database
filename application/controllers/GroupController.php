@@ -545,7 +545,7 @@ class GroupController extends Zend_Controller_Action
                                                             // Build group selection form - only enabled for admin
                                                             //----------------------------------------------------------
         $groupSelectForm = new Zend_Form();
-        $groupSelectForm->setAction('#')
+        $groupSelectForm->setAction('#');
         $groupSelectForm->setMethod('get');
 
         if($auth['level'] == 'admin') {
