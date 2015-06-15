@@ -18,13 +18,18 @@ class GroupController extends Zend_Controller_Action
                "scagroup b WHERE a.id=b.parentid AND b.status<>'closed' " .
                "AND b.country<>'NZ' ORDER BY a.groupname, b.groupname";
         $db->setFetchMode(Zend_Db::FETCH_OBJ);
-        try { $results = $db->fetchAll($sql); }
-        catch(Exception $e) { die('Database error: ' . $e->getMessage); }
+        try {
+            $results = $db->fetchAll($sql);
+        } catch(Exception $e) {
+            die('Database error: ' . $e->getMessage);
+        }
 
         foreach($results as $row) {
             $message .= $row->parent . "," . $row->child . "," .
                         $row->memnum . ",";
-            if($row->type == 'College') $message .= "College";
+            if($row->type == 'College') {
+                $message .= "College";
+            }
             $message .= "<BR />\n";
         }
 
@@ -40,8 +45,11 @@ class GroupController extends Zend_Controller_Action
         $sql = 'SELECT groupname, type, status, scaname, realname, email, website, area FROM scagroup ORDER BY groupname';
         $results = $db->fetchAll($sql);
 
-        if(count($results) == 0) $this->_helper->viewRenderer->setNoRender();
-        else $this->view->data = $results;
+        if(count($results) == 0) {
+            $this->_helper->viewRenderer->setNoRender();
+        } else {
+            $this->view->data = $results;
+        }
     }
 
     public function editAction()
@@ -58,13 +66,30 @@ class GroupController extends Zend_Controller_Action
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
         $values['id'] = 'new'; // Default value for group select box.
 
+                                                            //----------------------------------------------------------
+                                                            // Build group selection form
+                                                            //----------------------------------------------------------
         $groupSelectForm = new Zend_Form();
-        $groupSelectForm->setAction('#')
-                        ->setMethod('get')
-                        ->addElement('select','groupid',array('label' => 'Select group to edit:',
-                                                              'multiOptions' => $groupList,
-                                                              'required' => true))
-                        ->addElement('submit','submit',array('label' => 'Select'));
+        $groupSelectForm->setAction('#');
+        $groupSelectForm->setMethod('get');
+
+        $groupSelectForm->addElement(
+            'select',
+            'groupid',
+            array(
+                'label'        => 'Select group to edit:',
+                'multiOptions' => $groupList,
+                'required'     => true
+            )
+        );
+        $groupSelectForm->addElement(
+            'submit',
+            'submit',
+            array(
+                'label' => 'Select'
+            )
+        );
+
         $groupSelectForm->setDecorators(array('FormElements', 'Form'));
         $groupSelectForm->groupid->setDecorators(array('ViewHelper', 'Label'))
                                  ->addMultiOption('new', 'New Group');
@@ -74,96 +99,286 @@ class GroupController extends Zend_Controller_Action
             //Show relevant details for the selected group.
             $values['id'] = $groupSelectForm->getValue('groupid');
 
+                                                            //----------------------------------------------------------
+                                                            // Build group edit form
+                                                            //----------------------------------------------------------
             $detailsForm = new Zend_Form();
-            $detailsForm->setAction('#')
-                        ->setMethod('post')
-                        ->addElement('text','groupname',array('label' => 'Name of Group',
-                                                              'size' => 50,
-                                                              'required' => true))
-                        ->addElement('text','area',array('label' => 'Description of Group Area',
-                                                         'size' => 50))
-                        ->addElement('text','website',array('label' => 'Group Website',
-                                                            'size' => 50))
-                        ->addElement('select','type',array('label' => 'Group Type',
-                                                           'multiOptions' => array('Kingdom' => 'Kingdom',
-                                                                                   'Principality' => 'Principality',
-                                                                                   'Barony' => 'Barony',
-                                                                                   'Shire' => 'Shire',
-                                                                                   'Canton' => 'Canton',
-                                                                                   'College' => 'College')))
-                        ->addElement('select','status',array('label' => 'Group Status',
-                                                             'multiOptions' => array('live' => 'live',
-                                                                                     'dormant' => 'dormant',
-                                                                                     'abeyance' => 'abeyance',
-                                                                                     'closed' => 'closed',
-                                                                                     'proposed' => 'proposed')))
-                        ->addElement('select','parentid',array('label' => 'Parent Group',
-                                                               'multiOptions' => $groupList))
-                        ->addDisplayGroup(array('groupname','area','website','type','status','parentid'),'groupDetails',array('legend' => 'Group Details'))
-                        ->addElement('text','scaname',array('label' => 'SCA Name',
-                                                            'size' => 50,
-                                                            'required' => true))
-                        ->addElement('text','realname',array('label' => 'Legal Name',
-                                                            'size' => 50,
-                                                            'required' => true))
-                        ->addElement('text','address',array('label' => 'Street Address',
-                                                            'size' => 50,
-                                                            'required' => true))
-                        ->addElement('text','suburb',array('label' => 'Suburb / Town',
-                                                           'size' => 20))
-                        ->addElement('select','state',array('label' => 'State',
-                                                            'multiOptions' => array('NSW' => 'NSW', 'VIC' => 'VIC', 'QLD' => 'QLD',
-                                                                                    'SA' => 'SA', 'ACT' => 'ACT', 'WA' => 'WA',
-                                                                                    'TAS' => 'TAS', 'NT' => 'NT', 'NZ' => 'Not Applicable (NZ)')))
-                        ->addElement('text','postcode',array('label' => 'Postcode',
-                                                             'size' => 4))
-                        ->addElement('select','country',array('label' => 'Country',
-                                                              'multiOptions' => array('AU' => 'Australia', 'NZ' => 'New Zealand')))
-                        ->addElement('text','phone',array('label' => 'Phone',
-                                                          'size' => 15))
-                        ->addElement('text','email',array('label' => 'Email Address - Published on group listing',
-                                                          'size' => 40,
-                                                          'required' => true,
-                                                          'filters' => array('stringTrim'),
-                                                          'validators' => array('emailAddress')))
-                        ->addElement('text','memnum',array('label' => 'Member Number',
-                                                           'size' => 6,
-                                                           'required' => true,
-                                                           'validators' => array('digits')))
-                        ->addElement('text','warrantstart',array('label' => 'Warrant Start (YYYY-MM-DD)',
-                                                                 'size' => 10,
-                                                                 'validators' => array('date')))
-                        ->addElement('text','warrantend',array('label' => 'Warrant End (YYYY-MM-DD)',
-                                                               'size' => 10,
-                                                               'validators' => array('date')))
-                        ->addElement('text','lastreport',array('label' => 'Last Report (YYYY-MM-DD)',
-                                                               'size' => 10,
-                                                               'validators' => array('date')))
-                        ->addDisplayGroup(array('scaname','realname','address','suburb','state','postcode','country','phone','email','memnum',
-                                                'warrantstart','warrantend','lastreport'),'senDetails',array('legend' => 'Seneschal Details'))
-                        ->addElement('submit','submit',array('label' => 'Submit'))
-                        ->addElement('submit','reset',array('label' => 'Reset'));
+            $detailsForm->setAction('#');
+            $detailsForm->setMethod('post');
 
+                                                            //----------------------------------------------------------
+                                                            // Section - general group details
+                                                            //----------------------------------------------------------
+            $detailsForm->addElement(
+                'text',
+                'groupname',
+                array(
+                    'label'    => 'Name of Group',
+                    'size'     => 50,
+                    'required' => true
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'area',
+                array(
+                    'label' => 'Description of Group Area',
+                    'size'  => 50
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'website',
+                array(
+                    'label' => 'Group Website',
+                    'size'  => 50
+                )
+            );
+            $detailsForm->addElement(
+                'select',
+                'type',
+                array(
+                    'label'        => 'Group Type',
+                    'multiOptions' => array(
+                        'Kingdom'      => 'Kingdom',
+                        'Principality' => 'Principality',
+                        'Barony'       => 'Barony',
+                        'Shire'        => 'Shire',
+                        'Canton'       => 'Canton',
+                        'College'      => 'College'
+                    )
+                )
+            );
+            $detailsForm->addElement(
+                'select',
+                'status',
+                array(
+                    'label'        => 'Group Status',
+                    'multiOptions' => array(
+                        'live'     => 'live',
+                        'dormant'  => 'dormant',
+                        'abeyance' => 'abeyance',
+                        'closed'   => 'closed',
+                        'proposed' => 'proposed'
+                    )
+                )
+            );
+            $detailsForm->addElement(
+                'select',
+                'parentid',
+                array(
+                    'label'        => 'Parent Group',
+                    'multiOptions' => $groupList
+                )
+            );
+            $detailsForm->addDisplayGroup(
+                array(
+                    'groupname',
+                    'area',
+                    'website',
+                    'type',
+                    'status',
+                    'parentid'
+                ),
+                'groupDetails',
+                array('legend' => 'Group Details')
+            );
+
+                                                            //----------------------------------------------------------
+                                                            // Section - seneschal's details
+                                                            //----------------------------------------------------------
+            $detailsForm->addElement(
+                'text',
+                'scaname',
+                array(
+                    'label'    => 'SCA Name',
+                    'size'     => 50,
+                    'required' => true
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'realname',
+                array(
+                    'label'    => 'Legal Name',
+                    'size'     => 50,
+                    'required' => true
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'address',
+                array(
+                    'label'    => 'Street Address',
+                    'size'     => 50,
+                    'required' => true
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'suburb',
+                array(
+                    'label' => 'Suburb / Town',
+                    'size'  => 20
+                )
+            );
+            $detailsForm->addElement(
+                'select',
+                'state',
+                array(
+                    'label'        => 'State',
+                    'multiOptions' => array(
+                        'ACT' => 'ACT',
+                        'NSW' => 'NSW',
+                        'NT'  => 'NT',
+                        'QLD' => 'QLD',
+                        'SA'  => 'SA',
+                        'TAS' => 'TAS',
+                        'VIC' => 'VIC',
+                        'WA'  => 'WA',
+                        'NZ'  => 'Not Applicable (NZ)'
+                    )
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'postcode',
+                array(
+                    'label' => 'Postcode',
+                    'size'  => 4
+                )
+            );
+            $detailsForm->addElement(
+                'select',
+                'country',
+                array(
+                    'label'        => 'Country',
+                    'multiOptions' => array(
+                        'AU' => 'Australia',
+                        'NZ' => 'New Zealand'
+                    )
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'phone',
+                array(
+                    'label' => 'Phone',
+                    'size'  => 15
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'email',
+                array(
+                    'label'      => 'Email Address - Published on group listing',
+                    'size'       => 40,
+                    'required'   => true,
+                    'filters'    => array('stringTrim'),
+                    'validators' => array('emailAddress')
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'memnum',
+                array(
+                    'label'      => 'Member Number',
+                    'size'       => 6,
+                    'required'   => true,
+                    'validators' => array('digits')
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'warrantstart',
+                array(
+                    'label'      => 'Warrant Start (YYYY-MM-DD)',
+                    'size'       => 10,
+                    'validators' => array('date')
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'warrantend',
+                array(
+                    'label'      => 'Warrant End (YYYY-MM-DD)',
+                    'size'       => 10,
+                    'validators' => array('date')
+                )
+            );
+            $detailsForm->addElement(
+                'text',
+                'lastreport',
+                array(
+                    'label'      => 'Last Report (YYYY-MM-DD)',
+                    'size'       => 10,
+                    'validators' => array('date')
+                )
+            );
+            $detailsForm->addDisplayGroup(
+                array(
+                    'scaname',
+                    'realname',
+                    'address',
+                    'suburb',
+                    'state',
+                    'postcode',
+                    'country',
+                    'phone',
+                    'email',
+                    'memnum',
+                    'warrantstart',
+                    'warrantend',
+                    'lastreport'
+                ),
+                'senDetails',
+                array('legend' => 'Seneschal Details')
+            );
+
+            $detailsForm->addElement(
+                'submit',
+                'submit',
+                array(
+                    'label' => 'Submit'
+                )
+            );
+            $detailsForm->addElement(
+                'submit',
+                'reset',
+                array(
+                    'label' => 'Reset'
+                )
+            );
+
+                                                            //----------------------------------------------------------
+                                                            // Process the form - update or create group
+                                                            //----------------------------------------------------------
             if($detailsForm->isValid($_POST)) {
                 $values = array_merge($values, $detailsForm->getValues());
                 unset($values['submit'], $values['reset']);
 
-                if($detailsForm->reset->isChecked()) $detailsForm->reset();
-                elseif($values['id'] == 'new') {
+                if($detailsForm->reset->isChecked()) {
+                    $detailsForm->reset();
+
+                } elseif($values['id'] == 'new') {
                     // Create a new group.
                     $values['id'] = NULL;
                     try {
                         $changed = $db->insert('scagroup',$values);
 
-                        if($changed == 1) $this->view->message .= "<div class='good'>Successfully added group '{$values['groupname']}'. <a href='" .
+                        if($changed == 1) {
+                            $this->view->message .= "<div class='good'>Successfully added group '{$values['groupname']}'. <a href='" .
                                                                   Zend_Layout::getMvcInstance()->relativeUrl .
                                                                   "/group/edit?groupid={$db->lastInsertId()}'>Click to continue.</a></div><br />\n";
 
-                        else $this->view->message .= "<div class='bad'>Creating '{$values['groupname']}' failed. This is usually caused by a " .
+                        } else {
+                            $this->view->message .= "<div class='bad'>Creating '{$values['groupname']}' failed. This is usually caused by a " .
                                                      "database issue. <a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
                                                      "/group/edit?groupid={$db->lastInsertId()}'>Refresh to check.</a></div><br />\n";
+                        }
 
-                    } catch(Exception $e) { $this->view->message .= "<div class='bad'>Creating '{$values['groupname']}' failed due to a database " .
+                    } catch(Exception $e) {
+                        $this->view->message .= "<div class='bad'>Creating '{$values['groupname']}' failed due to a database " .
                                                                     "issue. Please try again.</div><br />\n";
                     }
 
@@ -172,25 +387,40 @@ class GroupController extends Zend_Controller_Action
                 } else {
                     // Update existing group.
                     try {
-                        $changed = $db->update('scagroup',$values,"id={$db->quote($values['id'],Zend_Db::INT_TYPE)}");
+                        $changed = $db->update(
+                            'scagroup',
+                            $values,
+                            "id={$db->quote($values['id'],Zend_Db::INT_TYPE)}"
+                        );
 
-                        if($changed == 1) $this->view->message .= "<div class='good'>Successfully updated {$values['groupname']}. <a href='" .
+                        if($changed == 1) {
+                            $this->view->message .= "<div class='good'>Successfully updated {$values['groupname']}. <a href='" .
                                                                   Zend_Layout::getMvcInstance()->relativeUrl .
                                                                   "/group/edit?groupid={$values['id']}'>Click to continue.</a></div><br />\n";
 
-                        else $this->view->message .= "<div class='bad'>Updating {$values['groupname']} failed. The group may not exist. <a href='" .
+                        } else {
+                            $this->view->message .= "<div class='bad'>Updating {$values['groupname']} failed. The group may not exist. <a href='" .
                                                      Zend_Layout::getMvcInstance()->relativeUrl .
                                                      "/group/edit?groupid={$values['id']}'>Refresh to check.</a></div><br />\n";
+                        }
 
-                    } catch(Exception $e) { $this->view->message .= "<div class='bad'>Updating {$values['groupname']} failed due to a " .
+                    } catch(Exception $e) {
+                        $this->view->message .= "<div class='bad'>Updating {$values['groupname']} failed due to a " .
                                                                     "database issue. Please try again.</div><br />\n";
                     }
 
                 }
             }
 
-            $defaults = array('groupname' => '', 'type' => 'Barony', 'status' => 'live', 'parentid' => 1);
-            if(!empty($values['id']) && $values['id'] <> 'new') {
+            $defaults = array(
+                'groupname' => '',
+                'type'      => 'Barony',
+                'status'    => 'live',
+                'parentid'  => 1
+            );
+
+            if(!empty($values['id'])
+              && $values['id'] <> 'new') {
                 $db->setFetchMode(Zend_Db::FETCH_ASSOC);
                 $defaults = $db->fetchRow("SELECT * FROM scagroup WHERE id={$db->quote($values['id'],Zend_Db::INT_TYPE)}");
             }
@@ -200,7 +430,9 @@ class GroupController extends Zend_Controller_Action
         $groupSelectForm->setDefaults(array('groupid' => $values['id']));
 
         $this->view->forms = $groupSelectForm;
-        if(!empty($detailsForm)) $this->view->forms .= "\n\n" . $detailsForm;
+        if(!empty($detailsForm)) {
+            $this->view->forms .= "\n\n" . $detailsForm;
+        }
     }
 
     public function closeAction()
