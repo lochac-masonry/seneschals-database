@@ -54,7 +54,7 @@ class ToolsController extends Zend_Controller_Action
 
             $mailHead = "From:{$group->email}";
 
-            if(mail($mailTo, $mailSubj, $mailBody, $mailHead)) {
+            if(SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead)) {
                 $successCount++;
             } else {
                 $this->view->message .= "<div class='bad'>Sending to seneschal of {$group->groupname} failed. "
