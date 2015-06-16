@@ -1,3 +1,7 @@
+# set as appropriate - defaults to staging if none set
+#SetEnv APP_MODE "production"
+SetEnv APP_MODE "staging"
+
 RewriteEngine on
 RewriteRule !\.(js|ico|gif|jpg|png|css)$ index.php
 

@@ -24,7 +24,7 @@ class EventController extends Zend_Controller_Action
 
         $mailHead = "From: {$seneschal->email}";
 
-        return mail($mailTo, $mailSubj, $mailBody, $mailHead);
+        return SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
     }
 
     public function newAction()
@@ -539,7 +539,7 @@ class EventController extends Zend_Controller_Action
 
         $mailHead = "From: {$values['stewardemail']}";
 
-        return mail($mailTo, $mailSubj, $mailBody, $mailHead);
+        return SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
     }
 
     protected function _emailAnnounce($values, $hostGroupName)
@@ -582,7 +582,7 @@ class EventController extends Zend_Controller_Action
 
         $mailHead = "From: information@lochac.sca.org";
 
-        return mail($mailTo, $mailSubj, $mailBody, $mailHead);
+        return SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
     }
 
     protected function _emailPegasus($values, $hostGroup)
@@ -615,7 +615,7 @@ class EventController extends Zend_Controller_Action
 
         $mailHead = "From: information@lochac.sca.org";
 
-        return mail($mailTo, $mailSubj, $mailBody, $mailHead);
+        return SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
     }
 
     protected function _getGoogleCalendarService()

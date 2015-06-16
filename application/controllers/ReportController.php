@@ -706,14 +706,12 @@ class ReportController extends Zend_Controller_Action
                     $mailheaders = "From: " . $values['email'];
 
                                                             //----------------------------------------------------------
-                                                            // Send report to each recipient
+                                                            // Send report
                                                             //----------------------------------------------------------
-                    foreach($mailto as $address) {
-                        if(mail($address,$mailsubj,$mailbody,$mailheaders)) {
-                            $this->view->message .= "<div class='good'>Report sent to " . $address . "</div><br />\n";
-                        } else {
-                            $this->view->message .= "<div class='bad'>Report failed to send to " . $address . "</div><br />\n";
-                        }
+                    if(SenDb_Helper_Email::send($mailto,$mailsubj,$mailbody,$mailheaders)) {
+                        $this->view->message .= "<div class='good'>Report sent to " . count($mailto) . " recipient(s)</div><br />\n";
+                    } else {
+                        $this->view->message .= "<div class='bad'>Failed to send report</div><br />\n";
                     }
 
                 }
