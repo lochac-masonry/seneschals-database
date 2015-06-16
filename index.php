@@ -22,7 +22,8 @@ require_once('Zend/Form.php');
 require_once('Zend/Filter.php');
 
 // Load config.
-$config = new Zend_Config_Ini('config.ini');
+$appMode = getenv('APP_MODE') ? getenv('APP_MODE') : 'staging';
+$config = new Zend_Config_Ini('config.ini', $appMode);
 
 // Connect to database.
 $db = Zend_Db::factory($config->database);
