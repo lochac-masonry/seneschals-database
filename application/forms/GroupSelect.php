@@ -1,11 +1,10 @@
 <?php
 
-class SenDb_Form_Report_GroupSelect extends Zend_Form
+class SenDb_Form_GroupSelect extends Zend_Form
 {
-    public init()
+    public function init()
     {
         $this->setAction('#');
-        $this->setMethod('get');
         $this->setDecorators(array('FormElements', 'Form'));
 
         $this->addElement(
@@ -13,8 +12,6 @@ class SenDb_Form_Report_GroupSelect extends Zend_Form
             'groupid',
             array(
                 'label'      => 'Select group:',
-                'validators' => array('digits'),
-                'required'   => true,
                 'decorators' => array(
                     'ViewHelper',
                     'Label'

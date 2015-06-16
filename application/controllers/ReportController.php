@@ -20,51 +20,13 @@ class ReportController extends Zend_Controller_Action
                                                             // Group selection form
                                                             // Enabled for admin, disabled for regular groups
                                                             //----------------------------------------------------------
-        $groupSelectForm = new Zend_Form();
-        $groupSelectForm->setAction('#');
-        $groupSelectForm->setMethod('get');
+        $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
+        $groupSelectForm->groupid->options = $groupList;
 
-        if($auth['level'] == 'admin') {
-            $groupSelectForm->addElement(
-                'select',
-                'groupid',
-                array(
-                    'label'        => 'Select group (Lochac for misc. aliases):',
-                    'multiOptions' => $groupList,
-                    'validators'   => array('digits'),
-                    'required'     => true
-                )
-            );
-            $groupSelectForm->addElement(
-                'submit',
-                'submit',
-                array(
-                    'label' => 'Select'
-                )
-            );
-        } else {
-            $groupSelectForm->addElement(
-                'select',
-                'groupid',
-                array(
-                    'label'        => 'Select Group (Lochac for misc. aliases):',
-                    'multiOptions' => $groupList,
-                    'disabled'     => true
-                )
-            );
-            $groupSelectForm->addElement(
-                'submit',
-                'submit',
-                array(
-                    'label'    => 'Select',
-                    'disabled' => true
-                )
-            );
+        if($auth['level'] != 'admin') {
+            $groupSelectForm->groupid->disabled = true;
+            $groupSelectForm->submit->disabled = true;
         }
-
-        $groupSelectForm->setDecorators(array('FormElements', 'Form'));
-        $groupSelectForm->groupid->setDecorators(array('ViewHelper', 'Label'));
-        $groupSelectForm->submit->setDecorators(array('ViewHelper'));
 
         if($groupSelectForm->isValid($_GET)) {
             //Show relevant details for the selected group.

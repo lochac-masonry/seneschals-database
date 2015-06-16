@@ -17,27 +17,6 @@ class ToolsController extends Zend_Controller_Action
         $this->view->message = Zend_Version::VERSION;
     }
 
-    public function formAction()
-    {
-        global $db;
-
-        $this->_helper->viewRenderer('echoMessage', null, true);
-        $this->view->title = 'Form test';
-
-        $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
-
-        $form = new SenDb_Form_Report_GroupSelect();
-        $form->groupId->options = $groupList;
-
-        if($form->isValid($_GET)) {
-            $this->view->message = "Form is valid.<br />\n";
-        } else {
-            $this->view->message = "Form is not valid.<br />\n";
-        }
-
-        $this->view->message .= $form;
-    }
-
     /*
      * To use this function, uncomment and replace PASSWORD in the email text with the actual password.
      */
