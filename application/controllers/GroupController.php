@@ -1,6 +1,6 @@
 <?php
 
-class GroupController extends Zend_Controller_Action
+class GroupController extends SenDb_Controller
 {
     public function indexAction()
     {

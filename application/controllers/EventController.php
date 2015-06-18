@@ -1,6 +1,6 @@
 <?php
 
-class EventController extends Zend_Controller_Action
+class EventController extends SenDb_Controller
 {
     public function indexAction()
     {

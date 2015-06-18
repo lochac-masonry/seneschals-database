@@ -1,6 +1,6 @@
 <?php
 
-class ReportController extends Zend_Controller_Action
+class ReportController extends SenDb_Controller
 {
     public function indexAction()
     {

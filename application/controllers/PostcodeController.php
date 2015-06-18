@@ -1,6 +1,6 @@
 <?php
 
-class PostcodeController extends Zend_Controller_Action
+class PostcodeController extends SenDb_Controller
 {
     public function indexAction()
     {

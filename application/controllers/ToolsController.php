@@ -1,6 +1,6 @@
 <?php
 
-class ToolsController extends Zend_Controller_Action
+class ToolsController extends SenDb_Controller
 {
     public function indexAction()
     {
