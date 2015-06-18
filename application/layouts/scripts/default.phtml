@@ -19,7 +19,7 @@
         <img src="<?php echo $url; ?>/resources/kingdom-seneschal-device.png" alt="Office of the Seneschal of Lochac" width="250" height="269" usemap="#SenLinks" />
         <map id="SenLinks" name="SenLinks">
             <area shape="poly" coords="83,47,165,48,165,104,125,144,83,103" href="http://lochac.sca.org/lochac" target="_blank" alt="Kingdom of Lochac" />
-            <area shape="circle" coords="125,197,33" href="http://lochac.sca.org/seneschal " alt="The Office of the Seneschal" />
+            <area shape="circle" coords="125,197,33" href="http://lochac.sca.org/seneschal" alt="The Office of the Seneschal" />
         </map>
 
         <p>
@@ -43,6 +43,13 @@
         <a name="top"></a>
 
         <h1 class="center"><?php echo $this->escape($this->title); ?></h1>
+
+<?php foreach($this->alerts as $alert) {
+    if (is_array($alert)) { ?>
+        <div class="<?php echo $alert['type']; ?>"><?php echo $alert['message']; ?></div><br />
+<?php } else { ?>
+        <?php echo $alert; ?><br />
+<?php } ?>
 
         <!-- Start page content -->
 <?php echo $this->layout()->content; ?>

@@ -277,42 +277,40 @@ class EventController extends SenDb_Controller
 
             if($curDateNum > $startDateNum
               || $startDateNum > $endDateNum) {
-                $this->view->message .= "<div class='bad'>Event ends before starting, or has already started! Check the start and end dates.</div><br />\n";
+                $this->addAlert('Event ends before starting, or has already started! Check the start and end dates.', SenDb_Controller::ALERT_BAD);
 
             } elseif(($values['bookingsclose'] != NULL)
               && ($curDateNum > $bookDateNum || $bookDateNum > $startDateNum)) {
-                $this->view->message .= "<div class='bad'>Bookings close after start of event or in the past! Check the close of bookings date.</div><br />\n";
+                $this->addAlert('Bookings close after start of event or in the past! Check the close of bookings date.', SenDb_Controller::ALERT_BAD);
 
             } else {
                 try {
                     $changed = $db->insert('events', $values);
 
                     if($changed == 1) {
-                        $this->view->message .= "<div class='good'>Successfully added event '{$values['name']}'.</div><br />\n";
+                        $this->addAlert('Successfully added event ' . $values['name'] . '.', SenDb_Controller::ALERT_GOOD);
 
                         $db->setFetchMode(Zend_Db::FETCH_OBJ);
                         $seneschal = $db->fetchRow("SELECT scaname, email FROM scagroup WHERE id={$db->quote($values['groupid'],Zend_Db::INT_TYPE)}");
 
                         if($this->_emailSteward($values, $groupList[$values['groupid']])) {
-                            $this->view->message .= "<div class='good'>Notification email sent to steward.</div><br />\n";
+                            $this->addAlert('Notification email sent to steward.', SenDb_Controller::ALERT_GOOD);
                         } else {
-                            $this->view->message .= "<div class='bad'>Failed to send notification email to steward.</div><br />\n";
+                            $this->addAlert('Failed to send notification email to steward.', SenDb_Controller::ALERT_BAD);
                         }
 
                         if($this->_emailSeneschal($seneschal)) {
-                            $this->view->message .= "<div class='good'>Notification sent to group seneschal.</div><br />\n";
+                            $this->addAlert('Notification email sent to group seneschal.', SenDb_Controller::ALERT_GOOD);
                         } else {
-                            $this->view->message .= "<div class='bad'>Failed to send email to group seneschal. Please contact them manually.</div><br />\n";
+                            $this->addAlert('Failed to send email to group seneschal. Please contact them manually.', SenDb_Controller::ALERT_BAD);
                         }
 
                     } else {
-                        $this->view->message .= "<div class='bad'>Creating '{$values['name']}' failed. This is usually caused by a " .
-                                                 "database issue. Please try again.</div><br />\n";
+                        $this->addAlert('Creating ' . $values['name'] . ' failed. This is usually caused by a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                     }
 
                 } catch(Exception $e) {
-                    $this->view->message .= "<div class='bad'>Creating '{$values['name']}' failed due to a database " .
-                                                                "issue. Please try again.</div><br />\n";
+                    $this->addAlert('Creating ' . $values['name'] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                 }
 
             }
@@ -672,7 +670,7 @@ class EventController extends SenDb_Controller
             return $event->id;
 
         } catch (Google_Service_Exception $e) {
-            $this->view->message .= "GCal error: " . $e->getMessage() . "<br />\n";
+            $this->addAlert('GCal error: ' . $e->getMessage(), SenDb_Controller::ALERT_BAD);
             return false;
         }
 
@@ -695,7 +693,7 @@ class EventController extends SenDb_Controller
             return true;
 
         } catch (Google_Service_Exception $e) {
-            $this->view->message .= "GCal error: " . $e->getMessage() . "<br />\n";
+            $this->addAlert('GCal error: ' . $e->getMessage(), SenDb_Controller::ALERT_BAD);
             return false;
         }
 
@@ -993,15 +991,15 @@ class EventController extends SenDb_Controller
                                                             //----------------------------------------------------------
             if($curDateNum > $startDateNum
               || $startDateNum > $endDateNum) {
-                $this->view->message .= "<div class='bad'>Event ends before starting, or has already started! Check the start and end dates.</div><br />\n";
+                $this->addAlert('Event ends before starting, or has already started! Check the start and end dates.', SenDb_Controller::ALERT_BAD);
 
             } elseif(($values['bookingsclose'] != NULL)
               && ($curDateNum > $bookDateNum || $bookDateNum > $startDateNum)) {
-                $this->view->message .= "<div class='bad'>Bookings close after start of event or in the past! Check the close of bookings date.</div><br />\n";
+                $this->addAlert('Bookings close after start of event or in the past! Check the close of bookings date.', SenDb_Controller::ALERT_BAD);
 
             } elseif($auth['level'] == 'user'
               && $auth['id'] != $db->fetchOne("SELECT groupid FROM events WHERE eventid={$db->quote($id,Zend_Db::INT_TYPE)}")) {
-                $this->view->message .= "<div class='bad'>Can only edit events assigned to your group, sorry.</div><br />\n";
+                $this->addAlert('Can only edit events assigned to your group, sorry.', SenDb_Controller::ALERT_BAD);
 
             } else {
                 // Update.
@@ -1016,21 +1014,20 @@ class EventController extends SenDb_Controller
                                                             // Check that the update worked
                                                             //----------------------------------------------------------
                     if($changed == 1) {
-                        $this->view->message .= "<div class='good'>Event details updated in database.</div><br />\n";
+                        $this->addAlert('Event details updated in database.', SenDb_Controller::ALERT_GOOD);
                     } elseif($changed == 0) {
-                        $this->view->message .= "Event record unchanged in database.<br />\n";
+                        $this->addAlert('Event record unchanged in database.');
                     } else {
-                        $this->view->message .= "<div class='bad'>Editing '{$values['name']}' failed. The event might not " .
-                                                   "exist. Refresh to check.</div><br />\n";
+                        $this->addAlert('Editing ' . $values['name'] . ' failed. The event might not exist. Refresh to check.', SenDb_Controller::ALERT_BAD);
                     }
 
                                                             //----------------------------------------------------------
                                                             // Email the steward
                                                             //----------------------------------------------------------
                     if($this->_emailSteward($values, $groupList[$values['groupid']])) {
-                        $this->view->message .= "<div class='good'>Notification email sent to steward.</div><br />\n";
+                        $this->addAlert('Notification email sent to steward.', SenDb_Controller::ALERT_GOOD);
                     } else {
-                        $this->view->message .= "<div class='bad'>Failed to send notification email to steward.</div><br />\n";
+                        $this->addAlert('Failed to send notification email to steward.', SenDb_Controller::ALERT_BAD);
                     }
 
                                                             //----------------------------------------------------------
@@ -1043,9 +1040,9 @@ class EventController extends SenDb_Controller
                         $hostGroup = $db->fetchRow("SELECT groupname, type, state FROM scagroup WHERE id={$db->quote($values['groupid'],Zend_Db::INT_TYPE)}");
 
                         if($this->_emailPegasus($values, $hostGroup)) {
-                            $this->view->message .= "<div class='good'>Event submitted to Pegasus.</div><br />\n";
+                            $this->addAlert('Event submitted to Pegasus.', SenDb_Controller::ALERT_GOOD);
                         } else {
-                            $this->view->message .= "<div class='bad'>Failed to submit event to Pegasus.</div><br />\n";
+                            $this->addAlert('Failed to submit event to Pegasus.', SenDb_Controller::ALERT_BAD);
                         }
                     }
 
@@ -1057,9 +1054,9 @@ class EventController extends SenDb_Controller
                             $result = $this->_deleteCalendar($googleId);
 
                             if($result === false) {
-                                $this->view->message .= "<div class='bad'>Failed to remove event from Kingdom Calendar.</div><br />\n";
+                                $this->addAlert('Failed to remove event from Kingdom Calendar.', SenDb_Controller::ALERT_BAD);
                             } else {
-                                $this->view->message .= "<div class='good'>Removed event from Kingdom Calendar.</div><br />\n";
+                                $this->addAlert('Removed event from Kingdom Calendar.', SenDb_Controller::ALERT_GOOD);
 
                                 // store updated eventId
                                 $changed = $db->update(
@@ -1068,9 +1065,9 @@ class EventController extends SenDb_Controller
                                     "eventid={$db->quote($id,Zend_Db::INT_TYPE)}"
                                 );
                                 if($changed == 0 || $changed == 1) {
-                                    $this->view->message .= "<div class='good'>Stored GCal event ID in database.</div><br />\n";
+                                    $this->addAlert('Stored GCal event ID in database.', SenDb_Controller::ALERT_GOOD);
                                 } else {
-                                    $this->view->message .= "<div class='bad'>Failed to store GCal event ID in database.</div><br />\n";
+                                    $this->addAlert('Failed to store GCal event ID in database.', SenDb_Controller::ALERT_BAD);
                                 }
                             }
                         }
@@ -1087,9 +1084,9 @@ class EventController extends SenDb_Controller
                             );
 
                             if($result === false) {
-                                $this->view->message .= "<div class='bad'>Failed to update Kingdom Calendar.</div><br />\n";
+                                $this->addAlert('Failed to update Kingdom Calendar.', SenDb_Controller::ALERT_BAD);
                             } else {
-                                $this->view->message .= "<div class='good'>Updated Kingdom Calendar.</div><br />\n";
+                                $this->addAlert('Updated Kingdom Calendar.', SenDb_Controller::ALERT_GOOD);
 
                                 // store updated eventId
                                 $changed = $db->update(
@@ -1098,9 +1095,9 @@ class EventController extends SenDb_Controller
                                     "eventid={$db->quote($id,Zend_Db::INT_TYPE)}"
                                 );
                                 if($changed == 0 || $changed == 1) {
-                                    $this->view->message .= "<div class='good'>Stored GCal event ID in database.</div><br />\n";
+                                    $this->addAlert('Stored GCal event ID in database.', SenDb_Controller::ALERT_GOOD);
                                 } else {
-                                    $this->view->message .= "<div class='bad'>Failed to store GCal event ID in database.</div><br />\n";
+                                    $this->addAlert('Failed to store GCal event ID in database.', SenDb_Controller::ALERT_BAD);
                                 }
                             }
                         }
@@ -1113,15 +1110,14 @@ class EventController extends SenDb_Controller
                       && in_array('announce', $sendTo)
                       && $values['status'] == 'approved') {
                         if($this->_emailAnnounce($values, $groupList[$values['groupid']])) {
-                            $this->view->message .= "<div class='good'>Notification email sent to Lochac-Announce.</div><br />\n";
+                            $this->addAlert('Notification email sent to Lochac-Announce.', SenDb_Controller::ALERT_GOOD);
                         } else {
-                            $this->view->message .= "<div class='bad'>Failed to send notification email to Lochac-Announce.</div><br />\n";
+                            $this->addAlert('Failed to send notification email to Lochac-Announce.', SenDb_Controller::ALERT_BAD);
                         }
                     }
 
                 } catch(Exception $e) {
-                    $this->view->message .= "<div class='bad'>Editing '{$values['name']}' failed due to a " .
-                                                                "database error. Please try again.</div><br />\n";
+                    $this->addAlert('Editing ' . $values['name'] . ' failed due to a database error. Please try again.', SenDb_Controller::ALERT_BAD);
                 }
 
             }
