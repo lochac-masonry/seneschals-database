@@ -343,96 +343,12 @@ class EventController extends Zend_Controller_Action
                                                             // Event selection - host group, past/future and approval
                                                             // Host group choice only available to admin
                                                             //----------------------------------------------------------
-        $groupSelectForm = new Zend_Form();
-        $groupSelectForm->setAction('#');
-        $groupSelectForm->setMethod('get');
+        $groupSelectForm = new SenDb_Form_EventSubset(array('method' => 'get'));
+        $groupSelectForm->groupid->options = $groupList;
 
-        if($auth['level'] == 'admin') {
-            $groupSelectForm->addElement(
-                'select',
-                'groupid',
-                array(
-                    'label'        => 'Group:',
-                    'multiOptions' => $groupList
-                )
-            );
-            $groupSelectForm->addElement(
-                'select',
-                'status',
-                array(
-                    'label'        => 'Status:',
-                    'multiOptions' => array(
-                        'new'      => 'New',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected'
-                    )
-                )
-            );
-            $groupSelectForm->addElement(
-                'select',
-                'tense',
-                array(
-                    'label'        => 'Tense:',
-                    'multiOptions' => array(
-                        'future' => 'Future',
-                        'past'   => 'Past',
-                        'both'   => 'Both'
-                    )
-                )
-            );
-            $groupSelectForm->addElement(
-                'submit',
-                'submit',
-                array(
-                    'label' => 'Select'
-                )
-            );
-        } else {
-            $groupSelectForm->addElement(
-                'select',
-                'groupid',
-                array(
-                    'label'        => 'Group:',
-                    'multiOptions' => $groupList,
-                    'disabled'     => true
-                )
-            );
-            $groupSelectForm->addElement(
-                'select',
-                'status',
-                array(
-                    'label'        => 'Status:',
-                    'multiOptions' => array(
-                        'new'      => 'New',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected'
-                    )
-                )
-            );
-            $groupSelectForm->addElement(
-                'select',
-                'tense',
-                array(
-                    'label'        => 'Tense:',
-                    'multiOptions' => array(
-                        'future' => 'Future',
-                        'past'   => 'Past',
-                        'both'   => 'Both'
-                    )
-                )
-            );
-            $groupSelectForm->addElement(
-                'submit',
-                'submit',
-                array(
-                    'label' => 'Select'
-                )
-            );
+        if($auth['level'] != 'admin') {
+            $groupSelectForm->groupid->disabled = true;
         }
-
-        $groupSelectForm->setDecorators(array('FormElements', 'Form'));
-        $groupSelectForm->setElementDecorators(array('ViewHelper', 'Label'));
-        $groupSelectForm->submit->setDecorators(array('ViewHelper'));
 
                                                             //----------------------------------------------------------
                                                             // Process the selection form
