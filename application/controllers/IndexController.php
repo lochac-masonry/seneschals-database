@@ -4,7 +4,7 @@ class IndexController extends SenDb_Controller
 {
     public function indexAction()
     {
-
+        $this->view->title = 'Lochac Seneschals\' Database';
     }
 
     public function homeAction()
@@ -12,14 +12,16 @@ class IndexController extends SenDb_Controller
         $auth = authenticate();
 
         $this->view->title = 'Lochac Seneschals\' Database';
-        $this->view->message = 'You are currently logged in as ';
+
+        $currentUser = 'You are currently logged in as ';
         if($auth['level'] == 'admin') {
-            $this->view->message .= "Kingdom Seneschal.<br />\n";
+            $currentUser .= "Kingdom Seneschal.<br />\n";
         } elseif($auth['level'] == 'user') {
-            $this->view->message .= "Group Seneschal.<br />\n";
+            $currentUser .= "Group Seneschal.<br />\n";
         } else {
-            $this->view->message .= "no-one in particular. Did you get your password correct?<br />\n";
+            $currentUser .= "no-one in particular. Did you get your password correct?<br />\n";
         }
+        $this->addAlert($currentUser);
 
         $this->view->authlevel = $auth['level'];
 

@@ -57,15 +57,14 @@ class ToolsController extends SenDb_Controller
             if(SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead)) {
                 $successCount++;
             } else {
-                $this->view->message .= "<div class='bad'>Sending to seneschal of {$group->groupname} failed. "
-                                      . "Try emailing manually.</div><br />\n";
+                $this->addAlert('Sending to seneschal of ' . $group->groupname . ' failed. Try emailing manually.', SenDb_Controller::ALERT_BAD);
             }
 
             $totalCount++;
 
         }
 
-        $this->view->message .= "{$successCount} out of {$totalCount} emails sent successfully.<br />\n";
+        $this->addAlert($successCount . ' out of ' . $totalCount . ' emails sent successfully.');
     }
     */
 
