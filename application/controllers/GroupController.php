@@ -62,7 +62,6 @@ class GroupController extends SenDb_Controller
         }
 
         $this->view->title = 'Edit Group Details';
-        $this->view->message = '';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
         $values['id'] = 'new'; // Default value for group select box.
 
@@ -367,19 +366,14 @@ class GroupController extends SenDb_Controller
                         $changed = $db->insert('scagroup',$values);
 
                         if($changed == 1) {
-                            $this->view->message .= "<div class='good'>Successfully added group '{$values['groupname']}'. <a href='" .
-                                                                  Zend_Layout::getMvcInstance()->relativeUrl .
-                                                                  "/group/edit?groupid={$db->lastInsertId()}'>Click to continue.</a></div><br />\n";
+                            $this->addAlert('Successfully added group ' . $values['groupname'] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/edit?groupid=' . $db->lastInsertId() . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                         } else {
-                            $this->view->message .= "<div class='bad'>Creating '{$values['groupname']}' failed. This is usually caused by a " .
-                                                     "database issue. <a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                     "/group/edit?groupid={$db->lastInsertId()}'>Refresh to check.</a></div><br />\n";
+                            $this->addAlert('Creating group ' . $values['groupname'] . ' failed. This is usually caused by a database issue. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/edit?groupid=' . $db->lastInsertId() . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                         }
 
                     } catch(Exception $e) {
-                        $this->view->message .= "<div class='bad'>Creating '{$values['groupname']}' failed due to a database " .
-                                                                    "issue. Please try again.</div><br />\n";
+                        $this->addAlert('Creating group ' . $values['groupname'] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                     }
 
                     $values['id'] = 'new';
@@ -394,19 +388,14 @@ class GroupController extends SenDb_Controller
                         );
 
                         if($changed == 1) {
-                            $this->view->message .= "<div class='good'>Successfully updated {$values['groupname']}. <a href='" .
-                                                                  Zend_Layout::getMvcInstance()->relativeUrl .
-                                                                  "/group/edit?groupid={$values['id']}'>Click to continue.</a></div><br />\n";
+                            $this->addAlert('Successfully updated group ' . $values['groupname'] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/edit?groupid=' . $db->lastInsertId() . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                         } else {
-                            $this->view->message .= "<div class='bad'>Updating {$values['groupname']} failed. The group may not exist. <a href='" .
-                                                     Zend_Layout::getMvcInstance()->relativeUrl .
-                                                     "/group/edit?groupid={$values['id']}'>Refresh to check.</a></div><br />\n";
+                            $this->addAlert('Updating group ' . $values['groupname'] . ' failed. The group might not exist. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/edit?groupid=' . $db->lastInsertId() . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                         }
 
                     } catch(Exception $e) {
-                        $this->view->message .= "<div class='bad'>Updating {$values['groupname']} failed due to a " .
-                                                                    "database issue. Please try again.</div><br />\n";
+                        $this->addAlert('Updating group ' . $values['groupname'] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                     }
 
                 }
@@ -445,7 +434,6 @@ class GroupController extends SenDb_Controller
         }
 
         $this->view->title = 'Close Group';
-        $this->view->message = '';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
 
                                                             //----------------------------------------------------------
@@ -511,16 +499,14 @@ class GroupController extends SenDb_Controller
                         "groupid={$db->quote($values['group_close'],Zend_Db::INT_TYPE)}"
                     );
 
-                    $this->view->message .= "<div class='good'>{$groupList[$values['group_close']]} closed successfully. {$updateCount} " .
-                                            "postcodes transferred to {$groupList[$values['group_get']]}.</div><br />\n";
+                    $this->addAlert($groupList[$values['group_close']] . ' closed successfully. ' . $updateCount . ' postcodes transferred to ' . $groupList[$values['group_get']] . '.', SenDb_Controller::ALERT_GOOD);
 
                 } catch(Exception $e) {
-                    $this->view->message .= "<div class='bad'>Update failed due to database error. Please " .
-                                                                "try again.</div><br />\n";
+                    $this->addAlert('Update failed due to database error. Please try again.', SenDb_Controller::ALERT_BAD);
                 }
 
             } else {
-                $this->view->message .= "<div class='bad'>Confirm was not checked. No action taken.</div><br />\n";
+                $this->addAlert('Confirm was not checked. No action taken.', SenDb_Controller::ALERT_BAD);
             }
 
         }
@@ -538,7 +524,6 @@ class GroupController extends SenDb_Controller
         }
 
         $this->view->title = 'Manage Group Email Aliases';
-        $this->view->message = '';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
 
                                                             //----------------------------------------------------------
@@ -603,23 +588,24 @@ class GroupController extends SenDb_Controller
             // Find which domains this group can edit, form an appropriate regex and explanatory message.
             $domains = $db->fetchCol("SELECT domain FROM domains WHERE groupid={$db->quote($groupid,Zend_Db::INT_TYPE)}");
             $emailRegex = '/^[^@]+@';
-            $this->view->message .= 'You are currently permitted to manage aliases with domain';
+            $permittedDomains = 'You are currently permitted to manage aliases with domain';
 
             if(count($domains) > 0) {
                 $emailRegex .= '((' . $domains[0];
-                $this->view->message .= ' ' . $domains[0] . '.lochac.sca.org';
+                $permittedDomains .= ' ' . $domains[0] . '.lochac.sca.org';
 
                 for($i = 1; $i < count($domains); $i++) {
                     $emailRegex .= '|' . $domains[$i];
-                    $this->view->message .= ', ' . $domains[$i] . '.lochac.sca.org';
+                    $permittedDomains .= ', ' . $domains[$i] . '.lochac.sca.org';
                 }
 
                 $emailRegex .= ').)?';
-                $this->view->message .= ' or';
+                $permittedDomains .= ' or';
             }
 
             $emailRegex .= 'lochac.sca.org$/';
-            $this->view->message .= ' lochac.sca.org. Request others from Kingdom Seneschal.' . "<br /><br />\n\n";
+            $permittedDomains .= ' lochac.sca.org. Request others from Kingdom Seneschal.';
+            $this->addAlert($permittedDomains);
 
             // Retrieve existing aliases
             $rows = $db->fetchAssoc("SELECT row_id, alias, address FROM virtusers WHERE groupid={$db->quote($groupid,Zend_Db::INT_TYPE)}");
@@ -689,19 +675,14 @@ class GroupController extends SenDb_Controller
                             $changed = $db->delete('virtusers', "row_id={$db->quote($id,Zend_Db::INT_TYPE)}");
 
                             if($changed == 1) {
-                                $this->view->message .= "<div class='good'>Successfully deleted alias '{$values['alias'.$id]}'. " .
-                                                                      "<a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                                      "/group/aliases?groupid={$groupid}'>Click to continue.</a></div><br />\n";
+                                $this->addAlert('Successfully deleted alias ' . $values['alias'.$id] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->view->message .= "<div class='bad'>Deleting '{$values['alias'.$id]}' failed. The alias may have " .
-                                                         "already been deleted. <a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                         "/group/aliases?groupid={$groupid}'>Refresh to check.</a></div><br />\n";
+                                $this->addAlert('Deleting alias ' . $values['alias'.$id] . ' failed. The alias may have already been deleted. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
-                            $this->view->message .= "<div class='bad'>Deleting '{$values['alias'.$id]}' failed due to a " .
-                                                                        "database error. Please try again.</div><br />\n";
+                            $this->addAlert('Deleting alias ' . $values['alias'.$id] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                         }
 
                     } elseif($aliasForms[$id]->getElement('submit'.$id)->isChecked()) {
@@ -716,19 +697,14 @@ class GroupController extends SenDb_Controller
                             );
 
                             if($changed == 1) {
-                                $this->view->message .= "<div class='good'>Successfully updated alias '{$values['alias'.$id]}'. " .
-                                                                      "<a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                                      "/group/aliases?groupid={$groupid}'>Click to continue.</a></div><br />\n";
+                                $this->addAlert('Successfully updated alias ' . $values['alias'.$id] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->view->message .= "<div class='bad'>Updating '{$values['alias'.$id]}' failed. The alias might not " .
-                                                         "exist. <a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                         "/group/aliases?groupid={$groupid}'>Refresh to check.</a></div><br />\n";
+                                $this->addAlert('Updating alias ' . $values['alias'.$id] . ' failed. The alias might not exist. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
-                            $this->view->message .= "<div class='bad'>Updating '{$values['alias'.$id]}' failed due to a " .
-                                                                        "database error. Please try again.</div><br />\n";
+                            $this->addAlert('Updating alias ' . $values['alias'.$id] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                         }
 
                     }
@@ -736,8 +712,7 @@ class GroupController extends SenDb_Controller
                 } elseif($aliasForms[$id]->getElement('submit'.$id)->isChecked()
                   || $aliasForms[$id]->getElement('delete'.$id)->isChecked()) {
                     // Form didn't validate, even though a button was pressed -> invalid address.
-                    $this->view->message .= "<div class='bad'>Alias and/or destination address invalid. Destination must be a valid email " .
-                                            "address, and the alias must be @ one of your listed domains.</div><br />\n";
+                    $this->addAlert('Alias and/or destination address invalid. Destination must be a valid email address, and the alias must be @ one of your listed domains.', SenDb_Controller::ALERT_BAD);
                 }
 
                 $aliasForms[$id]->setDefaults($values);
@@ -797,11 +772,8 @@ class GroupController extends SenDb_Controller
 
                 // Is the provided alias already in use?
                 if(0 < $db->fetchOne("SELECT COUNT(alias) AS count FROM virtusers WHERE alias={$db->quote($values['aliasnew'])}")) {
-                    $usedby = $db->fetchOne("SELECT groupid FROM virtusers WHERE alias={$db->quote($values['aliasnew'])}");
+                    $this->addAlert($values['aliasnew'] . ' is already in use, and cannot be duplicated.', SenDb_Controller::ALERT_BAD);
 
-                    $this->view->message .= "<div class='bad'>'{$values['aliasnew']}' has been previously used by another group. " .
-                                            "<a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                            "/group/aliases?groupid={$usedby}'>Details</a></div><br />\n";
                 } else {
                     try {
                         $changed = $db->insert(
@@ -815,25 +787,19 @@ class GroupController extends SenDb_Controller
                         );
 
                         if($changed == 1) {
-                            $this->view->message .= "<div class='good'>Successfully added alias '{$values['aliasnew']}'. " .
-                                                                  "<a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                                  "/group/aliases?groupid={$groupid}'>Click to continue.</a></div><br />\n";
+                            $this->addAlert('Successfully added alias ' . $values['aliasnew'] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                         } else {
-                            $this->view->message .= "<div class='bad'>Adding alias '{$values['aliasnew']}' may have failed. <a href='" .
-                                                     Zend_Layout::getMvcInstance()->relativeUrl .
-                                                     "/group/aliases?groupid={$groupid}'>Refresh to check</a>, then try again.</div><br />\n";
+                            $this->addAlert('Adding alias ' . $values['aliasnew'] . ' may have failed. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                         }
 
                     } catch(Exception $e) {
-                        $this->view->message .= "<div class='bad'>Adding alias '{$values['aliasnew']}' failed due to a " .
-                                                                    "database error. Please try again.</div><br />\n";
+                        $this->addAlert('Adding alias ' . $values['aliasnew'] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                     }
 
                 }
             } elseif($aliasForms['new']->submitnew->isChecked()) {
-                $this->view->message .= "<div class='bad'>Alias and/or destination address invalid. Destination must be a valid email address, " .
-                                        "and the alias must be @ one of your listed domains.</div><br />\n";
+                $this->addAlert('Alias and/or destination address invalid. Destination must be a valid email address, and the alias must be @ one of your listed domains.', SenDb_Controller::ALERT_BAD);
             }
         }
 
@@ -859,7 +825,6 @@ class GroupController extends SenDb_Controller
         }
 
         $this->view->title = 'Manage Group Domains';
-        $this->view->message = '';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
 
         // Show listing of configured domains.
@@ -929,26 +894,21 @@ class GroupController extends SenDb_Controller
                     }
                 }
 
-                // If no aliases use the group/domain combo this was, safe to update.
+                // If no aliases use this group/domain combo, safe to update.
                 if($aliasCount == 0) {
                     if($domainForms[$id]->getElement('delete'.$id)->isChecked()) {
                         try {
                             $changed = $db->delete('domains', "id={$db->quote($id,Zend_Db::INT_TYPE)}");
 
                             if($changed == 1) {
-                                $this->view->message .= "<div class='good'>Successfully deleted domain '{$values['domain'.$id]}'. " .
-                                                                      "<a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                                      "/group/domains'>Click to continue.</a></div><br />\n";
+                                $this->addAlert('Successfully deleted domain ' . $values['domain'.$id] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->view->message .= "<div class='bad'>Deleting '{$values['domain'.$id]}' failed. The domain may have already " .
-                                                         "been deleted. <a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                         "/group/domains'>Refresh to check.</a></div><br />\n";
+                                $this->addAlert('Deleting domain ' . $values['domain'.$id] . ' failed. The domain may have already been deleted. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
-                            $this->view->message .= "<div class='bad'>Deleting '{$values['alias'.$id]}' failed due to a " .
-                                                                        "database error. Please try again.</div><br />\n";
+                            $this->addAlert('Deleting domain ' . $values['domain'.$id] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                         }
 
                     } elseif($domainForms[$id]->getElement('submit'.$id)->isChecked()) {
@@ -963,31 +923,25 @@ class GroupController extends SenDb_Controller
                             );
 
                             if($changed == 1) {
-                                $this->view->message .= "<div class='good'>Successfully updated domain '{$values['domain'.$id]}'. " .
-                                                                      "<a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                                      "/group/domains'>Click to continue.</a></div><br />\n";
+                                $this->addAlert('Successfully updated domain ' . $values['domain'.$id] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->view->message .= "<div class='bad'>Updating '{$values['domain'.$id]}' failed. The domain might not exist. " .
-                                                         "<a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                         "/group/domains'>Refresh to check.</a></div><br />\n";
+                                $this->addAlert('Updating domain ' . $values['domain'.$id] . ' failed. The domain might not exist. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
-                            $this->view->message .= "<div class='bad'>Updating '{$values['domain'.$id]}' failed due to a " .
-                                                                        "database error. Please try again.</div><br />\n";
+                            $this->addAlert('Updating domain ' . $values['domain'.$id] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                         }
 
                     }
 
                 } else {
-                    $this->view->message .= "<div class='bad'>That group has {$aliasCount} aliases under the domain {$old['domain']}.lochac.sca.org. " .
-                                            "Please remove these aliases or move them to a different domain before changing this domain.</div><br />\n";
+                    $this->addAlert('That group has ' . $aliasCount . ' aliases under the domain ' . $old['domain'] . '.lochac.sca.org. Please remove these aliases or move them to a different domain before changing this domain.', SenDb_Controller::ALERT_BAD);
                 }
 
             } elseif($domainForms[$id]->getElement('submit'.$id)->isChecked()) {
                 // form invalid, but groupid came from our list and submit was pressed - domain must be invalid
-                $this->view->message .= "<div class='bad'>Domain invalid. Must be lower case letters only.</div><br />\n";
+                $this->addAlert('Domain invalid. Must be lower case letters only.', SenDb_Controller::ALERT_BAD);
             }
 
             $domainForms[$id]->setDefaults($values);
@@ -1038,7 +992,7 @@ class GroupController extends SenDb_Controller
             // Does that group already have that domain?
             if(0 < $db->fetchOne("SELECT COUNT(groupid) AS count FROM domains WHERE domain={$db->quote($values['domainnew'])}" .
                                                                                "AND groupid={$db->quote($values['groupidnew'],Zend_Db::INT_TYPE)}")) {
-                $this->view->message .= "<div class='bad'>That group already has access to that domain.</div><br />\n";
+                $this->addAlert('That group already has access to that domain.', SenDb_Controller::ALERT_BAD);
             } else {
                 try {
                     $changed = $db->insert(
@@ -1050,24 +1004,19 @@ class GroupController extends SenDb_Controller
                     );
 
                     if($changed == 1) {
-                        $this->view->message .= "<div class='good'>Successfully added domain '{$values['domainnew']}'. " .
-                                                              "<a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                              "/group/domains'>Click to continue.</a></div><br />\n";
+                        $this->addAlert('Successfully added domain ' . $values['domainnew'] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                     } else {
-                        $this->view->message .= "<div class='bad'>Adding domain '{$values['domainnew']}' may have failed. <a href='" .
-                                                 Zend_Layout::getMvcInstance()->relativeUrl .
-                                                 "/group/domains'>Refresh to check</a>, then try again.</div><br />\n";
+                        $this->addAlert('Adding domain ' . $values['domainnew'] . ' may have failed. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                     }
 
                 } catch(Exception $e) {
-                    $this->view->message .= "<div class='bad'>Adding domain '{$values['domainnew']}' failed due to a " .
-                                                                "database error. Please try again.</div><br />\n";
+                    $this->addAlert('Adding domain ' . $values['domainnew'] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                 }
 
             }
         } elseif($domainForms['new']->submitnew->isChecked()) {
-            $this->view->message .= "<div class='bad'>Domain invalid. Must be lower case letters only.</div><br />\n";
+            $this->addAlert('Domain invalid. Must be lower case letters only.', SenDb_Controller::ALERT_BAD);
         }
 
         if(isset($domainForms)) {
@@ -1087,7 +1036,6 @@ class GroupController extends SenDb_Controller
         }
 
         $this->view->title = 'Baron and Baroness Details';
-        $this->view->message = '';
         $groupList = $db->fetchPairs("SELECT id, groupname FROM scagroup WHERE type='Barony' ORDER BY groupname");
 
                                                             //----------------------------------------------------------
@@ -1144,7 +1092,7 @@ class GroupController extends SenDb_Controller
 
         if($auth['level'] == 'user'
           && !array_key_exists($auth['id'],$groupList)) {
-            $this->view->message .= "Available for baronies only.<br />\n";
+            $this->addAlert('Available for baronies only.', SenDb_Controller::ALERT_BAD);
         } elseif($groupSelectForm->isValid($_GET)) {
             //Show relevant details for the selected group.
             if($auth['level'] == 'admin') {
@@ -1414,19 +1362,14 @@ class GroupController extends SenDb_Controller
                             $changed = $db->insert('barony',$values);
 
                             if($changed == 1) {
-                                $this->view->message .= "<div class='good'>Successfully added barony. <a href='" .
-                                                                      Zend_Layout::getMvcInstance()->relativeUrl . "/group/baron-baroness?groupid=" .
-                                                                      "{$values['groupid']}'>Click to continue.</a></div><br />\n";
+                                $this->addAlert('Successfully added barony. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/baron-baroness?groupid=' . $values['groupid'] . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->view->message .= "<div class='bad'>Adding barony failed. The barony may already exist. " .
-                                                         "<a href='" . Zend_Layout::getMvcInstance()->relativeUrl .
-                                                         "/group/baron-baroness?groupid={$values['groupid']}'>Refresh to check.</a></div><br />\n";
+                                $this->addAlert('Adding barony failed. The barony may already exist. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/baron-baroness?groupid=' . $values['groupid'] . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
-                            $this->view->message .= "<div class='bad'>Adding barony failed due to a database error. " .
-                                                                        "Please try again.</div><br />\n";
+                            $this->addAlert('Adding barony failed due to a database error. Please try again.', SenDb_Controller::ALERT_BAD);
                         }
 
                     } else {
@@ -1439,19 +1382,14 @@ class GroupController extends SenDb_Controller
                             );
 
                             if($changed == 1) {
-                                $this->view->message .= "<div class='good'>Successfully updated barony. <a href='" .
-                                                                      Zend_Layout::getMvcInstance()->relativeUrl . "/group/baron-baroness?groupid=" .
-                                                                      "{$values['groupid']}'>Click to continue.</a></div><br />\n";
+                                $this->addAlert('Successfully updated barony. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/baron-baroness?groupid=' . $values['groupid'] . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->view->message .= "<div class='bad'>Updating barony failed. The barony might not exist. <a href='" .
-                                                         Zend_Layout::getMvcInstance()->relativeUrl .
-                                                         "/group/baron-baroness?groupid={$values['groupid']}'>Refresh to check.</a></div><br />\n";
+                                $this->addAlert('Updating barony failed. The barony might not exist. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/baron-baroness?groupid=' . $values['groupid'] . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
-                            $this->view->message .= "<div class='bad'>Updating barony failed due to a database error. " .
-                                                                        "Please try again.</div><br />\n";
+                            $this->addAlert('Updating barony failed due to a database error. Please try again.', SenDb_Controller::ALERT_BAD);
                         }
 
                     }

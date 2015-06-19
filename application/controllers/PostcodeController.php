@@ -297,7 +297,6 @@ class PostcodeController extends SenDb_Controller
         }
 
         $this->view->title = 'Assign Postcodes';
-        $this->view->message = '';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
 
                                                             //----------------------------------------------------------
@@ -404,7 +403,6 @@ class PostcodeController extends SenDb_Controller
         }
 
         $this->view->title = 'Upload Postcodes File';
-        $this->view->message = '';
 
         // Library includes.
         require_once('Zend/Filter/BaseName.php');

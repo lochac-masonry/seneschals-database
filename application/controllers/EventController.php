@@ -33,7 +33,6 @@ class EventController extends SenDb_Controller
         $groupList = $db->fetchPairs("SELECT id, groupname FROM scagroup WHERE status='live' ORDER BY groupname");
 
         $this->view->title = 'Submit Event Proposal';
-        $this->view->message = '';
 
                                                             //----------------------------------------------------------
                                                             // Build the event proposal form
@@ -330,7 +329,6 @@ class EventController extends SenDb_Controller
         }
 
         $this->view->title = 'Review Event Proposals';
-        $this->view->message = '';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
         if($auth['level'] == 'admin') {
             $groupList['all'] = 'All Groups';
@@ -711,7 +709,6 @@ class EventController extends SenDb_Controller
         $groupList = $db->fetchPairs("SELECT id, groupname FROM scagroup WHERE status='live' ORDER BY groupname");
 
         $this->view->title = 'Edit Event Proposal';
-        $this->view->message = '';
 
         if(isset($_GET['eventid'])
           && is_numeric($_GET['eventid'])) {
