@@ -1,6 +1,6 @@
 <?php
 
-class SenDb_Form_EventSubset extends Zend_Form
+class SenDb_Form_Event_List extends Zend_Form
 {
     public function init()
     {
