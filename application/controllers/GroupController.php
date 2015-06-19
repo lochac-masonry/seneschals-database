@@ -605,7 +605,6 @@ class GroupController extends SenDb_Controller
 
             $emailRegex .= 'lochac.sca.org$/';
             $permittedDomains .= ' lochac.sca.org. Request others from Kingdom Seneschal.';
-            $this->addAlert($permittedDomains);
 
             // Retrieve existing aliases
             $rows = $db->fetchAssoc("SELECT row_id, alias, address FROM virtusers WHERE groupid={$db->quote($groupid,Zend_Db::INT_TYPE)}");
@@ -802,6 +801,9 @@ class GroupController extends SenDb_Controller
                 $this->addAlert('Alias and/or destination address invalid. Destination must be a valid email address, and the alias must be @ one of your listed domains.', SenDb_Controller::ALERT_BAD);
             }
         }
+
+        // display permitted domains with the preamble, i.e. after all other alerts
+        $this->addAlert($permittedDomains);
 
         if(isset($aliasForms)) {
             $this->view->aliasForms = $aliasForms;
