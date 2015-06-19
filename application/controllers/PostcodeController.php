@@ -1,6 +1,6 @@
 <?php
 
-class PostcodeController extends Zend_Controller_Action
+class PostcodeController extends SenDb_Controller
 {
     public function indexAction()
     {
@@ -250,7 +250,7 @@ class PostcodeController extends Zend_Controller_Action
                     $results = $db->fetchAll($sql);
 
                 } catch (Exception $e) {
-                    $this->view->message .= "<div class='bad'>Possible error fetching data.</div><br />\n";
+                    $this->addAlert('Possible error fetching data.', SenDb_Controller::ALERT_BAD);
 
                 }
 
@@ -264,8 +264,7 @@ class PostcodeController extends Zend_Controller_Action
                         $localities[$result->postcode] = $db->fetchCol($sql);
 
                     } catch (Exception $e) {
-                        $this->view->message .= "<div class='bad'>Possible error getting suburb list for postcode " .
-                                                                   "{$result->postcode}.</div><br />\n";
+                        $this->addAlert('Possible error getting suburb list for postcode ' . $result->postcode . '.', SenDb_Controller::ALERT_BAD);
                     }
 
                     $result->localities = '';
@@ -281,7 +280,7 @@ class PostcodeController extends Zend_Controller_Action
                 $this->view->showResults = true;
             }
         } else {
-            $this->view->message .= "<div class='bad'>Form not valid.</div><br />\n";
+            $this->addAlert('Form not valid.', SenDb_Controller::ALERT_BAD);
             $this->view->showForm = true;
         }
 
@@ -298,7 +297,6 @@ class PostcodeController extends Zend_Controller_Action
         }
 
         $this->view->title = 'Assign Postcodes';
-        $this->view->message = '';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
 
                                                             //----------------------------------------------------------
@@ -384,10 +382,10 @@ class PostcodeController extends Zend_Controller_Action
                 );
 
             } catch(Exception $e) {
-                $this->view->message .= "<div class='bad'>Possible error updating postcodes.</div><br />\n";
+                $this->addAlert('Possible error updating postcodes.', SenDb_Controller::ALERT_BAD);
             }
 
-            $this->view->message .= "<div class='good'>$updateCount row(s) updated.</div><br />\n";
+            $this->addAlert($updateCount . ' row(s) updated.', SenDb_Controller::ALERT_GOOD);
 
         } else {
             // Don't.
@@ -405,7 +403,6 @@ class PostcodeController extends Zend_Controller_Action
         }
 
         $this->view->title = 'Upload Postcodes File';
-        $this->view->message = '';
 
         // Library includes.
         require_once('Zend/Filter/BaseName.php');
@@ -459,7 +456,7 @@ class PostcodeController extends Zend_Controller_Action
             $targetfile = $dir . '/' . $userfile_name;
 
             if (move_uploaded_file($userfile['tmp_name'], $targetfile)) {
-                $this->view->message .= "<div class='good'>File successfully uploaded.</div><br />\n";
+                $this->addAlert('File successfully uploaded.', SenDb_Controller::ALERT_GOOD);
 
                 // Mark all of the existing postcode records as old, and initialise counters.
                 $db->update('postcode',array('current' => 'N'));
@@ -516,8 +513,7 @@ class PostcodeController extends Zend_Controller_Action
                                 )
                             );
                         } catch(Exception $e) {
-                            $this->view->message .= "<div class='bad'>Possible error adding $row[Locality], " .
-                                                                        "$row[Pcode], $row[State].</div><br />\n";
+                            $this->addAlert('Possible error adding ' . $row[Locality] . ', ' . $row[Pcode] . ', ' . $row[State] . '.', SenDb_Controller::ALERT_BAD);
                         }
                         $insertCount++;
                     } else {
@@ -542,8 +538,7 @@ class PostcodeController extends Zend_Controller_Action
                                 )
                             );
                         } catch(Exception $e) {
-                            $this->view->message .= "<div class='bad'>Possible error updating $row[Locality], " .
-                                                                        "$row[Pcode], $row[State].</div><br />\n";
+                            $this->addAlert('Possible error updating ' . $row[Locality] . ', ' . $row[Pcode] . ', ' . $row[State] . '.', SenDb_Controller::ALERT_BAD);
                         }
                         $updateCount++;
                     }
@@ -554,15 +549,15 @@ class PostcodeController extends Zend_Controller_Action
                     $deleteCount = $db->delete('postcode',"current='N'");
 
                 } catch(Exception $e) {
-                    $this->view->message .= "<div class='bad'>Possible error deleting old entries.</div><br />\n";
+                    $this->addAlert('Possible error deleting old entries.', SenDb_Controller::ALERT_BAD);
                 }
-                $this->view->message .= "$insertCount row(s) added.<br />\n" .
-                                        "$updateCount row(s) updated.<br />\n" .
-                                        "$deleteCount row(s) deleted.<br />\n";
+                $this->addAlert($insertCount . ' row(s) added.');
+                $this->addAlert($updateCount . ' row(s) updated.');
+                $this->addAlert($deleteCount . ' row(s) deleted.');
 
                 fclose($file);
             } else {
-                $this->view->message .= "<div class='bad'>File move failed.</div><br />\n";
+                $this->addAlert('File move failed.', SenDb_Controller::ALERT_BAD);
             }
 
         } else {

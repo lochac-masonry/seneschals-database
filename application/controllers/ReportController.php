@@ -1,6 +1,6 @@
 <?php
 
-class ReportController extends Zend_Controller_Action
+class ReportController extends SenDb_Controller
 {
     public function indexAction()
     {
@@ -622,9 +622,9 @@ class ReportController extends Zend_Controller_Action
                         );
 
                     } catch(Exception $e) {
-                        $this->view->message .= "<div class='bad'>Possible error updating group details.</div><br />\n";
+                        $this->addAlert('Possible error updating group details.', SenDb_Controller::ALERT_BAD);
                     }
-                    $this->view->message .= $changed . " record(s) affected.<br />\n";
+                    $this->addAlert($changed . ' record(s) affected.');
 
                                                             //----------------------------------------------------------
                                                             // Compose report email
@@ -709,9 +709,9 @@ class ReportController extends Zend_Controller_Action
                                                             // Send report
                                                             //----------------------------------------------------------
                     if(SenDb_Helper_Email::send($mailto,$mailsubj,$mailbody,$mailheaders)) {
-                        $this->view->message .= "<div class='good'>Report sent to " . count($mailto) . " recipient(s)</div><br />\n";
+                        $this->addAlert('Report sent to ' . count($mailto) . ' recipient(s).', SenDb_Controller::ALERT_GOOD);
                     } else {
-                        $this->view->message .= "<div class='bad'>Failed to send report</div><br />\n";
+                        $this->addAlert('Failed to send report.', SenDb_Controller::ALERT_BAD);
                     }
 
                 }
