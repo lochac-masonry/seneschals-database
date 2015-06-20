@@ -18,7 +18,7 @@ class SenDb_Form_Event_List extends Zend_Form
             'select',
             'groupid',
             array(
-                'label'      => 'Select group:'
+                'label' => 'Select group:'
             )
         );
         $this->addElement(

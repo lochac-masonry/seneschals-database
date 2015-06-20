@@ -21,7 +21,7 @@ class SenDb_Form_Event_Edit extends Zend_Form
             'select',
             'groupid',
             array(
-                'label'        => 'Host Group'
+                'label' => 'Host Group'
             )
         );
         $this->addElement(

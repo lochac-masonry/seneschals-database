@@ -46,8 +46,8 @@ class SenDb_Form_Report extends Zend_Form
             'select',
             'parentid',
             array(
-                'label'        => 'Parent Group',
-                'disabled'     => true
+                'label'    => 'Parent Group',
+                'disabled' => true
             )
         );
         $this->addDisplayGroup(
