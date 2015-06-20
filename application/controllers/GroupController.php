@@ -68,31 +68,11 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build group selection form
                                                             //----------------------------------------------------------
-        $groupSelectForm = new Zend_Form();
-        $groupSelectForm->setAction('#');
-        $groupSelectForm->setMethod('get');
-
-        $groupSelectForm->addElement(
-            'select',
-            'groupid',
-            array(
-                'label'        => 'Select group to edit:',
-                'multiOptions' => $groupList,
-                'required'     => true
-            )
+        $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
+        $groupSelectForm->groupid->options = array_merge(
+            array('new' => 'New Group'),
+            $groupList
         );
-        $groupSelectForm->addElement(
-            'submit',
-            'submit',
-            array(
-                'label' => 'Select'
-            )
-        );
-
-        $groupSelectForm->setDecorators(array('FormElements', 'Form'));
-        $groupSelectForm->groupid->setDecorators(array('ViewHelper', 'Label'))
-                                 ->addMultiOption('new', 'New Group');
-        $groupSelectForm->submit->setDecorators(array('ViewHelper'));
 
         if($groupSelectForm->isValid($_GET)) {
             //Show relevant details for the selected group.
@@ -101,253 +81,8 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build group edit form
                                                             //----------------------------------------------------------
-            $detailsForm = new Zend_Form();
-            $detailsForm->setAction('#');
-            $detailsForm->setMethod('post');
-
-                                                            //----------------------------------------------------------
-                                                            // Section - general group details
-                                                            //----------------------------------------------------------
-            $detailsForm->addElement(
-                'text',
-                'groupname',
-                array(
-                    'label'    => 'Name of Group',
-                    'size'     => 50,
-                    'required' => true
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'area',
-                array(
-                    'label' => 'Description of Group Area',
-                    'size'  => 50
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'website',
-                array(
-                    'label' => 'Group Website',
-                    'size'  => 50
-                )
-            );
-            $detailsForm->addElement(
-                'select',
-                'type',
-                array(
-                    'label'        => 'Group Type',
-                    'multiOptions' => array(
-                        'Kingdom'      => 'Kingdom',
-                        'Principality' => 'Principality',
-                        'Barony'       => 'Barony',
-                        'Shire'        => 'Shire',
-                        'Canton'       => 'Canton',
-                        'College'      => 'College'
-                    )
-                )
-            );
-            $detailsForm->addElement(
-                'select',
-                'status',
-                array(
-                    'label'        => 'Group Status',
-                    'multiOptions' => array(
-                        'live'     => 'live',
-                        'dormant'  => 'dormant',
-                        'abeyance' => 'abeyance',
-                        'closed'   => 'closed',
-                        'proposed' => 'proposed'
-                    )
-                )
-            );
-            $detailsForm->addElement(
-                'select',
-                'parentid',
-                array(
-                    'label'        => 'Parent Group',
-                    'multiOptions' => $groupList
-                )
-            );
-            $detailsForm->addDisplayGroup(
-                array(
-                    'groupname',
-                    'area',
-                    'website',
-                    'type',
-                    'status',
-                    'parentid'
-                ),
-                'groupDetails',
-                array('legend' => 'Group Details')
-            );
-
-                                                            //----------------------------------------------------------
-                                                            // Section - seneschal's details
-                                                            //----------------------------------------------------------
-            $detailsForm->addElement(
-                'text',
-                'scaname',
-                array(
-                    'label'    => 'SCA Name',
-                    'size'     => 50,
-                    'required' => true
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'realname',
-                array(
-                    'label'    => 'Legal Name',
-                    'size'     => 50,
-                    'required' => true
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'address',
-                array(
-                    'label'    => 'Street Address',
-                    'size'     => 50,
-                    'required' => true
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'suburb',
-                array(
-                    'label' => 'Suburb / Town',
-                    'size'  => 20
-                )
-            );
-            $detailsForm->addElement(
-                'select',
-                'state',
-                array(
-                    'label'        => 'State',
-                    'multiOptions' => array(
-                        'ACT' => 'ACT',
-                        'NSW' => 'NSW',
-                        'NT'  => 'NT',
-                        'QLD' => 'QLD',
-                        'SA'  => 'SA',
-                        'TAS' => 'TAS',
-                        'VIC' => 'VIC',
-                        'WA'  => 'WA',
-                        'NZ'  => 'Not Applicable (NZ)'
-                    )
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'postcode',
-                array(
-                    'label' => 'Postcode',
-                    'size'  => 4
-                )
-            );
-            $detailsForm->addElement(
-                'select',
-                'country',
-                array(
-                    'label'        => 'Country',
-                    'multiOptions' => array(
-                        'AU' => 'Australia',
-                        'NZ' => 'New Zealand'
-                    )
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'phone',
-                array(
-                    'label' => 'Phone',
-                    'size'  => 15
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'email',
-                array(
-                    'label'      => 'Email Address - Published on group listing',
-                    'size'       => 40,
-                    'required'   => true,
-                    'filters'    => array('stringTrim'),
-                    'validators' => array('emailAddress')
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'memnum',
-                array(
-                    'label'      => 'Member Number',
-                    'size'       => 6,
-                    'required'   => true,
-                    'validators' => array('digits')
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'warrantstart',
-                array(
-                    'label'      => 'Warrant Start (YYYY-MM-DD)',
-                    'size'       => 10,
-                    'validators' => array('date')
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'warrantend',
-                array(
-                    'label'      => 'Warrant End (YYYY-MM-DD)',
-                    'size'       => 10,
-                    'validators' => array('date')
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'lastreport',
-                array(
-                    'label'      => 'Last Report (YYYY-MM-DD)',
-                    'size'       => 10,
-                    'validators' => array('date')
-                )
-            );
-            $detailsForm->addDisplayGroup(
-                array(
-                    'scaname',
-                    'realname',
-                    'address',
-                    'suburb',
-                    'state',
-                    'postcode',
-                    'country',
-                    'phone',
-                    'email',
-                    'memnum',
-                    'warrantstart',
-                    'warrantend',
-                    'lastreport'
-                ),
-                'senDetails',
-                array('legend' => 'Seneschal Details')
-            );
-
-            $detailsForm->addElement(
-                'submit',
-                'submit',
-                array(
-                    'label' => 'Submit'
-                )
-            );
-            $detailsForm->addElement(
-                'submit',
-                'reset',
-                array(
-                    'label' => 'Reset'
-                )
-            );
+            $detailsForm = new SenDb_Form_Group_Edit(array('method' => 'post'));
+            $detailsForm->parentid->options = $groupList;
 
                                                             //----------------------------------------------------------
                                                             // Process the form - update or create group
@@ -439,50 +174,9 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build the close group form
                                                             //----------------------------------------------------------
-        $form = new Zend_Form();
-        $form->setAction('#');
-        $form->setMethod('post');
-
-        $form->addElement(
-            'select',
-            'group_close',
-            array(
-                'label'        => 'Close group:',
-                'multiOptions' => $groupList
-            )
-        );
-        $form->addElement(
-            'select',
-            'group_get',
-            array(
-                'label'        => 'Give postcodes to:',
-                'multiOptions' => $groupList
-            )
-        );
-        $form->addElement(
-            'checkbox',
-            'confirm',
-            array(
-                'label' => 'Confirm:'
-            )
-        );
-        $form->addElement(
-            'submit',
-            'submit',
-            array(
-                'label'    => 'Submit',
-                'required' => true
-            )
-        );
-        $form->addDisplayGroup(
-            array(
-                'group_close',
-                'group_get',
-                'confirm',
-                'submit'
-            ),
-            'close'
-        );
+        $form = new SenDb_Form_Group_Close(array('method' => 'post'));
+        $form->group_close->options = $groupList;
+        $form->group_get->options = $groupList;
 
                                                             //----------------------------------------------------------
                                                             // Process the form - close the group
@@ -529,51 +223,16 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build group selection form - only enabled for admin
                                                             //----------------------------------------------------------
-        $groupSelectForm = new Zend_Form();
-        $groupSelectForm->setAction('#');
-        $groupSelectForm->setMethod('get');
+        $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
+        $groupSelectForm->groupid->options = array_merge(
+            array(0 => 'Unassigned'),
+            $groupList
+        );
 
-        if($auth['level'] == 'admin') {
-            $groupSelectForm->addElement(
-                'select',
-                'groupid',
-                array(
-                    'label'        => 'Select group (Lochac for misc. aliases):',
-                    'multiOptions' => $groupList,
-                    'validators'   => array('digits'),
-                    'required'     => true
-                )
-            );
-            $groupSelectForm->addElement(
-                'submit',
-                'submit',
-                array(
-                    'label' => 'Select'
-                )
-            );
-        } else {
-            $groupSelectForm->addElement(
-                'select',
-                'groupid',
-                array(
-                    'label'        => 'Select Group (Lochac for misc. aliases):',
-                    'multiOptions' => $groupList,
-                    'disabled'     => true
-                )
-            );
-            $groupSelectForm->addElement(
-                'submit',
-                'submit',
-                array(
-                    'label'    => 'Select',
-                    'disabled' => true
-                )
-            );
+        if($auth['level'] != 'admin') {
+            $groupSelectForm->groupid->disabled = true;
+            $groupSelectForm->submit->disabled = true;
         }
-
-        $groupSelectForm->setDecorators(array('FormElements', 'Form'));
-        $groupSelectForm->groupid->setDecorators(array('ViewHelper', 'Label'));
-        $groupSelectForm->submit->setDecorators(array('ViewHelper'));
 
                                                             //----------------------------------------------------------
                                                             // Once group is selected, display the alias forms
@@ -615,53 +274,15 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build existing alias form
                                                             //----------------------------------------------------------
-                $aliasForms[$id] = new Zend_Form();
-                $aliasForms[$id]->setAction('#');
-                $aliasForms[$id]->setMethod('post');
-                $aliasForms[$id]->addElement(
-                    'text',
-                    'alias'.$id,
-                    array(
-                        'required'   => true,
-                        'size'       => 25,
-                        'filters'    => array('stringTrim'),
-                        'validators' => array(
-                            array(
-                                'regex',
-                                false,
-                                array('pattern' => $emailRegex)
-                            ),
-                            'emailAddress'
-                        )
-                    )
+                $aliasForms[$id] = new SenDb_Form_Group_Alias(array(
+                    'method' => 'post',
+                    'suffix' => $id
+                ));
+                $aliasForms[$id]->getElement('alias'.$id)->addValidator(
+                    'regex',
+                    false,
+                    array('pattern' => $emailRegex)
                 );
-                $aliasForms[$id]->addElement(
-                    'text',
-                    'address'.$id,
-                    array(
-                        'required'   => true,
-                        'size'       => 25,
-                        'filters'    => array('stringTrim'),
-                        'validators' => array('emailAddress')
-                    )
-                );
-                $aliasForms[$id]->addElement(
-                    'submit',
-                    'submit'.$id,
-                    array(
-                        'label' => 'Save'
-                    )
-                );
-                $aliasForms[$id]->addElement(
-                    'submit',
-                    'delete'.$id,
-                    array(
-                        'label' => 'Delete'
-                    )
-                );
-
-                $aliasForms[$id]->setDecorators(array('FormElements', 'Form'));
-                $aliasForms[$id]->setElementDecorators(array('ViewHelper'));
 
                                                             //----------------------------------------------------------
                                                             // Process an existing alias - update or delete
@@ -720,48 +341,12 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build new alias form
                                                             //----------------------------------------------------------
-            $aliasForms['new'] = new Zend_Form();
-            $aliasForms['new']->setAction('#');
-            $aliasForms['new']->setMethod('post');
-            $aliasForms['new']->addElement(
-                'text',
-                'aliasnew',
-                array(
-                    'required'   => true,
-                    'size'       => 25,
-                    'filters'    => array('stringTrim'),
-                    'validators' => array(
-                        array(
-                            'regex',
-                            false,
-                            array('pattern' => $emailRegex)
-                        ),
-                        'emailAddress'
-                    )
-                )
+            $aliasForms['new'] = new SenDb_Form_Group_AliasNew(array('method' => 'post'));
+            $aliasForms['new']->aliasnew->addValidator(
+                'regex',
+                false,
+                array('pattern' => $emailRegex)
             );
-            $aliasForms['new']->addElement(
-                'text',
-                'addressnew',
-                array(
-                    'required'   => true,
-                    'size'       => 25,
-                    'filters'    => array('stringTrim'),
-                    'validators' => array(
-                        array('emailAddress')
-                    )
-                )
-            );
-            $aliasForms['new']->addElement(
-                'submit',
-                'submitnew',
-                array(
-                    'label'    => 'Add New',
-                    'required' => true
-                )
-            );
-            $aliasForms['new']->setDecorators(array('FormElements', 'Form'));
-            $aliasForms['new']->setElementDecorators(array('ViewHelper'));
 
                                                             //----------------------------------------------------------
                                                             // Process new alias - insert
@@ -811,7 +396,9 @@ class GroupController extends SenDb_Controller
             $this->view->aliasForms = array();
         }
 
-        if($auth['level'] == 'user') {
+        if($auth['level'] == 'admin') {
+            $groupSelectForm->setDefaults(array('groupid' => 0));
+        } else {
             $groupSelectForm->setDefaults(array('groupid' => $auth['id']));
         }
         $this->view->groupSelectForm = $groupSelectForm;
@@ -838,44 +425,11 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build existing domain form
                                                             //----------------------------------------------------------
-            $domainForms[$id] = new Zend_Form();
-            $domainForms[$id]->setAction('#');
-            $domainForms[$id]->setMethod('post');
-            $domainForms[$id]->addElement(
-                'select',
-                'groupid'.$id,
-                array(
-                    'multiOptions' => $groupList
-                )
-            );
-            $domainForms[$id]->addElement(
-                'text',
-                'domain'.$id,
-                array(
-                    'required'   => true,
-                    'filters'    => array(
-                        'stringTrim',
-                        'stringToLower'
-                    ),
-                    'validators' => array('alpha')
-                )
-            );
-            $domainForms[$id]->addElement(
-                'submit',
-                'submit'.$id,
-                array(
-                    'label' => 'Save'
-                )
-            );
-            $domainForms[$id]->addElement(
-                'submit',
-                'delete'.$id,
-                array(
-                    'label' => 'Delete'
-                )
-            );
-            $domainForms[$id]->setDecorators(array('FormElements','Form'));
-            $domainForms[$id]->setElementDecorators(array('ViewHelper'));
+            $domainForms[$id] = new SenDb_Form_Group_Domain(array(
+                'method' => 'post',
+                'suffix' => $id
+            ));
+            $domainForms[$id]->getElement('groupid'.$id)->options = $groupList;
 
                                                             //----------------------------------------------------------
                                                             // Process existing domain - update or delete
@@ -952,38 +506,8 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build new domain form
                                                             //----------------------------------------------------------
-        $domainForms['new'] = new Zend_Form();
-        $domainForms['new']->setAction('#');
-        $domainForms['new']->setMethod('post');
-        $domainForms['new']->addElement(
-            'select',
-            'groupidnew',
-            array(
-                'multiOptions' => $groupList
-            )
-        );
-        $domainForms['new']->addElement(
-            'text',
-            'domainnew',
-            array(
-                'required'   => true,
-                'filters'    => array(
-                    'stringTrim',
-                    'stringToLower'
-                ),
-                'validators' => array('alpha')
-            )
-        );
-        $domainForms['new']->addElement(
-            'submit',
-            'submitnew',
-            array(
-                'label'    => 'Add New',
-                'required' => true
-            )
-        );
-        $domainForms['new']->setDecorators(array('FormElements', 'Form'));
-        $domainForms['new']->setElementDecorators(array('ViewHelper'));
+        $domainForms['new'] = new SenDb_Form_Group_DomainNew(array('method' => 'post'));
+        $domainForms['new']->groupidnew->options = $groupList;
 
                                                             //----------------------------------------------------------
                                                             // Process new domain - insert
@@ -1044,52 +568,12 @@ class GroupController extends SenDb_Controller
                                                             // Build group select form - enabled only for admin,
                                                             // disabled for baronies, not rendered for other groups
                                                             //----------------------------------------------------------
-        $groupSelectForm = new Zend_Form();
-        $groupSelectForm->setAction('#');
-        $groupSelectForm->setMethod('get');
+        $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
+        $groupSelectForm->groupid->options = $groupList;
 
-        if($auth['level'] == 'admin') {
-            $groupSelectForm->addElement(
-                'select',
-                'groupid',
-                array(
-                    'label'        => 'Select group to edit:',
-                    'multiOptions' => $groupList,
-                    'validators'   => array('digits'),
-                    'required'     => true
-                )
-            );
-            $groupSelectForm->addElement(
-                'submit',
-                'submit',
-                array(
-                    'label' => 'Select'
-                )
-            );
-            $groupSelectForm->setDecorators(array('FormElements', 'Form'));
-            $groupSelectForm->groupid->setDecorators(array('ViewHelper', 'Label'));
-            $groupSelectForm->submit->setDecorators(array('ViewHelper'));
-        } elseif(array_key_exists($auth['id'],$groupList)) {
-            $groupSelectForm->addElement(
-                'select',
-                'groupid',
-                array(
-                    'label'        => 'Select group to edit:',
-                    'multiOptions' => $groupList,
-                    'disabled'     => true
-                )
-            );
-            $groupSelectForm->addElement(
-                'submit',
-                'submit',
-                array(
-                    'label'    => 'Select',
-                    'disabled' => true
-                )
-            );
-            $groupSelectForm->setDecorators(array('FormElements', 'Form'));
-            $groupSelectForm->groupid->setDecorators(array('ViewHelper', 'Label'));
-            $groupSelectForm->submit->setDecorators(array('ViewHelper'));
+        if($auth['level'] != 'admin') {
+            $groupSelectForm->groupid->disabled = true;
+            $groupSelectForm->submit->disabled = true;
         }
 
         if($auth['level'] == 'user'
@@ -1106,244 +590,7 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build B&B editing form
                                                             //----------------------------------------------------------
-            $detailsForm = new Zend_Form();
-            $detailsForm->setAction('#');
-            $detailsForm->setMethod('post');
-
-                                                            //----------------------------------------------------------
-                                                            // Section - Baron details
-                                                            //----------------------------------------------------------
-            $detailsForm->addElement(
-                'text',
-                'baronsca',
-                array(
-                    'label' => 'SCA Name',
-                    'size'  => 50
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronreal',
-                array(
-                    'label' => 'Legal Name',
-                    'size'  => 50
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronaddress',
-                array(
-                    'label' => 'Street Address',
-                    'size'  => 50
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronsuburb',
-                array(
-                    'label' => 'Suburb / Town',
-                    'size'  => 20
-                )
-            );
-            $detailsForm->addElement(
-                'select',
-                'baronstate',
-                array(
-                    'label'        => 'State',
-                    'multiOptions' => array(
-                        'ACT' => 'ACT',
-                        'NSW' => 'NSW',
-                        'NT'  => 'NT',
-                        'QLD' => 'QLD',
-                        'SA'  => 'SA',
-                        'TAS' => 'TAS',
-                        'VIC' => 'VIC',
-                        'WA'  => 'WA',
-                        'NZ'  => 'Not Applicable (NZ)'
-                    )
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronpostcode',
-                array(
-                    'label' => 'Postcode',
-                    'size'  => 4
-                )
-            );
-            $detailsForm->addElement(
-                'select',
-                'baroncountry',
-                array(
-                    'label'        => 'Country',
-                    'multiOptions' => array(
-                        'AU' => 'Australia',
-                        'NZ' => 'New Zealand'
-                    )
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronphone',
-                array(
-                    'label' => 'Phone',
-                    'size'  => 15
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronemail',
-                array(
-                    'label'      => 'Email Address',
-                    'size'       => 30,
-                    'filters'    => array('stringTrim'),
-                    'validators' => array('emailAddress')
-                )
-            );
-            $detailsForm->addDisplayGroup(
-                array(
-                    'baronsca',
-                    'baronreal',
-                    'baronaddress',
-                    'baronsuburb',
-                    'baronstate',
-                    'baronpostcode',
-                    'baroncountry',
-                    'baronphone',
-                    'baronemail'
-                ),
-                'baron',
-                array('legend' => "Baron's Details")
-            );
-
-                                                            //----------------------------------------------------------
-                                                            // Section - Baroness details
-                                                            //----------------------------------------------------------
-            $detailsForm->addElement(
-                'text',
-                'baronesssca',
-                array(
-                    'label' => 'SCA Name',
-                    'size'  => 50
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronessreal',
-                array(
-                    'label' => 'Legal Name',
-                    'size'  => 50
-                )
-            );
-            $detailsForm->addElement(
-                'checkbox',
-                'same',
-                array(
-                    'label' => 'Address same as for Baron?'
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronessaddress',
-                array(
-                    'label' => 'Street Address',
-                    'size'  => 50
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronesssuburb',
-                array(
-                    'label' => 'Suburb / Town',
-                    'size'  => 20
-                )
-            );
-            $detailsForm->addElement(
-                'select',
-                'baronessstate',
-                array(
-                    'label'        => 'State',
-                    'multiOptions' => array(
-                        'ACT' => 'ACT',
-                        'NSW' => 'NSW',
-                        'NT'  => 'NT',
-                        'QLD' => 'QLD',
-                        'SA'  => 'SA',
-                        'TAS' => 'TAS',
-                        'VIC' => 'VIC',
-                        'WA'  => 'WA',
-                        'NZ'  => 'Not Applicable (NZ)'
-                    )
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronesspostcode',
-                array(
-                    'label' => 'Postcode',
-                    'size'  => 4
-                )
-            );
-            $detailsForm->addElement(
-                'select',
-                'baronesscountry',
-                array(
-                    'label'        => 'Country',
-                    'multiOptions' => array(
-                        'AU' => 'Australia',
-                        'NZ' => 'New Zealand'
-                    )
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronessphone',
-                array(
-                    'label' => 'Phone',
-                    'size'  => 15
-                )
-            );
-            $detailsForm->addElement(
-                'text',
-                'baronessemail',
-                array(
-                    'label'      => 'Email Address',
-                    'size'       => 30,
-                    'filters'    => array('stringTrim'),
-                    'validators' => array('emailAddress')
-                )
-            );
-            $detailsForm->addDisplayGroup(
-                array(
-                    'baronesssca',
-                    'baronessreal',
-                    'same',
-                    'baronessaddress',
-                    'baronesssuburb',
-                    'baronessstate',
-                    'baronesspostcode',
-                    'baronesscountry',
-                    'baronessphone',
-                    'baronessemail'
-                ),
-                'baroness',
-                array('legend' => "Baroness' Details")
-            );
-
-            $detailsForm->addElement(
-                'submit',
-                'submit',
-                array(
-                    'label' => 'Submit'
-                )
-            );
-            $detailsForm->addElement(
-                'submit',
-                'reset',
-                array(
-                    'label' => 'Reset'
-                )
-            );
+            $detailsForm = new SenDb_Form_Group_Nobility(array('method' => 'post'));
 
                                                             //----------------------------------------------------------
                                                             // Process Baronial details - insert or update
