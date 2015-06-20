@@ -7,7 +7,7 @@ class ReportController extends SenDb_Controller
         $auth = authenticate();
         global $db;
         if($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            throw new Exception('User not authorised for this task.');
+            throw new SenDb_Exception_NotAuthorised();
             return;
         }
 

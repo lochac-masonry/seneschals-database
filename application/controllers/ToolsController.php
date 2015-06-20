@@ -24,7 +24,7 @@ class ToolsController extends SenDb_Controller
         $auth = authenticate();
         global $db;
         if($auth['level'] != 'admin') {
-            throw new Exception('User not authorised for this task.');
+            throw new SenDb_Exception_NotAuthorised();
             return;
         }
 
