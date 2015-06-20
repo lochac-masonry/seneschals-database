@@ -239,7 +239,10 @@ class GroupController extends Zend_Controller_Action
                                                             // Build group selection form - only enabled for admin
                                                             //----------------------------------------------------------
         $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
-        $groupSelectForm->groupid->options = $groupList;
+        $groupSelectForm->groupid->options = array_merge(
+            array(0 => 'Unassigned'),
+            $groupList
+        );
 
         if($auth['level'] != 'admin') {
             $groupSelectForm->groupid->disabled = true;
@@ -425,7 +428,9 @@ class GroupController extends Zend_Controller_Action
             $this->view->aliasForms = array();
         }
 
-        if($auth['level'] == 'user') {
+        if($auth['level'] == 'admin') {
+            $groupSelectForm->setDefaults(array('groupid' => 0));
+        } else {
             $groupSelectForm->setDefaults(array('groupid' => $auth['id']));
         }
         $this->view->groupSelectForm = $groupSelectForm;
