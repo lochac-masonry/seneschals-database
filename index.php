@@ -148,6 +148,8 @@ $db->insert(
     array(
         'requestDateTime' => date('Y-m-d H:i:s', $startTime),
         'elapsedMs'       => ($endTime - $startTime) * 1000,
-        'requestUri'      => $_SERVER['REQUEST_URI']
+        'requestMethod'   => $_SERVER['REQUEST_METHOD'],
+        'requestUri'      => strtok($_SERVER['REQUEST_URI'], '?'),
+        'queryString'     => $_SERVER['QUERY_STRING']
     )
 );
