@@ -10,16 +10,10 @@ set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path()
 )));
 
+// register application autoloader and Zend autoloader
 require_once(APPLICATION_PATH . '/autoload.php');
-
-// Library includes.
-require_once('Zend/Controller/Front.php');
-require_once('Zend/Layout.php');
-require_once('Zend/Config.php');
-require_once('Zend/Config/Ini.php');
-require_once('Zend/Db.php');
-require_once('Zend/Form.php');
-require_once('Zend/Filter.php');
+require_once('Zend/Loader.php');
+Zend_Loader::registerAutoload();
 
 // Load config.
 $appMode = getenv('APP_MODE') ? getenv('APP_MODE') : 'staging';

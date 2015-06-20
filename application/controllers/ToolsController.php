@@ -9,8 +9,6 @@ class ToolsController extends SenDb_Controller
 
     public function versionAction()
     {
-        require_once('Zend/Version.php');
-
         $this->_helper->viewRenderer('echoMessage', null, true);
         $this->view->title = 'Zend Version';
 

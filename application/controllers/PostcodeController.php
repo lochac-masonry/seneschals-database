@@ -186,10 +186,6 @@ class PostcodeController extends SenDb_Controller
 
         $this->view->title = 'Upload Postcodes File';
 
-        // Library includes.
-        require_once('Zend/Filter/BaseName.php');
-        require_once('Zend/Filter/StripTags.php');
-
                                                             //----------------------------------------------------------
                                                             // Build the upload form
                                                             //----------------------------------------------------------
