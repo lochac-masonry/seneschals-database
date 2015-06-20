@@ -1,5 +1,7 @@
 <?php
 
+$startTime = microtime(true);
+
 // Determine path of the application root.
 defined('APPLICATION_PATH')
     || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/application'));
@@ -138,3 +140,16 @@ Zend_Layout::getMvcInstance()->authlevel = 'anyone';
 
 // Go.
 Zend_Controller_Front::run('application/controllers');
+
+$endTime = microtime(true);
+
+$db->insert(
+    'accessLog',
+    array(
+        'requestDateTime' => date('Y-m-d H:i:s', $startTime),
+        'elapsedMs'       => ($endTime - $startTime) * 1000,
+        'requestMethod'   => $_SERVER['REQUEST_METHOD'],
+        'requestUri'      => strtok($_SERVER['REQUEST_URI'], '?'),
+        'queryString'     => $_SERVER['QUERY_STRING']
+    )
+);
