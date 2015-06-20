@@ -115,17 +115,16 @@ class EventController extends SenDb_Controller
 
         $this->view->title = 'Review Event Proposals';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
-        if($auth['level'] == 'admin') {
-            $groupList['all'] = 'All Groups';
-            $groupid = 'all'; // Default group selection
-        }
 
                                                             //----------------------------------------------------------
                                                             // Event selection - host group, past/future and approval
                                                             // Host group choice only available to admin
                                                             //----------------------------------------------------------
         $groupSelectForm = new SenDb_Form_Event_List(array('method' => 'get'));
-        $groupSelectForm->groupid->options = $groupList;
+        $groupSelectForm->groupid->options = array_merge(
+            array('all' => 'All Groups'),
+            $groupList
+        );
 
         if($auth['level'] != 'admin') {
             $groupSelectForm->groupid->disabled = true;
@@ -199,7 +198,9 @@ class EventController extends SenDb_Controller
             $this->view->events = array();
         }
 
-        $groupSelectForm->setDefaults(array('groupid' => $groupid));
+        if($auth['level'] != 'admin') {
+            $groupSelectForm->setDefaults(array('groupid' => $auth['id']));
+        }
         $this->view->groupSelectForm = $groupSelectForm;
     }
 
