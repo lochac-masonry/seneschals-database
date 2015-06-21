@@ -10,9 +10,10 @@ class ToolsController extends SenDb_Controller
     public function versionAction()
     {
         $this->_helper->viewRenderer('echoMessage', null, true);
-        $this->view->title = 'Zend Version';
+        $this->view->title = 'Version';
 
-        $this->view->message = Zend_Version::VERSION;
+        $this->view->message = 'Lochac Seneschals\' Database: ' . SENDB_VERSION . "<br />\n"
+                             . 'Zend Framework: ' . Zend_Version::VERSION;
     }
 
     /*
