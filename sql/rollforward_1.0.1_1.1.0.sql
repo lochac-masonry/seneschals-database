@@ -25,7 +25,7 @@ migrate:BEGIN
     FROM
         DUAL
     INTO
-        @dbName;
+        dbName;
 
                                                             #-----------------------------------------------------------
                                                             #-- Check that current database is of the correct version
@@ -36,13 +36,18 @@ migrate:BEGIN
     FROM
         information_schema.TABLES
     WHERE
-        TABLE_SCHEMA = @dbName
+        TABLE_SCHEMA = dbName
     AND TABLE_NAME   = 'version'
     INTO
-        @versionTableExists;
+        versionTableExists;
 
-    IF (@versionTableExists > 0) THEN
-        SELECT 'This script can only run on a version 1.0.1 database' AS result;
+    IF (versionTableExists > 0) THEN
+        SELECT 'This script can only run on a version 1.0.1 database' AS result
+        UNION
+        SELECT 'If you are certain you want to run this script, modify the source to bypass this check'
+        UNION
+        SELECT 'Table `version` exists.';
+
         LEAVE migrate;
     END IF;
 
@@ -87,6 +92,8 @@ migrate:BEGIN
                                                             #-- Log deployment
                                                             #-----------------------------------------------------------
     INSERT INTO version (version) VALUES ('1.1.0');
+
+    SELECT 'Rollforward complete. Now at version 1.1.0.' AS result;
 
 END //
 
