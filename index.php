@@ -16,8 +16,8 @@ set_include_path(implode(PATH_SEPARATOR, array(
 
 // register application autoloader and Zend autoloader
 require_once(APPLICATION_PATH . '/autoload.php');
-require_once('Zend/Loader.php');
-Zend_Loader::registerAutoload();
+require_once('Zend/Loader/Autoloader.php');
+Zend_Loader_Autoloader::getInstance();
 
 // Load config.
 $appMode = getenv('APP_MODE') ? getenv('APP_MODE') : 'staging';
