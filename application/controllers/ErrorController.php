@@ -20,9 +20,9 @@ class ErrorController extends SenDb_Controller
             $db->insert(
                 'errorLog',
                 array(
-                    'errorDateTime' => date('Y-m-d H:i:s'),
-                    'type'          => get_class($exception),
-                    'message'       => substr($exception->getMessage(), 0, 512)
+                    'errorDateTime'  => date('Y-m-d H:i:s'),
+                    'exceptionClass' => get_class($exception),
+                    'message'        => substr($exception->getMessage(), 0, 512)
                 )
             );
         } catch (Exception $e) {
