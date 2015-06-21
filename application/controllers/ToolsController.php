@@ -4,7 +4,7 @@ class ToolsController extends SenDb_Controller
 {
     public function indexAction()
     {
-        $this->_forward(version);
+        $this->_forward('version');
     }
 
     public function versionAction()
