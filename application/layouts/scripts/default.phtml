@@ -45,7 +45,7 @@
         <h1 class="center"><?php echo $this->escape($this->title); ?></h1>
 
 <?php
-if(isset($this->alerts) {
+if(isset($this->alerts)) {
     foreach($this->alerts as $alert) {
         if (is_array($alert)) { ?>
         <div class="<?php echo $alert['type']; ?>"><?php echo $alert['message']; ?></div><br />
