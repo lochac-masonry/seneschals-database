@@ -1,23 +1,30 @@
 <?php
 
-class IndexController extends Zend_Controller_Action
+class IndexController extends SenDb_Controller
 {
     public function indexAction()
     {
-        
+        $this->view->title = 'Lochac Seneschals\' Database';
     }
 
     public function homeAction()
     {
         $auth = authenticate();
-        
+
         $this->view->title = 'Lochac Seneschals\' Database';
-        $this->view->message = 'You are currently logged in as ';
-        if($auth['level'] == 'admin') $this->view->message .= "Kingdom Seneschal.<br />\n";
-        elseif($auth['level'] == 'user') $this->view->message .= "Group Seneschal.<br />\n";
-        else $this->view->message .= "no-one in particular. Did you get you password correct?<br />\n";
-        
+
+        $currentUser = 'You are currently logged in as ';
+        if($auth['level'] == 'admin') {
+            $currentUser .= "Kingdom Seneschal.<br />\n";
+        } elseif($auth['level'] == 'user') {
+            $currentUser .= "Group Seneschal.<br />\n";
+        } else {
+            $currentUser .= "no-one in particular. Did you get your password correct?<br />\n";
+        }
+        $this->addAlert($currentUser);
+
         $this->view->authlevel = $auth['level'];
+
     }
 
 }

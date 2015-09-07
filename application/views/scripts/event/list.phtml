@@ -7,7 +7,6 @@ You can sort by any of the columns by clicking on the column headings.<br />
 Click View/Edit for more details and to approve or reject the proposal.</p>
 
 <?php
-echo $this->message . "\n<br />\n\n";
 echo $this->groupSelectForm;
 if(0 < count($this->events)) {
 ?>
@@ -35,5 +34,7 @@ if(0 < count($this->events)) {
 </table>
 <?php
 echo count($this->events) . " event(s) displayed.<br />\n";
-} else echo "No events found. Try choosing a different status to view.<br />\n";
+} else {
+    echo "No events found. Try choosing a different status to view.<br />\n";
+}
 ?>
