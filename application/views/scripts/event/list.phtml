@@ -16,24 +16,39 @@ if(0 < count($this->events)) {
     table {border: 3px solid #FFFFFF;}
     td, th {border: 1px solid #FFFFFF;}
 </style>
-<table>
-    <tr>
-        <th><a href='<?php echo $thisUrl; ?>&sort=name'>Event Name</a></th>
-        <th><a href='<?php echo $thisUrl; ?>&sort=startdate'>Event Start Date</a></th>
-        <th><a href='<?php echo $thisUrl; ?>&sort=lastchange'>Status Last Changed</a></th>
-        <th>Actions</th>
-    </tr>
+<table id="eventList" class="tablesorter">
+    <thead>
+        <tr>
+            <th>Event Name</th>
+            <th>Event Start Date</th>
+            <th>Status Last Changed</th>
+            <th data-sorter="false">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
 <?php foreach($this->events as $id => $event) { ?>
-    <tr>
-        <td><?php echo $this->escape($event->name); ?></td>
-        <td><?php echo $this->escape($event->startdate); ?></td>
-        <td><?php echo $this->escape($event->lastchange); ?></td>
-        <td><a href='<?php echo $url; ?>/event/edit?eventid=<?php echo $event->eventid; ?>'>View/Edit</a></td>
-    </tr>
+        <tr>
+            <td><?php echo $this->escape($event->name); ?></td>
+            <td><?php echo $this->escape($event->startdate); ?></td>
+            <td><?php echo $this->escape($event->lastchange); ?></td>
+            <td><a href='<?php echo $url; ?>/event/edit?eventid=<?php echo $event->eventid; ?>'>View/Edit</a></td>
+        </tr>
 <?php } ?>
+    </tbody>
 </table>
 <?php
 echo count($this->events) . " event(s) displayed.<br />\n";
+?>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.23.3/js/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#eventList").tablesorter({ sortList: [[1,0]] });
+    });
+</script>
+
+<?php
 } else {
     echo "No events found. Try choosing a different status to view.<br />\n";
 }
