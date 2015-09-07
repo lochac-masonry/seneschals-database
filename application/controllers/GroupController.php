@@ -69,10 +69,7 @@ class GroupController extends SenDb_Controller
                                                             // Build group selection form
                                                             //----------------------------------------------------------
         $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
-        $groupSelectForm->groupid->options = array_merge(
-            array('new' => 'New Group'),
-            $groupList
-        );
+        $groupSelectForm->groupid->options = array('new' => 'New Group') + $groupList;
 
         if($groupSelectForm->isValid($_GET)) {
             //Show relevant details for the selected group.
@@ -224,10 +221,7 @@ class GroupController extends SenDb_Controller
                                                             // Build group selection form - only enabled for admin
                                                             //----------------------------------------------------------
         $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
-        $groupSelectForm->groupid->options = array_merge(
-            array(0 => 'Unassigned'),
-            $groupList
-        );
+        $groupSelectForm->groupid->options = array(0 => 'Unassigned') + $groupList;
 
         if($auth['level'] != 'admin') {
             $groupSelectForm->groupid->disabled = true;

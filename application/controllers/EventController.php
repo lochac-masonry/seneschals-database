@@ -121,10 +121,7 @@ class EventController extends SenDb_Controller
                                                             // Host group choice only available to admin
                                                             //----------------------------------------------------------
         $groupSelectForm = new SenDb_Form_Event_List(array('method' => 'get'));
-        $groupSelectForm->groupid->options = array_merge(
-            array('all' => 'All Groups'),
-            $groupList
-        );
+        $groupSelectForm->groupid->options = array('all' => 'All Groups') + $groupList;
 
         if($auth['level'] != 'admin') {
             $groupSelectForm->groupid->disabled = true;
