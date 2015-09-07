@@ -44,12 +44,16 @@
 
         <h1 class="center"><?php echo $this->escape($this->title); ?></h1>
 
-<?php foreach($this->alerts as $alert) {
-    if (is_array($alert)) { ?>
+<?php
+if(isset($this->alerts)) {
+    foreach($this->alerts as $alert) {
+        if (is_array($alert)) { ?>
         <div class="<?php echo $alert['type']; ?>"><?php echo $alert['message']; ?></div><br />
-<?php } else { ?>
+<?php   } else { ?>
         <?php echo $alert; ?><br />
-<?php } } ?>
+<?php   }
+    }
+} ?>
 
         <!-- Start page content -->
 <?php echo $this->layout()->content; ?>

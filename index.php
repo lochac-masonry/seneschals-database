@@ -2,6 +2,8 @@
 
 $startTime = microtime(true);
 
+define('SENDB_VERSION', '1.1.0');
+
 // Determine path of the application root.
 defined('APPLICATION_PATH')
     || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/application'));
@@ -14,8 +16,8 @@ set_include_path(implode(PATH_SEPARATOR, array(
 
 // register application autoloader and Zend autoloader
 require_once(APPLICATION_PATH . '/autoload.php');
-require_once('Zend/Loader.php');
-Zend_Loader::registerAutoload();
+require_once('Zend/Loader/Autoloader.php');
+Zend_Loader_Autoloader::getInstance();
 
 // Load config.
 $appMode = getenv('APP_MODE') ? getenv('APP_MODE') : 'staging';

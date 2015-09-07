@@ -4,15 +4,19 @@ class ToolsController extends SenDb_Controller
 {
     public function indexAction()
     {
-        $this->_forward(version);
+        $this->_forward('version');
     }
 
     public function versionAction()
     {
         $this->_helper->viewRenderer('echoMessage', null, true);
-        $this->view->title = 'Zend Version';
+        $this->view->title = 'Version';
 
-        $this->view->message = Zend_Version::VERSION;
+        require_once('Google/autoload.php');
+
+        $this->view->message = 'Lochac Seneschals\' Database: ' . SENDB_VERSION . "<br />\n"
+                             . 'Zend Framework: ' . Zend_Version::VERSION . "<br />\n"
+                             . 'Google API PHP Client: ' . Google_Client::LIBVER;
     }
 
     /*
