@@ -151,24 +151,6 @@ class EventController extends SenDb_Controller
                 $tense = 'future'; // Default value for everyone
             }
 
-            // Use the selected sort column, default to start date
-            if(isset($_GET['sort'])) {
-                switch(strtolower($_GET['sort'])) {
-                    case 'name':
-                        $sort = 'name';
-                        break;
-                    case 'lastchange':
-                        $sort = 'lastchange';
-                        break;
-                    case 'startdate':
-                    default:
-                        $sort = 'startdate';
-                        break;
-                }
-            } else {
-                $sort = 'startdate';
-            }
-
             // Retrieve relevant events.
             $sql = "SELECT eventid, name, startdate, lastchange FROM events WHERE status={$db->quote($status)} ";
             if($groupid != 'all') {
@@ -180,7 +162,7 @@ class EventController extends SenDb_Controller
             if($tense == 'past') {
                 $sql .= "AND CURDATE() > startdate ";
             }
-            $sql .= "ORDER BY {$sort}";
+            $sql .= "ORDER BY startdate";
 
             $db->setFetchMode(Zend_Db::FETCH_OBJ);
             $events = $db->fetchAll($sql);
