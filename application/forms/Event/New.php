@@ -31,7 +31,18 @@ class SenDb_Form_Event_New extends Zend_Form
                 'label'      => 'Start Date (YYYY-MM-DD)',
                 'required'   => true,
                 'size'       => 10,
-                'validators' => array('date')
+                'validators' => array('date'),
+                'class'      => 'start date'
+            )
+        );
+        $this->addElement(
+            'text',
+            'starttime',
+            array(
+                'label'      => 'Start Time',
+                'required'   => true,
+                'size'       => 10,
+                'class'      => 'start time'
             )
         );
         $this->addElement(
@@ -41,7 +52,18 @@ class SenDb_Form_Event_New extends Zend_Form
                 'label'      => 'End Date (YYYY-MM-DD)',
                 'required'   => true,
                 'size'       => 10,
-                'validators' => array('date')
+                'validators' => array('date'),
+                'class'      => 'end date'
+            )
+        );
+        $this->addElement(
+            'text',
+            'endtime',
+            array(
+                'label'      => 'End Time',
+                'required'   => true,
+                'size'       => 10,
+                'class'      => 'end time'
             )
         );
         $this->addElement(

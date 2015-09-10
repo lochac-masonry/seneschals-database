@@ -1,3 +1,4 @@
+<?php $url = Zend_Layout::getMvcInstance()->relativeUrl; ?>
 <p>Thankyou for your interest in running an event. To submit your proposal for approval by your local group seneschal, please fill in the following form. <b>All fields are required unless marked otherwise.</b><br />
 The email address you provide will only be used to contact you regarding this submission, including notifications if it is approved, rejected or edited by your group seneschal; the email address will not be shared with anyone else.<br />
 If your proposal is approved, the event will automatically appear on the Announce mailing list, in the Lochac newsletter 'Pegasus' and on the kingdom calendar.</p>
@@ -6,6 +7,41 @@ If your proposal is approved, the event will automatically appear on the Announc
 <br />
 
 <?php echo $this->form; ?>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.1/jquery.timepicker.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.0/js/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.0/locales/bootstrap-datepicker.en-GB.min.js"></script>
+<script type="text/javascript" src="<?php echo $url; ?>/resources/jquery.datepair.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('<link />', {
+            rel: 'stylesheet',
+            type: 'text/css',
+            href: 'https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.1/jquery.timepicker.css'
+        }).appendTo('head');
+
+        $('<link />', {
+            rel: 'stylesheet',
+            type: 'text/css',
+            href: 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.0/css/bootstrap-datepicker3.standalone.min.css'
+        }).appendTo('head');
+
+        $('#fieldset-eventGroup .time').timepicker({
+            'showDuration': true,
+            'timeFormat': 'g:ia'
+        });
+
+        $('#fieldset-eventGroup .date').datepicker({
+            'autoclose': true,
+            'startDate': '0d'
+        });
+
+        $('#fieldset-eventGroup').datepair({
+            'defaultTimeDelta': null
+        });
+    });
+</script>
 
 <br /><br />
 
