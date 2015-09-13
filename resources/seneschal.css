@@ -193,3 +193,7 @@ img {
     cursor: default;
     padding: 4px;
 }
+
+.ui-timepicker-list {
+    text-align: left
+}

@@ -54,49 +54,37 @@ class EventController extends SenDb_Controller
                 $values['bookingsclose'] = NULL;
             }
 
-            $curDateNum = date('Ymd');
-            $startDateNum = str_replace('-', '', $values['startdate']);
-            $endDateNum = str_replace('-', '', $values['enddate']);
+            $startDateTime = new DateTime($values['daterange']['startdate'] . ' ' . $values['daterange']['starttime']);
+            $endDateNum = new DateTime($values['daterange']['enddate'] . ' ' . $values['daterange']['endtime']);
             $bookDateNum = str_replace('-', '', $values['bookingsclose']);
 
-            if($curDateNum > $startDateNum
-              || $startDateNum > $endDateNum) {
-                $this->addAlert('Event ends before starting, or has already started! Check the start and end dates.', SenDb_Controller::ALERT_BAD);
+            try {
+                $changed = $db->insert('events', $values);
 
-            } elseif(($values['bookingsclose'] != NULL)
-              && ($curDateNum > $bookDateNum || $bookDateNum > $startDateNum)) {
-                $this->addAlert('Bookings close after start of event or in the past! Check the close of bookings date.', SenDb_Controller::ALERT_BAD);
+                if($changed == 1) {
+                    $this->addAlert('Successfully added event ' . $values['name'] . '.', SenDb_Controller::ALERT_GOOD);
 
-            } else {
-                try {
-                    $changed = $db->insert('events', $values);
+                    $db->setFetchMode(Zend_Db::FETCH_OBJ);
+                    $seneschal = $db->fetchRow("SELECT scaname, email FROM scagroup WHERE id={$db->quote($values['groupid'],Zend_Db::INT_TYPE)}");
 
-                    if($changed == 1) {
-                        $this->addAlert('Successfully added event ' . $values['name'] . '.', SenDb_Controller::ALERT_GOOD);
-
-                        $db->setFetchMode(Zend_Db::FETCH_OBJ);
-                        $seneschal = $db->fetchRow("SELECT scaname, email FROM scagroup WHERE id={$db->quote($values['groupid'],Zend_Db::INT_TYPE)}");
-
-                        if($this->_emailSteward($values, $groupList[$values['groupid']])) {
-                            $this->addAlert('Notification email sent to steward.', SenDb_Controller::ALERT_GOOD);
-                        } else {
-                            $this->addAlert('Failed to send notification email to steward.', SenDb_Controller::ALERT_BAD);
-                        }
-
-                        if($this->_emailSeneschal($seneschal)) {
-                            $this->addAlert('Notification email sent to group seneschal.', SenDb_Controller::ALERT_GOOD);
-                        } else {
-                            $this->addAlert('Failed to send email to group seneschal. Please contact them manually.', SenDb_Controller::ALERT_BAD);
-                        }
-
+                    if($this->_emailSteward($values, $groupList[$values['groupid']])) {
+                        $this->addAlert('Notification email sent to steward.', SenDb_Controller::ALERT_GOOD);
                     } else {
-                        $this->addAlert('Creating ' . $values['name'] . ' failed. This is usually caused by a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
+                        $this->addAlert('Failed to send notification email to steward.', SenDb_Controller::ALERT_BAD);
                     }
 
-                } catch(Exception $e) {
-                    $this->addAlert('Creating ' . $values['name'] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
+                    if($this->_emailSeneschal($seneschal)) {
+                        $this->addAlert('Notification email sent to group seneschal.', SenDb_Controller::ALERT_GOOD);
+                    } else {
+                        $this->addAlert('Failed to send email to group seneschal. Please contact them manually.', SenDb_Controller::ALERT_BAD);
+                    }
+
+                } else {
+                    $this->addAlert('Creating ' . $values['name'] . ' failed. This is usually caused by a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
                 }
 
+            } catch(Exception $e) {
+                $this->addAlert('Creating ' . $values['name'] . ' failed due to a database issue. Please try again.', SenDb_Controller::ALERT_BAD);
             }
 
         }
