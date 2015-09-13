@@ -27,17 +27,18 @@ If your proposal is approved, the event will automatically appear on the Announc
             href: 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.0/css/bootstrap-datepicker3.standalone.min.css'
         }).appendTo('head');
 
-        $('#fieldset-eventGroup .time').timepicker({
+        $('#daterange .time').timepicker({
             'showDuration': true,
-            'timeFormat': 'g:ia'
+            'timeFormat': 'G:i'
         });
 
-        $('#fieldset-eventGroup .date').datepicker({
+        $('#daterange .date').datepicker({
             'autoclose': true,
+            'format': 'yyyy-mm-dd',
             'startDate': '0d'
         });
 
-        $('#fieldset-eventGroup').datepair({
+        $('#daterange').datepair({
             'defaultTimeDelta': null
         });
     });

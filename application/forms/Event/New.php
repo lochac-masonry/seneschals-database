@@ -24,48 +24,13 @@ class SenDb_Form_Event_New extends Zend_Form
                 'label' => 'Host Group'
             )
         );
-        $this->addElement(
-            'text',
-            'startdate',
+        $this->addElement( new SenDb_Form_Element_DatePair(
+            'daterange',
             array(
-                'label'      => 'Start Date (YYYY-MM-DD)',
-                'required'   => true,
-                'size'       => 10,
-                'validators' => array('date'),
-                'class'      => 'start date'
+                'label'    => 'Date and Time',
+                'required' => true
             )
-        );
-        $this->addElement(
-            'text',
-            'starttime',
-            array(
-                'label'      => 'Start Time',
-                'required'   => true,
-                'size'       => 10,
-                'class'      => 'start time'
-            )
-        );
-        $this->addElement(
-            'text',
-            'enddate',
-            array(
-                'label'      => 'End Date (YYYY-MM-DD)',
-                'required'   => true,
-                'size'       => 10,
-                'validators' => array('date'),
-                'class'      => 'end date'
-            )
-        );
-        $this->addElement(
-            'text',
-            'endtime',
-            array(
-                'label'      => 'End Time',
-                'required'   => true,
-                'size'       => 10,
-                'class'      => 'end time'
-            )
-        );
+        ));
         $this->addElement(
             'textarea',
             'location',
@@ -121,8 +86,7 @@ class SenDb_Form_Event_New extends Zend_Form
             array(
                 'name',
                 'groupid',
-                'startdate',
-                'enddate',
+                'daterange',
                 'location',
                 'type',
                 'description',
