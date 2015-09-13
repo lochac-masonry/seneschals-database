@@ -54,9 +54,9 @@ class EventController extends SenDb_Controller
                 $values['bookingsclose'] = NULL;
             }
 
-            $startDateTime = new DateTime($values['daterange']['startdate'] . ' ' . $values['daterange']['starttime']);
-            $endDateNum = new DateTime($values['daterange']['enddate'] . ' ' . $values['daterange']['endtime']);
-            $bookDateNum = str_replace('-', '', $values['bookingsclose']);
+            $values['startdatetime'] = new DateTime($values['daterange']['startdate'] . ' ' . $values['daterange']['starttime']);
+            $values['enddatetime'] = new DateTime($values['daterange']['enddate'] . ' ' . $values['daterange']['endtime']);
+            unset($values['daterange']);
 
             try {
                 $changed = $db->insert('events', $values);
