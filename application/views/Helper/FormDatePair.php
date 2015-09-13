@@ -16,16 +16,16 @@ class SenDb_View_Helper_FormDatePair extends Zend_View_Helper_FormElement
         $endDate = '';
         if (is_array($value)) {
             if (isset($value['startdate'])) {
-                $startDate = ' value="' . $this->view->escape($value['startdate']);
+                $startDate = ' value="' . $this->view->escape($value['startdate']) . '"';
             }
             if (isset($value['starttime'])) {
-                $startTime = ' value="' . $this->view->escape($value['starttime']);
+                $startTime = ' value="' . $this->view->escape($value['starttime']) . '"';
             }
             if (isset($value['endtime'])) {
-                $endTime = ' value="' . $this->view->escape($value['endtime']);
+                $endTime = ' value="' . $this->view->escape($value['endtime']) . '"';
             }
             if (isset($value['enddate'])) {
-                $endDate = ' value="' . $this->view->escape($value['enddate']);
+                $endDate = ' value="' . $this->view->escape($value['enddate']) . '"';
             }
         }
 
@@ -63,7 +63,7 @@ class SenDb_View_Helper_FormDatePair extends Zend_View_Helper_FormElement
                 . $this->getClosingBracket()
                 . "\n";
 
-        $xhtml .= '    <span class="to">to</span>'
+        $xhtml .= '    <span class="to"> to </span>'
                 . "\n";
 
         // - end time

@@ -27,8 +27,12 @@ class SenDb_Form_Event_New extends Zend_Form
         $this->addElement( new SenDb_Form_Element_DatePair(
             'daterange',
             array(
-                'label'    => 'Date and Time',
-                'required' => true
+                'label'      => 'Date and Time',
+                'validators' => array(
+                    new SenDb_Validate_DatePair_NotEmpty(),
+                    new SenDb_Validate_DatePair_Ordered(),
+                    new SenDb_Validate_DatePair_StartInFuture()
+                )
             )
         ));
         $this->addElement(
