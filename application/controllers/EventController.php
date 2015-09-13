@@ -54,8 +54,8 @@ class EventController extends SenDb_Controller
                 $values['bookingsclose'] = NULL;
             }
 
-            $values['startdatetime'] = new DateTime($values['daterange']['startdate'] . ' ' . $values['daterange']['starttime']);
-            $values['enddatetime'] = new DateTime($values['daterange']['enddate'] . ' ' . $values['daterange']['endtime']);
+            $values['startdatetime'] = (new DateTime($values['daterange']['startdate'] . ' ' . $values['daterange']['starttime'])).format('Y-m-d H:i:s');
+            $values['enddatetime'] = (new DateTime($values['daterange']['enddate'] . ' ' . $values['daterange']['endtime'])).format('Y-m-d H:i:s');
             unset($values['daterange']);
 
             try {
@@ -184,8 +184,8 @@ class EventController extends SenDb_Controller
                     "*Event Details*\n" .
                     "Name:\t\t" . $values['name'] . "\n" .
                     "Host Group:\t" . $hostGroupName . "\n" .
-                    "Start date:\t" . $values['startdate'] . "\n" .
-                    "End date:\t" . $values['enddate'] . "\n" .
+                    "Start date:\t" . $values['startdatetime'] . "\n" .
+                    "End date:\t" . $values['enddatetime'] . "\n" .
                     "Location:\n" . $values['location'] . "\n" .
                     "Event type:\t" . $values['type'] . "\n" .
                     "Description:\n" . $values['description'] . "\n" .
@@ -220,12 +220,7 @@ class EventController extends SenDb_Controller
                     "Event Name:\t" . $values['name'] . "\n" .
                     "Host Group:\t" . $hostGroupName . "\n";
 
-        if($values['startdate'] == $values['enddate']) {
-            $mailBody .= "Date:\t\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n";
-        } else {
-            $mailBody .= "Start date:\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n" .
-                         "End date:\t" . date('l, F jS Y', strtotime($values['enddate'])) . "\n";
-        }
+        $mailBody .= "Date and time:\t" . $values['startdatetime'] . " to " . $values['enddatetime'] . "\n";
 
         $mailBody .= "Event type:\t" . $values['type'] . "\n" .
                      "Location:\n" . $values['location'] . "\n\n" .
@@ -254,16 +249,11 @@ class EventController extends SenDb_Controller
     {
         $mailTo = "pegasus_events@lochac.sca.org";
 
-        $mailSubj = "Event Notification for {$values['name']} on {$values['startdate']} ({$hostGroup['groupname']})";
+        $mailSubj = "Event Notification for {$values['name']} on {$values['startdatetime']} ({$hostGroup['groupname']})";
 
-        $mailBody = "Event notification for {$values['name']} on {$values['startdate']}\n\n";
+        $mailBody = "Event notification for {$values['name']}\n\n";
 
-        if($values['startdate'] == $values['enddate']) {
-            $mailBody .= date('j M Y. ', strtotime($values['startdate']));
-        } else {
-            $mailBody .= date('j M Y - ', strtotime($values['startdate'])) .
-                         date('j M Y. ', strtotime($values['enddate']));
-        }
+        $mailBody .= $values['startdatetime'] . " to " . $values['enddatetime'] . "\n\n";
 
         $mailBody .= $values['name'] . ". {$hostGroup['type']} of {$hostGroup['groupname']}, {$hostGroup['state']}\n" .
                      "Site: {$values['location']}. Cost: {$values['price']}. {$values['description']} " .
