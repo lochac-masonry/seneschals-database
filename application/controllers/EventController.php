@@ -54,8 +54,8 @@ class EventController extends SenDb_Controller
                 $values['bookingsclose'] = NULL;
             }
 
-            $values['startdatetime'] = (new DateTime($values['daterange']['startdate'] . ' ' . $values['daterange']['starttime'])).format('Y-m-d H:i:s');
-            $values['enddatetime'] = (new DateTime($values['daterange']['enddate'] . ' ' . $values['daterange']['endtime'])).format('Y-m-d H:i:s');
+            $values['startdatetime'] = (new DateTime($values['daterange']['startdate'] . ' ' . $values['daterange']['starttime']))->format('Y-m-d H:i:s');
+            $values['enddatetime'] = (new DateTime($values['daterange']['enddate'] . ' ' . $values['daterange']['endtime']))->format('Y-m-d H:i:s');
             unset($values['daterange']);
 
             try {
@@ -67,7 +67,7 @@ class EventController extends SenDb_Controller
                     $db->setFetchMode(Zend_Db::FETCH_OBJ);
                     $seneschal = $db->fetchRow("SELECT scaname, email FROM scagroup WHERE id={$db->quote($values['groupid'],Zend_Db::INT_TYPE)}");
 
-                    if($this->_emailSteward($values, $groupList[$values['groupid']])) {
+                    if($this->_emailSteward($values + array('status' => 'new'), $groupList[$values['groupid']])) {
                         $this->addAlert('Notification email sent to steward.', SenDb_Controller::ALERT_GOOD);
                     } else {
                         $this->addAlert('Failed to send notification email to steward.', SenDb_Controller::ALERT_BAD);
@@ -140,17 +140,17 @@ class EventController extends SenDb_Controller
             }
 
             // Retrieve relevant events.
-            $sql = "SELECT eventid, name, startdate, lastchange FROM events WHERE status={$db->quote($status)} ";
+            $sql = "SELECT eventid, name, startdatetime, lastchange FROM events WHERE status={$db->quote($status)} ";
             if($groupid != 'all') {
                 $sql .= "AND groupid={$db->quote($groupid,Zend_Db::INT_TYPE)} ";
             }
             if($tense == 'future') {
-                $sql .= "AND CURDATE() <= startdate ";
+                $sql .= "AND CURDATE() <= startdatetime ";
             }
             if($tense == 'past') {
-                $sql .= "AND CURDATE() > startdate ";
+                $sql .= "AND CURDATE() > startdatetime ";
             }
-            $sql .= "ORDER BY startdate";
+            $sql .= "ORDER BY startdatetime";
 
             $db->setFetchMode(Zend_Db::FETCH_OBJ);
             $events = $db->fetchAll($sql);
@@ -211,9 +211,9 @@ class EventController extends SenDb_Controller
     {
         $mailTo = "announce@lochac.sca.org";
 
-        $mailSubj = "Event Notification for {$values['name']} on {$values['startdate']} ({$hostGroupName})";
+        $mailSubj = "Event Notification for {$values['name']} on {$values['startdatetime']} ({$hostGroupName})";
 
-        $mailBody = "Event notification for {$values['name']} on {$values['startdate']}\n" .
+        $mailBody = "Event notification for {$values['name']} on {$values['startdatetime']}\n" .
                     "The following announcement has been generated from http://lochac.sca.org/seneschal/database\n" .
                     "and forwarded to Lochac-Announce at the request of the Event Steward.\n\n" .
                     "EVENT DETAILS\n=============\n" .
@@ -314,9 +314,8 @@ class EventController extends SenDb_Controller
             $event->description = "Steward:\t" . $values['stewardname'] . "\n"
                                 . "Email:\t" . $values['stewardemail'] . "\n\n"
                                 . $values['description'];
-            $event->start = array('date' => $values['startdate']);
-            // Google uses exclusive end dates, so we add a day to the end date
-            $event->end = array('date' => date('Y-m-d',strtotime($values['enddate']) + 60*60*24));
+            $event->start = array('datetime' => $values['startdatetime']);
+            $event->end = array('datetime' => $values['enddatetime']);
 
             if (empty($eventId)) {
                 $event = $service->events->insert($calendarId, $event);
