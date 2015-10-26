@@ -390,9 +390,7 @@ class GroupController extends SenDb_Controller
             $this->view->aliasForms = array();
         }
 
-        if($auth['level'] == 'admin') {
-            $groupSelectForm->setDefaults(array('groupid' => 0));
-        } else {
+        if($auth['level'] != 'admin') {
             $groupSelectForm->setDefaults(array('groupid' => $auth['id']));
         }
         $this->view->groupSelectForm = $groupSelectForm;
