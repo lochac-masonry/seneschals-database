@@ -50,7 +50,7 @@ class SenDb_Form_Event_New extends Zend_Form
             array(
                 'label'    => 'Location (include Address)',
                 'required' => true,
-                'rows'     => 2,
+                'rows'     => 3,
                 'cols'     => 50,
                 'wrap'     => 'virtual'
             )
@@ -157,7 +157,7 @@ class SenDb_Form_Event_New extends Zend_Form
             array(
                 'label'   => 'Contact for Bookings (Name and Email address preferred)',
                 'filters' => array('stringTrim'),
-                'rows'    => 2,
+                'rows'    => 3,
                 'cols'    => 50,
                 'wrap'    => 'virtual'
             )

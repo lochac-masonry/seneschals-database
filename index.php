@@ -2,7 +2,7 @@
 
 $startTime = microtime(true);
 
-define('SENDB_VERSION', '1.1.0');
+define('SENDB_VERSION', '1.1.1');
 
 // Determine path of the application root.
 defined('APPLICATION_PATH')
