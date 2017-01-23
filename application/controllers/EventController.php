@@ -54,8 +54,10 @@ class EventController extends SenDb_Controller
                 $values['bookingsclose'] = NULL;
             }
 
-            $values['startdatetime'] = (new DateTime($values['daterange']['startdate'] . ' ' . $values['daterange']['starttime']))->format('Y-m-d H:i:s');
-            $values['enddatetime'] = (new DateTime($values['daterange']['enddate'] . ' ' . $values['daterange']['endtime']))->format('Y-m-d H:i:s');
+            $startDateTime = new DateTime($values['daterange']['startdate'] . ' ' . $values['daterange']['starttime']);
+            $endDateTime = new DateTime($values['daterange']['enddate'] . ' ' . $values['daterange']['endtime']);
+            $values['startdatetime'] = $startDateTime->format('Y-m-d H:i:s');
+            $values['enddatetime'] = $endDateTime->format('Y-m-d H:i:s');
             unset($values['daterange']);
 
             try {
