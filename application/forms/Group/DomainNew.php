@@ -21,7 +21,7 @@ class SenDb_Form_Group_DomainNew extends Zend_Form
                     'stringTrim',
                     'stringToLower'
                 ),
-                'validators' => array('alpha')
+                'validators' => array('alnum')
             )
         );
         $this->addElement(

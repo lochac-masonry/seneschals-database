@@ -489,7 +489,7 @@ class GroupController extends SenDb_Controller
 
             } elseif($domainForms[$id]->getElement('submit'.$id)->isChecked()) {
                 // form invalid, but groupid came from our list and submit was pressed - domain must be invalid
-                $this->addAlert('Domain invalid. Must be lower case letters only.', SenDb_Controller::ALERT_BAD);
+                $this->addAlert('Domain invalid. Must be lower case letters and numerals only.', SenDb_Controller::ALERT_BAD);
             }
 
             $domainForms[$id]->setDefaults($values);
@@ -534,7 +534,7 @@ class GroupController extends SenDb_Controller
 
             }
         } elseif($domainForms['new']->submitnew->isChecked()) {
-            $this->addAlert('Domain invalid. Must be lower case letters only.', SenDb_Controller::ALERT_BAD);
+            $this->addAlert('Domain invalid. Must be lower case letters and numerals only.', SenDb_Controller::ALERT_BAD);
         }
 
         if(isset($domainForms)) {
