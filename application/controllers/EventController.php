@@ -579,6 +579,7 @@ class EventController extends SenDb_Controller
         $defaults = $db->fetchRow("SELECT name, groupid, startdate, enddate, location, type, description, price, stewardreal, " .
                                   "stewardname, stewardemail, bookingcontact, bookingsclose, status, googleid " .
                                   "FROM events WHERE eventid={$db->quote($id,Zend_Db::INT_TYPE)}");
+        $defaults['sendto'] = array('pegasus', 'calendar', 'announce'); // Enable all publicity by default.
         $eventForm->setDefaults($defaults);
 
         $this->view->form = $eventForm;
