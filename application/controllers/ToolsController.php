@@ -47,7 +47,7 @@ class ToolsController extends SenDb_Controller
                         "This message is being sent to you because you are listed as the seneschal of the " .
                         "{$group->type} of {$group->groupname}. If this is not the case, please delete this message.\n\n" .
                         "To access the Lochac Seneschals' Database for quarterly reporting, editing email aliases or " .
-                        "updating the details of your Baron and Baroness, please go to http://lochac.sca.org" .
+                        "updating the details of your Baron and Baroness, please go to https://lochac.sca.org" .
                         Zend_Layout::getMvcInstance()->relativeUrl . " and enter the username and password listed below.\n\n" .
                         "Username: " . strtolower(str_replace(' ','',$group->groupname)) . "\n" .
                         "Password: PASSWORD\n\n" .
