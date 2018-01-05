@@ -9,6 +9,9 @@ class EventController extends SenDb_Controller
 
     protected function _emailSeneschal($seneschal)
     {
+        global $config;
+        $relativeUrl = $config->relativeUrl
+
         $mailTo = $seneschal->email;
 
         $mailSubj = 'New Event Awaiting Approval';
@@ -18,7 +21,7 @@ class EventController extends SenDb_Controller
                     "At your convenience, log in using your group's username and password, review the proposal and " .
                     "edit, approve or reject as appropriate. Once approved, the event will be added to the Kingdom calendar " .
                     "and sent to Pegasus and Announce.\n" .
-                    "Access the Seneschals' Database at http://lochac.sca.org/seneschal/database.\n\n" .
+                    "Access the Seneschals' Database at https://lochac.sca.org{$relativeUrl}.\n\n" .
                     "Kind Regards,\n" .
                     "The Lochac Seneschals' Database";
 
@@ -221,12 +224,15 @@ class EventController extends SenDb_Controller
 
     protected function _emailAnnounce($values, $hostGroupName)
     {
+        global $config;
+        $relativeUrl = $config->relativeUrl
+
         $mailTo = "announce@lochac.sca.org";
 
         $mailSubj = "Event Notification for {$values['name']} on {$values['startdate']} ({$hostGroupName})";
 
         $mailBody = "Event notification for {$values['name']} on {$values['startdate']}\n" .
-                    "The following announcement has been generated from http://lochac.sca.org/seneschal/database\n" .
+                    "The following announcement has been generated from https://lochac.sca.org{$relativeUrl}\n" .
                     "and forwarded to Lochac-Announce at the request of the Event Steward.\n\n" .
                     "EVENT DETAILS\n=============\n" .
                     "Event Name:\t" . $values['name'] . "\n" .
