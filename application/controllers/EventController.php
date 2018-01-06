@@ -10,7 +10,7 @@ class EventController extends SenDb_Controller
     protected function _emailSeneschal($seneschal)
     {
         global $config;
-        $relativeUrl = $config->relativeUrl
+        $relativeUrl = $config->relativeUrl;
 
         $mailTo = $seneschal->email;
 
@@ -225,7 +225,7 @@ class EventController extends SenDb_Controller
     protected function _emailAnnounce($values, $hostGroupName)
     {
         global $config;
-        $relativeUrl = $config->relativeUrl
+        $relativeUrl = $config->relativeUrl;
 
         $mailTo = "announce@lochac.sca.org";
 
