@@ -26,6 +26,8 @@ class SenDb_Helper_Email
             throw new IllegalArgumentException('Argument $header must be string or array of strings');
         }
 
+        $header .= "\r\nContent-Type: text/plain;charset=utf-8";
+
                                                             //----------------------------------------------------------
                                                             // Redirect all email to the debug address if it is set
                                                             //----------------------------------------------------------

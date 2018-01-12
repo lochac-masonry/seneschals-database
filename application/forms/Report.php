@@ -446,6 +446,16 @@ class SenDb_Form_Report extends Zend_Form
                 'wrap'  => 'virtual'
             )
         );
+        $this->addElement(
+            'textarea',
+            'sumyouth',
+            array(
+                'label' => 'Youth Officer',
+                'cols'  => 50,
+                'rows'  => 10,
+                'wrap'  => 'virtual'
+            )
+        );
         $this->addDisplayGroup(
             array(
                 'summarshal',
@@ -456,7 +466,8 @@ class SenDb_Form_Report extends Zend_Form
                 'sumchirurgeon',
                 'sumchronicler',
                 'sumchatelaine',
-                'sumlists'
+                'sumlists',
+                'sumyouth'
             ),
             'officers',
             array('legend' => 'Summary of Officer Reports')

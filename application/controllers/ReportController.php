@@ -183,6 +183,7 @@ class ReportController extends SenDb_Controller
                                . "\n\n== Chronicler/Webminister\n" . $values['sumchronicler']
                                . "\n\n== Chatelaine/Hospitaller\n" . $values['sumchatelaine']
                                . "\n\n== Lists\n" . $values['sumlists']
+                               . "\n\n== Youth\n" . $values['sumyouth']
                                . "\n"
                                . "\nSUMMARY OF SUB-GROUPS"
                                . "\n======================";
