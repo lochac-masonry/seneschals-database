@@ -118,7 +118,14 @@ class SenDb_Form_Event_Edit extends Zend_Form
             'stewardreal',
             array(
                 'label'    => 'Legal Name (not published)',
-                'required' => true
+                'required' => true,
+                'validators' => array(
+                    array(
+                        'stringLength',
+                        false,
+                        array(0, 32)
+                    )
+                )
             )
         );
         $this->addElement(
@@ -126,7 +133,14 @@ class SenDb_Form_Event_Edit extends Zend_Form
             'stewardname',
             array(
                 'label'    => 'SCA Name (published)',
-                'required' => true
+                'required' => true,
+                'validators' => array(
+                    array(
+                        'stringLength',
+                        false,
+                        array(0, 32)
+                    )
+                )
             )
         );
         $this->addElement(
@@ -135,7 +149,14 @@ class SenDb_Form_Event_Edit extends Zend_Form
             array(
                 'label'      => 'Email Address (published)',
                 'required'   => true,
-                'validators' => array('emailAddress')
+                'validators' => array(
+                    'emailAddress',
+                    array(
+                        'stringLength',
+                        false,
+                        array(0, 64)
+                    )
+                )
             )
         );
         $this->addDisplayGroup(
