@@ -46,6 +46,17 @@ class SenDb_Form_Event_New extends Zend_Form
         );
         $this->addElement(
             'textarea',
+            'setupTime',
+            array(
+                'label'    => 'Setup time(s), if applicable',
+                'rows'     => 3,
+                'cols'     => 50,
+                'wrap'     => 'virtual',
+                'filters'    => array('stringTrim')
+            )
+        );
+        $this->addElement(
+            'textarea',
             'location',
             array(
                 'label'    => 'Location (include Address)',
@@ -101,6 +112,7 @@ class SenDb_Form_Event_New extends Zend_Form
                 'groupid',
                 'startdate',
                 'enddate',
+                'setupTime',
                 'location',
                 'type',
                 'description',

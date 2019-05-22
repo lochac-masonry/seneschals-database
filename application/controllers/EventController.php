@@ -50,6 +50,9 @@ class EventController extends SenDb_Controller
             $values = $eventForm->getValues();
             unset($values['quiz'], $values['submit']);
 
+            if($values['setupTime'] == '') {
+                $values['setupTime'] = NULL;
+            }
             if($values['bookingcontact'] == '') {
                 $values['bookingcontact'] = NULL;
             }
@@ -201,6 +204,7 @@ class EventController extends SenDb_Controller
                     "Host Group:\t" . $hostGroupName . "\n" .
                     "Start date:\t" . $values['startdate'] . "\n" .
                     "End date:\t" . $values['enddate'] . "\n" .
+                    "Setup time(s):\n" . $values['setupTime'] . "\n" .
                     "Location:\n" . $values['location'] . "\n" .
                     "Event type:\t" . $values['type'] . "\n" .
                     "Description:\n" . $values['description'] . "\n" .
@@ -244,6 +248,9 @@ class EventController extends SenDb_Controller
             $mailBody .= "Start date:\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n" .
                          "End date:\t" . date('l, F jS Y', strtotime($values['enddate'])) . "\n";
         }
+        if(!empty($values['setupTime'])) {
+            $mailBody .= "Setup time(s):\n" . $values['setupTime'] . "\n";
+        }
 
         $mailBody .= "Event type:\t" . $values['type'] . "\n" .
                      "Location:\n" . $values['location'] . "\n\n" .
@@ -284,8 +291,13 @@ class EventController extends SenDb_Controller
         }
 
         $mailBody .= $values['name'] . ". {$hostGroup['type']} of {$hostGroup['groupname']}, {$hostGroup['state']}\n" .
-                     "Site: {$values['location']}. Cost: {$values['price']}. {$values['description']} " .
-                     "Steward: {$values['stewardname']}, {$values['stewardemail']}. ";
+                     "Site: {$values['location']}. Cost: {$values['price']}. ";
+
+        if(!empty($values['setupTime'])) {
+            $mailBody .= "Setup time(s): {$values['setupTime']}. ";
+        }
+
+        $mailBody .= "{$values['description']} Steward: {$values['stewardname']}, {$values['stewardemail']}. ";
 
         if(empty($values['bookingcontact'])
           || empty($values['bookingsclose'])) {
@@ -425,6 +437,9 @@ class EventController extends SenDb_Controller
 
             // Change values to suit DB.
             unset($values['sendto'], $values['googleid'], $values['submit']);
+            if($values['setupTime'] == '') {
+                $values['setupTime'] = NULL;
+            }
             if($values['bookingcontact'] == '') {
                 $values['bookingcontact'] = NULL;
             }
@@ -582,9 +597,9 @@ class EventController extends SenDb_Controller
                                                             // Populate form with current details, and render
                                                             //----------------------------------------------------------
         $db->setFetchMode(Zend_Db::FETCH_ASSOC);
-        $defaults = $db->fetchRow("SELECT name, groupid, startdate, enddate, location, type, description, price, stewardreal, " .
-                                  "stewardname, stewardemail, bookingcontact, bookingsclose, status, googleid " .
-                                  "FROM events WHERE eventid={$db->quote($id,Zend_Db::INT_TYPE)}");
+        $defaults = $db->fetchRow("SELECT name, groupid, startdate, enddate, setupTime, location, type, description, " .
+                                  "price, stewardreal, stewardname, stewardemail, bookingcontact, bookingsclose, " .
+                                  "status, googleid FROM events WHERE eventid={$db->quote($id,Zend_Db::INT_TYPE)}");
         $defaults['sendto'] = array('pegasus', 'calendar', 'announce'); // Enable all publicity by default.
         $eventForm->setDefaults($defaults);
 
