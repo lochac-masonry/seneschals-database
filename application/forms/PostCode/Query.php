@@ -48,6 +48,7 @@ class SenDb_Form_PostCode_Query extends Zend_Form
             'postcode',
             array(
                 'label'      => 'Postcode:',
+                'maxlength'  => 4,
                 'validators' => array(
                     array(
                         'stringLength',
@@ -81,6 +82,7 @@ class SenDb_Form_PostCode_Query extends Zend_Form
             'rangestart',
             array(
                 'label'      => 'Range Start:',
+                'maxlength'  => 4,
                 'validators' => array(
                     array(
                         'stringLength',
@@ -95,6 +97,7 @@ class SenDb_Form_PostCode_Query extends Zend_Form
             'rangeend',
             array(
                 'label'      => 'Range End:',
+                'maxlength'  => 4,
                 'validators' => array(
                     array(
                         'stringLength',
@@ -129,6 +132,7 @@ class SenDb_Form_PostCode_Query extends Zend_Form
             'locality',
             array(
                 'label'      => 'Suburb/Locality Name:',
+                'maxlength'  => 64,
                 'validators' => array(
                     array(
                         'stringLength',

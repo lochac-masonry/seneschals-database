@@ -46,6 +46,17 @@ class SenDb_Form_Event_New extends Zend_Form
         );
         $this->addElement(
             'textarea',
+            'setupTime',
+            array(
+                'label'    => 'Setup time(s), if applicable',
+                'rows'     => 3,
+                'cols'     => 50,
+                'wrap'     => 'virtual',
+                'filters'    => array('stringTrim')
+            )
+        );
+        $this->addElement(
+            'textarea',
             'location',
             array(
                 'label'    => 'Location (include Address)',
@@ -101,6 +112,7 @@ class SenDb_Form_Event_New extends Zend_Form
                 'groupid',
                 'startdate',
                 'enddate',
+                'setupTime',
                 'location',
                 'type',
                 'description',
@@ -117,8 +129,9 @@ class SenDb_Form_Event_New extends Zend_Form
             'text',
             'stewardreal',
             array(
-                'label'    => 'Legal Name (not published)',
-                'required' => true,
+                'label'      => 'Legal Name (up to 32 characters, not published)',
+                'required'   => true,
+                'maxlength'  => 32,
                 'validators' => array(
                     array(
                         'stringLength',
@@ -132,8 +145,9 @@ class SenDb_Form_Event_New extends Zend_Form
             'text',
             'stewardname',
             array(
-                'label'    => 'SCA Name (published)',
-                'required' => true,
+                'label'      => 'SCA Name (up to 64 characters, published)',
+                'required'   => true,
+                'maxlength'  => 64,
                 'validators' => array(
                     array(
                         'stringLength',
@@ -147,8 +161,9 @@ class SenDb_Form_Event_New extends Zend_Form
             'text',
             'stewardemail',
             array(
-                'label'      => 'Email Address (published)',
+                'label'      => 'Email Address (up to 64 characters, published)',
                 'required'   => true,
+                'maxlength'  => 64,
                 'validators' => array(
                     'emailAddress',
                     array(

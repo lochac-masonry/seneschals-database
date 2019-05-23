@@ -12,6 +12,7 @@ class SenDb_Form_PostCode_Assign extends Zend_Form
             array(
                 'label'      => 'Postcode Range Start:',
                 'required'   => true,
+                'maxlength'  => 4,
                 'filters'    => array('stringTrim'),
                 'validators' => array(
                     'int',
@@ -29,6 +30,7 @@ class SenDb_Form_PostCode_Assign extends Zend_Form
             array(
                 'label'      => 'Range End:',
                 'required'   => true,
+                'maxlength'  => 4,
                 'filters'    => array('stringTrim'),
                 'validators' => array(
                     'int',
