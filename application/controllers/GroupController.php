@@ -1,6 +1,9 @@
 <?php
 
-class GroupController extends SenDb_Controller
+use SenDb\Exception\NotAuthorised;
+use SenDb\Form;
+
+class GroupController extends \SenDb\Controller
 {
     public function indexAction()
     {
@@ -58,7 +61,7 @@ class GroupController extends SenDb_Controller
         $auth = authenticate();
         $db = Zend_Db_Table::getDefaultAdapter();
         if ($auth['level'] != 'admin') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -69,7 +72,7 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build group selection form
                                                             //----------------------------------------------------------
-        $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
+        $groupSelectForm = new Form\GroupSelect(array('method' => 'get'));
         $groupSelectForm->groupid->options = array('new' => 'New Group') + $groupList;
 
         if ($groupSelectForm->isValid($_GET)) {
@@ -79,7 +82,7 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build group edit form
                                                             //----------------------------------------------------------
-            $detailsForm = new SenDb_Form_Group_Edit(array('method' => 'post'));
+            $detailsForm = new Form\Group\Edit(array('method' => 'post'));
             $detailsForm->parentid->options = $groupList;
 
                                                             //----------------------------------------------------------
@@ -184,7 +187,7 @@ class GroupController extends SenDb_Controller
         $auth = authenticate();
         $db = Zend_Db_Table::getDefaultAdapter();
         if ($auth['level'] != 'admin') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -194,7 +197,7 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build the close group form
                                                             //----------------------------------------------------------
-        $form = new SenDb_Form_Group_Close(array('method' => 'post'));
+        $form = new Form\Group\Close(array('method' => 'post'));
         $form->group_close->options = $groupList;
         $form->group_get->options = $groupList;
 
@@ -234,7 +237,7 @@ class GroupController extends SenDb_Controller
         $auth = authenticate();
         $db = Zend_Db_Table::getDefaultAdapter();
         if ($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -244,7 +247,7 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build group selection form - only enabled for admin
                                                             //----------------------------------------------------------
-        $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
+        $groupSelectForm = new Form\GroupSelect(array('method' => 'get'));
         $groupSelectForm->groupid->options = array(0 => 'Unassigned') + $groupList;
 
         if ($auth['level'] != 'admin') {
@@ -298,7 +301,7 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build existing alias form
                                                             //----------------------------------------------------------
-                $aliasForms[$id] = new SenDb_Form_Group_Alias(array(
+                $aliasForms[$id] = new Form\Group\Alias(array(
                     'method' => 'post',
                     'suffix' => $id
                 ));
@@ -389,7 +392,7 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build new alias form
                                                             //----------------------------------------------------------
-            $aliasForms['new'] = new SenDb_Form_Group_AliasNew(array('method' => 'post'));
+            $aliasForms['new'] = new Form\Group\AliasNew(array('method' => 'post'));
             $aliasForms['new']->aliasnew->addValidator(
                 'regex',
                 false,
@@ -475,7 +478,7 @@ class GroupController extends SenDb_Controller
         $db = Zend_Db_Table::getDefaultAdapter();
         $refreshUrl = $this->_helper->url->url();
         if ($auth['level'] != 'admin') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -491,7 +494,7 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build existing domain form
                                                             //----------------------------------------------------------
-            $domainForms[$id] = new SenDb_Form_Group_Domain(array(
+            $domainForms[$id] = new Form\Group\Domain(array(
                 'method' => 'post',
                 'suffix' => $id
             ));
@@ -601,7 +604,7 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build new domain form
                                                             //----------------------------------------------------------
-        $domainForms['new'] = new SenDb_Form_Group_DomainNew(array('method' => 'post'));
+        $domainForms['new'] = new Form\Group\DomainNew(array('method' => 'post'));
         $domainForms['new']->groupidnew->options = $groupList;
 
                                                             //----------------------------------------------------------
@@ -665,7 +668,7 @@ class GroupController extends SenDb_Controller
         $auth = authenticate();
         $db = Zend_Db_Table::getDefaultAdapter();
         if ($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -676,7 +679,7 @@ class GroupController extends SenDb_Controller
                                                             // Build group select form - enabled only for admin,
                                                             // disabled for baronies, not rendered for other groups
                                                             //----------------------------------------------------------
-        $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
+        $groupSelectForm = new Form\GroupSelect(array('method' => 'get'));
         $groupSelectForm->groupid->options = $groupList;
 
         if ($auth['level'] != 'admin') {
@@ -704,7 +707,7 @@ class GroupController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build B&B editing form
                                                             //----------------------------------------------------------
-            $detailsForm = new SenDb_Form_Group_Nobility(array('method' => 'post'));
+            $detailsForm = new Form\Group\Nobility(array('method' => 'post'));
 
                                                             //----------------------------------------------------------
                                                             // Process Baronial details - insert or update

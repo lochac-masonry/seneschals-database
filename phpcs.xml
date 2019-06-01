@@ -8,10 +8,15 @@
     <arg name="parallel" value="75"/>
     <arg value="p"/>
 
-    <rule ref="PSR12">
-        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
-        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
-        <exclude name="Squiz.Classes.ValidClassName.NotCamelCaps"/>
+    <rule ref="PSR12"/>
+
+    <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
+        <exclude-pattern>application/Bootstrap.php</exclude-pattern>
+        <exclude-pattern>application/controllers/*</exclude-pattern>
+    </rule>
+
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <exclude-pattern>index.php</exclude-pattern>
     </rule>
 
 </ruleset>

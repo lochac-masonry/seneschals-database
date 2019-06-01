@@ -1,20 +1,24 @@
 <?php
 
-class SenDb_Form_Group_DomainNew extends Zend_Form
+namespace SenDb\Form\Group;
+
+class Domain extends \Zend_Form
 {
     public function init()
     {
+        $id = $this->getAttrib('suffix');
+
         $this->setAction('#');
         $this->setDecorators(array('FormElements', 'Form'));
         $this->setElementDecorators(array('ViewHelper'));
 
         $this->addElement(
             'select',
-            'groupidnew'
+            'groupid' . $id
         );
         $this->addElement(
             'text',
-            'domainnew',
+            'domain' . $id,
             array(
                 'required'   => true,
                 'filters'    => array(
@@ -26,9 +30,16 @@ class SenDb_Form_Group_DomainNew extends Zend_Form
         );
         $this->addElement(
             'submit',
-            'submitnew',
+            'submit' . $id,
             array(
-                'label' => 'Add New'
+                'label' => 'Save'
+            )
+        );
+        $this->addElement(
+            'submit',
+            'delete' . $id,
+            array(
+                'label' => 'Delete'
             )
         );
     }

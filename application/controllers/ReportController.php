@@ -1,13 +1,17 @@
 <?php
 
-class ReportController extends SenDb_Controller
+use SenDb\Exception\NotAuthorised;
+use SenDb\Form;
+use SenDb\Helper\Email;
+
+class ReportController extends \SenDb\Controller
 {
     public function indexAction()
     {
         $auth = authenticate();
         $db = Zend_Db_Table::getDefaultAdapter();
         if ($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -20,7 +24,7 @@ class ReportController extends SenDb_Controller
                                                             // Group selection form
                                                             // Enabled for admin, disabled for regular groups
                                                             //----------------------------------------------------------
-        $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
+        $groupSelectForm = new Form\GroupSelect(array('method' => 'get'));
         $groupSelectForm->groupid->options = $groupList;
 
         if ($auth['level'] != 'admin') {
@@ -38,7 +42,7 @@ class ReportController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build the report form
                                                             //----------------------------------------------------------
-            $detailsForm = new SenDb_Form_Report(array('method' => 'post'));
+            $detailsForm = new Form\Report(array('method' => 'post'));
             $detailsForm->parentid->options = $groupList;
 
                                                             //----------------------------------------------------------
@@ -216,7 +220,7 @@ class ReportController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Send report
                                                             //----------------------------------------------------------
-                    if (SenDb_Helper_Email::send($mailto, $mailsubj, $mailbody, $mailheaders)) {
+                    if (Email::send($mailto, $mailsubj, $mailbody, $mailheaders)) {
                         $this->addAlert('Report sent to ' . count($mailto) . ' recipient(s).', self::ALERT_GOOD);
                     } else {
                         $this->addAlert('Failed to send report.', self::ALERT_BAD);

@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_PostCode_Upload extends Zend_Form
+namespace SenDb\Form\PostCode;
+
+class Upload extends \Zend_Form
 {
     public function init()
     {

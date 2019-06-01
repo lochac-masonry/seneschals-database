@@ -1,6 +1,10 @@
 <?php
 
-class EventController extends SenDb_Controller
+use SenDb\Exception\NotAuthorised;
+use SenDb\Form;
+use SenDb\Helper\Email;
+
+class EventController extends \SenDb\Controller
 {
     public function indexAction()
     {
@@ -26,7 +30,7 @@ class EventController extends SenDb_Controller
 
         $mailHead = "From: {$seneschal->email}";
 
-        return SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
+        return Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
     }
 
     public function newAction()
@@ -41,7 +45,7 @@ class EventController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build the event proposal form
                                                             //----------------------------------------------------------
-        $eventForm = new SenDb_Form_Event_New(array('method' => 'post'));
+        $eventForm = new Form\Event\Create(array('method' => 'post'));
         $eventForm->groupid->options = $groupList;
 
                                                             //----------------------------------------------------------
@@ -130,7 +134,7 @@ class EventController extends SenDb_Controller
         $auth = authenticate();
         $db = Zend_Db_Table::getDefaultAdapter();
         if ($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -141,7 +145,7 @@ class EventController extends SenDb_Controller
                                                             // Event selection - host group, past/future and approval
                                                             // Host group choice only available to admin
                                                             //----------------------------------------------------------
-        $groupSelectForm = new SenDb_Form_Event_List(array('method' => 'get'));
+        $groupSelectForm = new Form\Event\ListFilter(array('method' => 'get'));
         $groupSelectForm->groupid->options = array('all' => 'All Groups') + $groupList;
 
         if ($auth['level'] != 'admin') {
@@ -238,7 +242,7 @@ class EventController extends SenDb_Controller
 
         $mailHead = "From: {$values['stewardemail']}";
 
-        return SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
+        return Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
     }
 
     protected function emailAnnounce($values, $hostGroupName)
@@ -285,7 +289,7 @@ class EventController extends SenDb_Controller
 
         $mailHead = "From: information@lochac.sca.org";
 
-        return SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
+        return Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
     }
 
     protected function emailPegasus($values, $hostGroup)
@@ -324,7 +328,7 @@ class EventController extends SenDb_Controller
 
         $mailHead = "From: information@lochac.sca.org";
 
-        return SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
+        return Email::send($mailTo, $mailSubj, $mailBody, $mailHead);
     }
 
     protected function getGoogleCalendarService()
@@ -409,7 +413,7 @@ class EventController extends SenDb_Controller
         $auth = authenticate();
         if ($auth['level'] != 'admin'
           && $auth['level'] != 'user') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
         $db = Zend_Db_Table::getDefaultAdapter();
@@ -432,7 +436,7 @@ class EventController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build the event editing and approval form
                                                             //----------------------------------------------------------
-        $eventForm = new SenDb_Form_Event_Edit(array('method' => 'post'));
+        $eventForm = new Form\Event\Edit(array('method' => 'post'));
         $eventForm->groupid->options = $groupList;
 
                                                             //----------------------------------------------------------

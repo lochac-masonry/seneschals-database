@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_Event_New extends Zend_Form
+namespace SenDb\Form\Event;
+
+class Edit extends \Zend_Form
 {
     public function init()
     {
@@ -218,25 +220,29 @@ class SenDb_Form_Event_New extends Zend_Form
         );
 
                                                             //----------------------------------------------------------
-                                                            // Section - anti-spam and submit
+                                                            // Section - approval and publicity options
                                                             //----------------------------------------------------------
         $this->addElement(
-            'text',
-            'quiz',
+            'radio',
+            'status',
             array(
-                'label'      => 'Spam prevention: What is the name of this kingdom (one word)?',
-                'required'   => true,
-                'size'       => 10,
-                'filters'    => array('stringToLower'),
-                'validators' => array(
-                    array(
-                        'regex',
-                        false,
-                        array(
-                            'pattern'  => '/^lochac$/',
-                            'messages' => array('regexNotMatch' => 'Incorrect')
-                        )
-                    )
+                'label'        => 'Change status to:',
+                'multiOptions' => array(
+                    'approved' => 'Approved',
+                    'rejected' => 'Rejected',
+                    'new'      => 'New'
+                )
+            )
+        );
+        $this->addElement(
+            'multiCheckbox',
+            'sendto',
+            array(
+                'label'        => 'Also: (Can only post to Pegasus or Announce if approved)',
+                'multiOptions' => array(
+                    'pegasus'  => 'Advertise in Pegasus',
+                    'calendar' => 'Update the Kingdom Calendar',
+                    'announce' => 'Post on Lochac-Announce'
                 )
             )
         );
@@ -247,12 +253,22 @@ class SenDb_Form_Event_New extends Zend_Form
                 'label' => 'Submit'
             )
         );
+        $this->addElement(
+            'text',
+            'googleid',
+            array(
+                'hidden' => true
+            )
+        );
         $this->addDisplayGroup(
             array(
-                'quiz',
-                'submit'
+                'status',
+                'sendto',
+                'submit',
+                'googleid'
             ),
-            'endGroup'
+            'submitGroup',
+            array('legend' => 'Actions')
         );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-class ToolsController extends SenDb_Controller
+class ToolsController extends \SenDb\Controller
 {
     public function indexAction()
     {
@@ -27,7 +27,7 @@ class ToolsController extends SenDb_Controller
         $db = Zend_Db_Table::getDefaultAdapter();
         $url = $this->view->serverUrl($this->_helper->url->url(array(), null, true));
         if($auth['level'] != 'admin') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -56,7 +56,7 @@ class ToolsController extends SenDb_Controller
 
             $mailHead = "From:{$group->email}";
 
-            if(SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead)) {
+            if(Email::send($mailTo, $mailSubj, $mailBody, $mailHead)) {
                 $successCount++;
             } else {
                 $this->addAlert(

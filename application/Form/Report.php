@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_Report extends Zend_Form
+namespace SenDb\Form;
+
+class Report extends \Zend_Form
 {
     public function init()
     {

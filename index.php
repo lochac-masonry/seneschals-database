@@ -13,7 +13,6 @@ defined('APPLICATION_ENV')
     || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
 
 // Register autoloaders.
-require_once(APPLICATION_PATH . '/autoload.php');
 require_once(__DIR__ . '/vendor/autoload.php');
 
 // Load config.

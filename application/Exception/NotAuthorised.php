@@ -1,6 +1,10 @@
 <?php
 
-class SenDb_Exception_NotAuthorised extends Exception
+namespace SenDb\Exception;
+
+use Exception;
+
+class NotAuthorised extends Exception
 {
     public function __construct($message = null, $code = 0, Exception $previous = null)
     {

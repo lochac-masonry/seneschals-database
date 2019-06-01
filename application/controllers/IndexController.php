@@ -1,6 +1,6 @@
 <?php
 
-class IndexController extends SenDb_Controller
+class IndexController extends \SenDb\Controller
 {
     public function indexAction()
     {

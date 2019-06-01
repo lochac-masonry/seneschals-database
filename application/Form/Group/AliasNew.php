@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_Group_AliasNew extends Zend_Form
+namespace SenDb\Form\Group;
+
+class AliasNew extends \Zend_Form
 {
     public function init()
     {

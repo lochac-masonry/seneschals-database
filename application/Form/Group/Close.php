@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_Group_Close extends Zend_Form
+namespace SenDb\Form\Group;
+
+class Close extends \Zend_Form
 {
     public function init()
     {

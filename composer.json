@@ -11,6 +11,9 @@
             "email": "dylan-kerr@users.noreply.github.com"
         }
     ],
+    "autoload": {
+        "psr-4": {"SenDb\\": "application/"}
+    },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.4"
     }

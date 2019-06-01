@@ -1,6 +1,10 @@
 <?php
 
-class SenDb_Controller extends Zend_Controller_Action
+namespace SenDb;
+
+use InvalidArgumentException;
+
+class Controller extends \Zend_Controller_Action
 {
     const ALERT_GOOD = 'good';
     const ALERT_BAD  = 'bad';

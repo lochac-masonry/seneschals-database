@@ -1,6 +1,8 @@
 <?php
 
-class ErrorController extends SenDb_Controller
+use SenDb\Helper\Email;
+
+class ErrorController extends \SenDb\Controller
 {
     public function errorAction()
     {
@@ -35,7 +37,7 @@ class ErrorController extends SenDb_Controller
 
                 $mailHead = "From: information@lochac.sca.org";
 
-                SenDb_Helper_Email::send($config->exception->email, $mailSubj, $mailBody, $mailHead);
+                Email::send($config->exception->email, $mailSubj, $mailBody, $mailHead);
             }
         }
     }

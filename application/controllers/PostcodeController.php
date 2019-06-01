@@ -1,6 +1,9 @@
 <?php
 
-class PostcodeController extends SenDb_Controller
+use SenDb\Exception\NotAuthorised;
+use SenDb\Form;
+
+class PostcodeController extends \SenDb\Controller
 {
     public function indexAction()
     {
@@ -45,7 +48,7 @@ class PostcodeController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build postcode query form
                                                             //----------------------------------------------------------
-        $form = new SenDb_Form_PostCode_Query(array('method' => 'post'));
+        $form = new Form\PostCode\Query(array('method' => 'post'));
         $form->group->options = $groupList;
 
                                                             //----------------------------------------------------------
@@ -135,7 +138,7 @@ class PostcodeController extends SenDb_Controller
         $auth = authenticate();
         $db = Zend_Db_Table::getDefaultAdapter();
         if ($auth['level'] != 'admin') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -145,7 +148,7 @@ class PostcodeController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build postcode assignment form
                                                             //----------------------------------------------------------
-        $form = new SenDb_Form_PostCode_Assign(array('method' => 'post'));
+        $form = new Form\PostCode\Assign(array('method' => 'post'));
         $form->group->options = $groupList;
 
                                                             //----------------------------------------------------------
@@ -179,7 +182,7 @@ class PostcodeController extends SenDb_Controller
     {
         $auth = authenticate();
         if ($auth['level'] != 'admin') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -188,7 +191,7 @@ class PostcodeController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build the upload form
                                                             //----------------------------------------------------------
-        $form = new SenDb_Form_PostCode_Upload(array('method' => 'post'));
+        $form = new Form\PostCode\Upload(array('method' => 'post'));
 
         if ($form->isValid($_POST)) {
             // Process uploaded file

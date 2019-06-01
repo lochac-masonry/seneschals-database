@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_Event_List extends Zend_Form
+namespace SenDb\Form\Event;
+
+class ListFilter extends \Zend_Form
 {
     public function init()
     {
