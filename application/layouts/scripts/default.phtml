@@ -15,10 +15,13 @@
 
 <div id="Container">
     <div class="Navigation">
-        <img src="<?= $this->baseUrl() ?>/resources/kingdom-seneschal-device.png" alt="Office of the Seneschal of Lochac" width="250" height="269" usemap="#SenLinks" />
+        <img src="<?= $this->baseUrl() ?>/resources/kingdom-seneschal-device.png"
+            alt="Office of the Seneschal of Lochac" width="250" height="269" usemap="#SenLinks" />
         <map id="SenLinks" name="SenLinks">
-            <area shape="poly" coords="83,47,165,48,165,104,125,144,83,103" href="https://lochac.sca.org/lochac" target="_blank" alt="Kingdom of Lochac" />
-            <area shape="circle" coords="125,197,33" href="https://seneschal.lochac.sca.org" alt="The Office of the Seneschal" />
+            <area shape="poly" coords="83,47,165,48,165,104,125,144,83,103"
+                href="https://lochac.sca.org/lochac" target="_blank" alt="Kingdom of Lochac" />
+            <area shape="circle" coords="125,197,33" href="https://seneschal.lochac.sca.org"
+                alt="The Office of the Seneschal" />
         </map>
 
         <p>
@@ -26,7 +29,7 @@
             <a href="https://seneschal.lochac.sca.org">From the Seneschal <small>(Home)</small></a><br />
             <a href="<?= $this->url(array(), null, true) ?>">Database</a><br />
             <span class="subNav">
-<?php foreach(buildMenu() as $item) { ?>
+<?php foreach (buildMenu() as $item) { ?>
                 <a href="<?= $this->url($item['link']) ?>"><?= $item['name'] ?></a><br />
 <?php } ?>
             </span>
@@ -37,20 +40,21 @@
 
     <div class="PageContent">
         <div class="headerImg">
-            <img alt="The Office of the Seneschal - Kingdom of Lochac" src="<?= $this->baseUrl() ?>/resources/office-of-the-seneschal.png" width="555" height="81"/>
+            <img alt="The Office of the Seneschal - Kingdom of Lochac"
+                src="<?= $this->baseUrl() ?>/resources/office-of-the-seneschal.png" width="555" height="81"/>
         </div>
         <a name="top"></a>
 
         <h1 class="center"><?= $this->escape($this->title) ?></h1>
 
 <?php
-if(isset($this->alerts)) {
-    foreach($this->alerts as $alert) {
+if (isset($this->alerts)) {
+    foreach ($this->alerts as $alert) {
         if (is_array($alert)) { ?>
         <div class="<?= $alert['type'] ?>"><?= $alert['message'] ?></div><br />
-<?php   } else { ?>
-        <?= $alert ?><br />
-<?php   }
+        <?php   } else { ?>
+            <?= $alert ?><br />
+        <?php   }
     }
 } ?>
 
@@ -61,8 +65,12 @@ if(isset($this->alerts)) {
 
         <div class="copyright">
             <hr />
-            <p>This page is maintained by the Publications/Technical Deputy to the Kingdom Seneschal<br />
-            Comments or suggestions to <a href="mailto:information&#64;lochac.sca.org">information&#64;lochac.sca.org</a></p>
+            <p>
+                This page is maintained by the Publications/Technical Deputy to the Kingdom Seneschal
+                <br />
+                Comments or suggestions to
+                <a href="mailto:information&#64;lochac.sca.org">information&#64;lochac.sca.org</a>
+            </p>
             <p style="font-size: 10px;">Application Code: Lord Edmund Kerr</p>
             <p style="font-size: 10px;">Site Design: Lord Ronan mac Briain</p>
         </div>

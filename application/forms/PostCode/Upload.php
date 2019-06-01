@@ -32,7 +32,5 @@ class SenDb_Form_PostCode_Upload extends Zend_Form
                 'label' => 'Submit'
             )
         );
-
     }
-
 }

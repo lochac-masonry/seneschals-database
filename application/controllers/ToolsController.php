@@ -43,10 +43,11 @@ class ToolsController extends SenDb_Controller
             $mailSubj = "Lochac Seneschals' Database Password Reminder";
 
             $mailBody = "Greetings {$group->scaname}!\n\n" .
-                        "This message is being sent to you because you are listed as the seneschal of the " .
-                        "{$group->type} of {$group->groupname}. If this is not the case, please delete this message.\n\n" .
-                        "To access the Lochac Seneschals' Database for quarterly reporting, editing email aliases or " .
-                        "updating the details of your Baron and Baroness, please go to " .
+                        "This message is being sent to you because you are listed as the " .
+                        "seneschal of the {$group->type} of {$group->groupname}. " .
+                        "If this is not the case, please delete this message.\n\n" .
+                        "To access the Lochac Seneschals' Database for quarterly reporting, editing " .
+                        "email aliases or updating the details of your Baron and Baroness, please go to " .
                         $url . " and enter the username and password listed below.\n\n" .
                         "Username: " . strtolower(str_replace(' ','',$group->groupname)) . "\n" .
                         "Password: PASSWORD\n\n" .
@@ -58,7 +59,10 @@ class ToolsController extends SenDb_Controller
             if(SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead)) {
                 $successCount++;
             } else {
-                $this->addAlert('Sending to seneschal of ' . $group->groupname . ' failed. Try emailing manually.', SenDb_Controller::ALERT_BAD);
+                $this->addAlert(
+                    'Sending to seneschal of ' . $group->groupname . ' failed. Try emailing manually.',
+                    self::ALERT_BAD
+                );
             }
 
             $totalCount++;
@@ -68,5 +72,4 @@ class ToolsController extends SenDb_Controller
         $this->addAlert($successCount . ' out of ' . $totalCount . ' emails sent successfully.');
     }
     */
-
 }

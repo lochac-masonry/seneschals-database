@@ -11,7 +11,7 @@
         <th>State</th>
         <th>Group</th>
     </tr>
-<?php foreach($this->results as $row) { ?>
+<?php foreach ($this->results as $row) { ?>
     <tr>
         <td><?= $this->escape($row->postcode) ?></td>
         <td><?= $this->escape($row->localities) ?></td>
@@ -23,9 +23,10 @@
 <?php
 echo 'Number of rows: ' . count($this->results) . "<br />\n";
 
-foreach($this->alerts as $alert) {
+foreach ($this->alerts as $alert) {
     if (is_array($alert)) { ?>
         <?= $alert['message'] ?><br />
-<?php } else { ?>
+    <?php } else { ?>
         <?= $alert ?><br />
-<?php } }
+    <?php }
+}

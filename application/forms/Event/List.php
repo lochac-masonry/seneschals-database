@@ -53,7 +53,5 @@ class SenDb_Form_Event_List extends Zend_Form
                 'decorators' => array('ViewHelper')
             )
         );
-
     }
-
 }

@@ -44,7 +44,5 @@ class SenDb_Form_Group_Close extends Zend_Form
             ),
             'close'
         );
-
     }
-
 }

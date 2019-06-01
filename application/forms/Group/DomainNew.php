@@ -31,7 +31,5 @@ class SenDb_Form_Group_DomainNew extends Zend_Form
                 'label' => 'Add New'
             )
         );
-
     }
-
 }

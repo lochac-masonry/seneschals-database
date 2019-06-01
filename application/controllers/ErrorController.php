@@ -26,11 +26,11 @@ class ErrorController extends SenDb_Controller
                 )
             );
         } catch (Exception $e) {
-            if(isset($config->exception->email)) {
+            if (isset($config->exception->email)) {
                 $mailSubj = 'Lochac Seneschals\' Database: Unhandled Exception';
 
                 $mailBody = "An error occurred in the error handler - something is probably going wrong.\n\n"
-                          . "New exception:\n" . $e.getMessage() . "\n\n"
+                          . "New exception:\n" . $e->getMessage() . "\n\n"
                           . "Original exception:\n" . print_r($exception, true);
 
                 $mailHead = "From: information@lochac.sca.org";
@@ -39,6 +39,4 @@ class ErrorController extends SenDb_Controller
             }
         }
     }
-
 }
-

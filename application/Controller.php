@@ -7,16 +7,16 @@ class SenDb_Controller extends Zend_Controller_Action
 
     protected function addAlert($message, $type = null)
     {
-        if(!is_string($message)) {
+        if (!is_string($message)) {
             throw new InvalidArgumentException('Argument $message must be string');
         }
-        if(isset($type)
+        if (isset($type)
           && $type !== self::ALERT_GOOD
           && $type !== self::ALERT_BAD) {
             throw new InvalidArgumentException('Argument $type must be unspecified or one of ALERT_GOOD or ALERT_BAD');
         }
 
-        if(!isset($this->view->alerts)) {
+        if (!isset($this->view->alerts)) {
             $this->view->alerts = array();
         }
 
@@ -27,6 +27,4 @@ class SenDb_Controller extends Zend_Controller_Action
     {
         $this->view->alerts = array();
     }
-
 }
-

@@ -26,7 +26,5 @@ class SenDb_Form_GroupSelect extends Zend_Form
                 'decorators' => array('ViewHelper')
             )
         );
-
     }
-
 }

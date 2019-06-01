@@ -12,7 +12,7 @@ class SenDb_Form_Group_Alias extends Zend_Form
 
         $this->addElement(
             'text',
-            'alias'.$id,
+            'alias' . $id,
             array(
                 'required'   => true,
                 'size'       => 25,
@@ -22,7 +22,7 @@ class SenDb_Form_Group_Alias extends Zend_Form
         );
         $this->addElement(
             'text',
-            'address'.$id,
+            'address' . $id,
             array(
                 'required'   => true,
                 'size'       => 25,
@@ -32,19 +32,17 @@ class SenDb_Form_Group_Alias extends Zend_Form
         );
         $this->addElement(
             'submit',
-            'submit'.$id,
+            'submit' . $id,
             array(
                 'label' => 'Save'
             )
         );
         $this->addElement(
             'submit',
-            'delete'.$id,
+            'delete' . $id,
             array(
                 'label' => 'Delete'
             )
         );
-
     }
-
 }

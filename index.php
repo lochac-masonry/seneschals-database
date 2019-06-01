@@ -20,42 +20,38 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $config = new Zend_Config_Ini('config.ini', APPLICATION_ENV);
 
 $authLevel = 'anyone';
-function authenticate() {
+function authenticate()
+{
     global $authLevel;
     global $config;
     $db = Zend_Db_Table::getDefaultAdapter();
 
     $groupList = $db->fetchPairs("SELECT id, groupname FROM scagroup");
-    foreach($groupList as $id => $groupname) {
+    foreach ($groupList as $id => $groupname) {
         $groupList[$id] = strtolower(str_replace(' ', '', $groupname));
     }
 
-    if(isset($_GET['bypass'])
+    if (isset($_GET['bypass'])
       && $_GET['bypass'] == 'true') {
         $auth['level'] = 'anyone';
-
-    } elseif(isset($_SERVER['PHP_AUTH_USER'])
+    } elseif (isset($_SERVER['PHP_AUTH_USER'])
       && ($_SERVER['PHP_AUTH_USER'] == $config->auth->admin->username)
       && (hash('sha256', $_SERVER['PHP_AUTH_PW']) == $config->auth->admin->passhash)) {
         $auth['level'] = 'admin';
         $auth['id'] = 1;
-
-    } elseif(isset($_SERVER['PHP_AUTH_USER'])
+    } elseif (isset($_SERVER['PHP_AUTH_USER'])
       && ($_SERVER['PHP_AUTH_USER'] == $config->auth->wheel->username)
       && (hash('sha256', $_SERVER['PHP_AUTH_PW']) == $config->auth->wheel->passhash)) {
         $auth['level'] = 'admin';
         $auth['id'] = 1;
-
-    } elseif(isset($_SERVER['PHP_AUTH_USER'])
-      && (in_array($_SERVER['PHP_AUTH_USER'],$groupList))
+    } elseif (isset($_SERVER['PHP_AUTH_USER'])
+      && (in_array($_SERVER['PHP_AUTH_USER'], $groupList))
       && (hash('sha256', $_SERVER['PHP_AUTH_PW']) == $config->auth->user->passhash)) {
         $auth['level'] = 'user';
         $auth['id'] = array_search($_SERVER['PHP_AUTH_USER'], $groupList);
-
-    } elseif(isset($_SERVER['PHP_AUTH_USER'])
+    } elseif (isset($_SERVER['PHP_AUTH_USER'])
       && ($_SERVER['PHP_AUTH_USER'] == 'guest')) {
         $auth['level'] = 'anyone';
-
     } else {
         Header('WWW-Authenticate: Basic realm="Seneschals\' Database"');
         $auth['level'] = 'anyone';
@@ -65,11 +61,12 @@ function authenticate() {
     return $auth;
 }
 
-function buildMenu() {
+function buildMenu()
+{
     global $authLevel;
     // Set up main menu based on authLevel. All cases fall through to build an authLevel-cumulative menu.
     // Links are relative to application root.
-    switch($authLevel) {
+    switch ($authLevel) {
         case 'admin':
             $menu[] = array(
                 'link' => array('controller' => 'group', 'action' => 'edit'),
@@ -91,6 +88,7 @@ function buildMenu() {
                 'link' => array('controller' => 'group', 'action' => 'domains'),
                 'name' => 'Manage Group Email Domains'
             );
+            // Fall through
         case 'user':
             $menu[] = array(
                 'link' => array('controller' => 'group', 'action' => 'aliases'),
@@ -108,6 +106,7 @@ function buildMenu() {
                 'link' => array('controller' => 'group', 'action' => 'baron-baroness'),
                 'name' => 'Baron and Baroness Details'
             );
+            // Fall through
         default: // Equivalent to case 'anyone'
             $menu[] = array(
                 'link' => array('controller' => 'postcode', 'action' => null),

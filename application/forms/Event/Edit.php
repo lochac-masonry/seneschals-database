@@ -268,7 +268,5 @@ class SenDb_Form_Event_Edit extends Zend_Form
             'submitGroup',
             array('legend' => 'Actions')
         );
-
     }
-
 }

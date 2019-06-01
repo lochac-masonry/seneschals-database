@@ -22,11 +22,11 @@ class PostcodeController extends SenDb_Controller
 
         try {
             $results = $db->fetchAll($sql);
-        } catch(Exception $e) {
-            die('Database error: ' . $e->getMessage);
+        } catch (Exception $e) {
+            die('Database error: ' . $e->getMessage());
         }
 
-        foreach($results as $row) {
+        foreach ($results as $row) {
             $message .= $row->postcode . ",," . $row->state . "," .
                         $row->groupname . "<BR />\n";
         }
@@ -51,33 +51,33 @@ class PostcodeController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Process the form
                                                             //----------------------------------------------------------
-        if($form->isValid($_POST)) {
+        if ($form->isValid($_POST)) {
             $values = $form->getValues();
 
-            if($form->printable->isChecked()) {
+            if ($form->printable->isChecked()) {
                 $this->_helper->layout->disableLayout();
                 $this->_helper->viewRenderer('queryTable');
             }
 
-            if($form->reset->isChecked()) {
+            if ($form->reset->isChecked()) {
                 $form->reset();
             }
 
             $queryExists = true;
-            if($form->querybygroup->isChecked()) {
+            if ($form->querybygroup->isChecked()) {
                 // Get listing from database where groupid as given.
                 $sql = "SELECT DISTINCT postcode, state, groupid FROM postcode " .
-                       "WHERE groupid={$db->quote($values['group'],Zend_Db::INT_TYPE)}";
-            } elseif($form->querybycode->isChecked()) {
+                       "WHERE groupid={$db->quote($values['group'], Zend_Db::INT_TYPE)}";
+            } elseif ($form->querybycode->isChecked()) {
                 // Get listing for postcode given
                 $sql = "SELECT DISTINCT postcode, state, groupid FROM postcode " .
-                       "WHERE postcode={$db->quote($values['postcode'],Zend_Db::INT_TYPE)}";
-            } elseif($form->querybyrange->isChecked()) {
+                       "WHERE postcode={$db->quote($values['postcode'], Zend_Db::INT_TYPE)}";
+            } elseif ($form->querybyrange->isChecked()) {
                 // Get listing for all codes in range
                 $sql = "SELECT DISTINCT postcode, state, groupid FROM postcode " .
-                       "WHERE postcode>={$db->quote($values['rangestart'],Zend_Db::INT_TYPE)} " .
-                       "AND postcode<={$db->quote($values['rangeend'],Zend_Db::INT_TYPE)}";
-            } elseif($form->querybylocality->isChecked()) {
+                       "WHERE postcode>={$db->quote($values['rangestart'], Zend_Db::INT_TYPE)} " .
+                       "AND postcode<={$db->quote($values['rangeend'], Zend_Db::INT_TYPE)}";
+            } elseif ($form->querybylocality->isChecked()) {
                 // Get listing for a given locality
                 $sql = "SELECT DISTINCT postcode, state, groupid FROM postcode " .
                        "WHERE locality LIKE {$db->quote('%' . $values['locality'] . '%')}";
@@ -86,14 +86,12 @@ class PostcodeController extends SenDb_Controller
                 $this->view->showForm = true;
             }
 
-            if($queryExists) {
+            if ($queryExists) {
                 $db->setFetchMode(Zend_Db::FETCH_OBJ);
                 try {
                     $results = $db->fetchAll($sql);
-
                 } catch (Exception $e) {
-                    $this->addAlert('Possible error fetching data.', SenDb_Controller::ALERT_BAD);
-
+                    $this->addAlert('Possible error fetching data.', self::ALERT_BAD);
                 }
 
                 foreach ($results as $result) {
@@ -101,17 +99,20 @@ class PostcodeController extends SenDb_Controller
                     $result->groupname = $groupList[$result->groupid];
 
                     // Also need a list of locality names with this postcode.
-                    $sql = "SELECT locality FROM postcode WHERE postcode={$db->quote($result->postcode)} ORDER BY locality";
+                    $sql = "SELECT locality FROM postcode " .
+                           "WHERE postcode={$db->quote($result->postcode)} ORDER BY locality";
                     try {
                         $localities[$result->postcode] = $db->fetchCol($sql);
-
                     } catch (Exception $e) {
-                        $this->addAlert('Possible error getting suburb list for postcode ' . $result->postcode . '.', SenDb_Controller::ALERT_BAD);
+                        $this->addAlert(
+                            'Possible error getting suburb list for postcode ' . $result->postcode . '.',
+                            self::ALERT_BAD
+                        );
                     }
 
                     $result->localities = '';
                     foreach ($localities[$result->postcode] as $locality) {
-                        if($result->localities == '') {
+                        if ($result->localities == '') {
                             $result->localities = $locality;
                         } else {
                             $result->localities .= ', ' . $locality;
@@ -122,7 +123,7 @@ class PostcodeController extends SenDb_Controller
                 $this->view->showResults = true;
             }
         } else {
-            $this->addAlert('Form not valid.', SenDb_Controller::ALERT_BAD);
+            $this->addAlert('Form not valid.', self::ALERT_BAD);
             $this->view->showForm = true;
         }
 
@@ -133,7 +134,7 @@ class PostcodeController extends SenDb_Controller
     {
         $auth = authenticate();
         $db = Zend_Db_Table::getDefaultAdapter();
-        if($auth['level'] != 'admin') {
+        if ($auth['level'] != 'admin') {
             throw new SenDb_Exception_NotAuthorised();
             return;
         }
@@ -150,7 +151,7 @@ class PostcodeController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Process form - attempt to assign postcode range
                                                             //----------------------------------------------------------
-        if($form->isValid($_POST)) {
+        if ($form->isValid($_POST)) {
             $values = $form->getValues();
 
             try {
@@ -158,17 +159,15 @@ class PostcodeController extends SenDb_Controller
                     'postcode',
                     array('groupid' => $values['group']),
                     array( // where
-                        "postcode>={$db->quote($values['rangestart'],Zend_Db::INT_TYPE)}",
-                        "postcode<={$db->quote($values['rangeend'],Zend_Db::INT_TYPE)}"
+                        "postcode>={$db->quote($values['rangestart'], Zend_Db::INT_TYPE)}",
+                        "postcode<={$db->quote($values['rangeend'], Zend_Db::INT_TYPE)}"
                     )
                 );
-
-            } catch(Exception $e) {
-                $this->addAlert('Possible error updating postcodes.', SenDb_Controller::ALERT_BAD);
+            } catch (Exception $e) {
+                $this->addAlert('Possible error updating postcodes.', self::ALERT_BAD);
             }
 
-            $this->addAlert($updateCount . ' row(s) updated.', SenDb_Controller::ALERT_GOOD);
-
+            $this->addAlert($updateCount . ' row(s) updated.', self::ALERT_GOOD);
         } else {
             // Don't.
         }
@@ -179,7 +178,7 @@ class PostcodeController extends SenDb_Controller
     public function uploadAction()
     {
         $auth = authenticate();
-        if($auth['level'] != 'admin') {
+        if ($auth['level'] != 'admin') {
             throw new SenDb_Exception_NotAuthorised();
             return;
         }
@@ -191,10 +190,10 @@ class PostcodeController extends SenDb_Controller
                                                             //----------------------------------------------------------
         $form = new SenDb_Form_PostCode_Upload(array('method' => 'post'));
 
-        if($form->isValid($_POST)) {
+        if ($form->isValid($_POST)) {
             // Process uploaded file
             $db = Zend_Db_Table::getDefaultAdapter();
-            $dir='/var/tmp';
+            $dir = '/var/tmp';
 
             $filter = new Zend_Filter();
 
@@ -205,41 +204,42 @@ class PostcodeController extends SenDb_Controller
             $targetfile = $dir . '/' . $userfile_name;
 
             if (move_uploaded_file($userfile['tmp_name'], $targetfile)) {
-                $this->addAlert('File successfully uploaded.', SenDb_Controller::ALERT_GOOD);
+                $this->addAlert('File successfully uploaded.', self::ALERT_GOOD);
 
                 // Mark all of the existing postcode records as old, and initialise counters.
-                $db->update('postcode',array('current' => 'N'));
+                $db->update('postcode', array('current' => 'N'));
                 $updateCount = 0;
                 $insertCount = 0;
                 $deleteCount = 0;
 
                 // We have a CSV file at targetfile - open it.
-                $file = fopen($targetfile,'r');
+                $file = fopen($targetfile, 'r');
 
                 // Grab the first row to use as headings.
-                if(!feof($file)) {
+                if (!feof($file)) {
                     $headRow = fgetcsv($file, 0, ',', '"');
                 }
 
                 // Get each row in turn
-                while(!feof($file)) {
+                while (!feof($file)) {
                     $rowData = fgetcsv($file, 0, ',', '"');
 
                     // add header row as keys for row array
-                    foreach($rowData as $key => $value) {
+                    foreach ($rowData as $key => $value) {
                         $row[$headRow[$key]] = $value;
                     }
 
-                    $sql = "SELECT COUNT(*) FROM postcode WHERE postcode={$db->quote($row['Pcode'],Zend_Db::INT_TYPE)} " .
+                    $sql = "SELECT COUNT(*) FROM postcode " .
+                           "WHERE postcode={$db->quote($row['Pcode'], Zend_Db::INT_TYPE)} " .
                            "AND locality={$db->quote($row['Locality'])} AND state={$db->quote($row['State'])}";
                     $exists = $db->fetchOne($sql);
 
                     // Does the entry exist?
-                    if($exists === 0) {
+                    if ($exists === 0) {
                         // Find the group that has the postcode and add to db.
                         $sql = "SELECT groupid FROM postcode WHERE postcode=$row[Pcode]";
                         $groupID = $db->fetchOne($sql);
-                        if($groupID == 0) {
+                        if ($groupID == 0) {
                             $groupID = 1;
                         }
 
@@ -261,8 +261,11 @@ class PostcodeController extends SenDb_Controller
                                     'groupid'          => $groupID
                                 )
                             );
-                        } catch(Exception $e) {
-                            $this->addAlert('Possible error adding ' . $row[Locality] . ', ' . $row[Pcode] . ', ' . $row[State] . '.', SenDb_Controller::ALERT_BAD);
+                        } catch (Exception $e) {
+                            $this->addAlert(
+                                "Possible error adding {$row[Locality]}, {$row[Pcode]}, {$row[State]}.",
+                                self::ALERT_BAD
+                            );
                         }
                         $insertCount++;
                     } else {
@@ -281,13 +284,16 @@ class PostcodeController extends SenDb_Controller
                                     'category'         => $row['Category']
                                 ),
                                 array( // where
-                                    "postcode={$db->quote($row['Pcode'],Zend_Db::INT_TYPE)}",
+                                    "postcode={$db->quote($row['Pcode'], Zend_Db::INT_TYPE)}",
                                     "locality={$db->quote($row['Locality'])}",
                                     "state={$db->quote($row['State'])}"
                                 )
                             );
-                        } catch(Exception $e) {
-                            $this->addAlert('Possible error updating ' . $row[Locality] . ', ' . $row[Pcode] . ', ' . $row[State] . '.', SenDb_Controller::ALERT_BAD);
+                        } catch (Exception $e) {
+                            $this->addAlert(
+                                "Possible error updating {$row[Locality]}, {$row[Pcode]}, {$row[State]}.",
+                                self::ALERT_BAD
+                            );
                         }
                         $updateCount++;
                     }
@@ -295,10 +301,9 @@ class PostcodeController extends SenDb_Controller
 
                 // delete any entries not in the uploaded file
                 try {
-                    $deleteCount = $db->delete('postcode',"current='N'");
-
-                } catch(Exception $e) {
-                    $this->addAlert('Possible error deleting old entries.', SenDb_Controller::ALERT_BAD);
+                    $deleteCount = $db->delete('postcode', "current='N'");
+                } catch (Exception $e) {
+                    $this->addAlert('Possible error deleting old entries.', self::ALERT_BAD);
                 }
                 $this->addAlert($insertCount . ' row(s) added.');
                 $this->addAlert($updateCount . ' row(s) updated.');
@@ -306,14 +311,11 @@ class PostcodeController extends SenDb_Controller
 
                 fclose($file);
             } else {
-                $this->addAlert('File move failed.', SenDb_Controller::ALERT_BAD);
+                $this->addAlert('File move failed.', self::ALERT_BAD);
             }
-
         } else {
             // Display the form
             $this->view->form .= $form;
         }
     }
-
 }
-

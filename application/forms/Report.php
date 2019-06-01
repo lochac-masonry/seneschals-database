@@ -472,7 +472,5 @@ class SenDb_Form_Report extends Zend_Form
             'officers',
             array('legend' => 'Summary of Officer Reports')
         );
-
     }
-
 }

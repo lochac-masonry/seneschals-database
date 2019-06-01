@@ -11,7 +11,7 @@ function lochac_sendb_autoload($className)
     $classPath = array_slice($classPath, 1);
 
     // Look for class of type 'Thing' in directory 'things'
-    if(count($classPath) > 1) {
+    if (count($classPath) > 1) {
         $classPath[0] = strtolower($classPath[0]) . 's';
     }
 

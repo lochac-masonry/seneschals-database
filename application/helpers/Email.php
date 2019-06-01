@@ -2,7 +2,8 @@
 
 class SenDb_Helper_Email
 {
-    public static function send($to, $subject, $body, $header = null) {
+    public static function send($to, $subject, $body, $header = null)
+    {
         global $config;
 
         if (is_array($to)) {

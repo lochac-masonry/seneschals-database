@@ -12,11 +12,11 @@ class SenDb_Form_Group_Domain extends Zend_Form
 
         $this->addElement(
             'select',
-            'groupid'.$id
+            'groupid' . $id
         );
         $this->addElement(
             'text',
-            'domain'.$id,
+            'domain' . $id,
             array(
                 'required'   => true,
                 'filters'    => array(
@@ -28,19 +28,17 @@ class SenDb_Form_Group_Domain extends Zend_Form
         );
         $this->addElement(
             'submit',
-            'submit'.$id,
+            'submit' . $id,
             array(
                 'label' => 'Save'
             )
         );
         $this->addElement(
             'submit',
-            'delete'.$id,
+            'delete' . $id,
             array(
                 'label' => 'Delete'
             )
         );
-
     }
-
 }

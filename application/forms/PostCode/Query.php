@@ -137,7 +137,7 @@ class SenDb_Form_PostCode_Query extends Zend_Form
                     array(
                         'stringLength',
                         false,
-                        array(0,64)
+                        array(0, 64)
                     )
                 )
             )
@@ -165,7 +165,5 @@ class SenDb_Form_PostCode_Query extends Zend_Form
                 'label' => 'Reset'
             )
         );
-
     }
-
 }

@@ -1,15 +1,32 @@
-<p>Use this page to find which geographical area a group operates in, or which group operates in a particular geographical area.</p>
+<p>
+    Use this page to find which geographical area a group operates in, or which group operates in a
+    particular geographical area.
+</p>
 You can:
 <ul>
-    <li>Search by Group: Select a group name from the list and press 'Submit' to get a list of suburbs controlled by that group.</li>
-    <li>Search by Postcode: Enter a numerical postcode and press 'Submit' to find the group operating in that suburb.</li>
-    <li>Search by Postcode Range: Submit a start and end postcode to get a list of suburbs in that range with the group controlling each.</li>
-    <li>Search by Suburb Name: Submit a suburb or locality name to find the group operating in that area.</li>
+    <li>
+        Search by Group: Select a group name from the list and press 'Submit' to get a list of
+        suburbs controlled by that group.
+    </li>
+    <li>
+        Search by Postcode: Enter a numerical postcode and press 'Submit' to find the group
+        operating in that suburb.
+    </li>
+    <li>
+        Search by Postcode Range: Submit a start and end postcode to get a list of suburbs in that
+        range with the group controlling each.
+    </li>
+    <li>
+        Search by Suburb Name: Submit a suburb or locality name to find the group operating in that area.
+    </li>
 </ul>
-<p>In any case, check the "Printable Report" button to remove the graphics and navigation from the results page.</p>
+<p>
+    In any case, check the "Printable Report" button to remove the graphics and navigation from the
+    results page.
+</p>
 
 <?php
-if($this->showResults) { ?>
+if ($this->showResults) { ?>
 <table class="colouredTable">
     <tr class="r1">
         <th>Postcode</th>
@@ -17,16 +34,17 @@ if($this->showResults) { ?>
         <th>State</th>
         <th>Group</th>
     </tr>
-<?php $i=0; foreach($this->results as $row) { ?>
+    <?php $i = 0; foreach ($this->results as $row) { ?>
     <tr class="r<?= ($i & 1) ?>">
         <td><?= $this->escape($row->postcode) ?></td>
         <td><?= $this->escape($row->localities) ?></td>
         <td><?= $this->escape($row->state) ?></td>
         <td><?= $this->escape($row->groupname) ?></td>
     </tr>
-<?php $i++; } ?>
+        <?php $i++;
+    } ?>
 </table>
-<?php
+    <?php
     echo 'Number of rows: ' . count($this->results) . "<br />\n";
 }
 

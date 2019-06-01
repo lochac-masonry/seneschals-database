@@ -254,7 +254,5 @@ class SenDb_Form_Event_New extends Zend_Form
             ),
             'endGroup'
         );
-
     }
-
 }

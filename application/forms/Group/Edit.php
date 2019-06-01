@@ -248,7 +248,5 @@ class SenDb_Form_Group_Edit extends Zend_Form
                 'label' => 'Reset'
             )
         );
-
     }
-
 }

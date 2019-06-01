@@ -240,7 +240,5 @@ class SenDb_Form_Group_Nobility extends Zend_Form
                 'label' => 'Reset'
             )
         );
-
     }
-
 }
