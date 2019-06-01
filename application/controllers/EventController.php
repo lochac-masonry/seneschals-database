@@ -9,9 +9,7 @@ class EventController extends SenDb_Controller
 
     protected function _emailSeneschal($seneschal)
     {
-        global $config;
-        $relativeUrl = $config->relativeUrl;
-
+        $url = $this->view->serverUrl($this->_helper->url->url(array(), null, true));
         $mailTo = $seneschal->email;
 
         $mailSubj = 'New Event Awaiting Approval';
@@ -21,7 +19,7 @@ class EventController extends SenDb_Controller
                     "At your convenience, log in using your group's username and password, review the proposal and " .
                     "edit, approve or reject as appropriate. Once approved, the event will be added to the Kingdom calendar " .
                     "and sent to Pegasus and Announce.\n" .
-                    "Access the Seneschals' Database at https://lochac.sca.org{$relativeUrl}.\n\n" .
+                    "Access the Seneschals' Database at {$url}.\n\n" .
                     "Kind Regards,\n" .
                     "The Lochac Seneschals' Database";
 
@@ -32,7 +30,7 @@ class EventController extends SenDb_Controller
 
     public function newAction()
     {
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         $groupList = $db->fetchPairs("SELECT id, groupname FROM scagroup WHERE status='live' ORDER BY groupname");
 
         $this->view->title = 'Submit Event Proposal';
@@ -113,7 +111,7 @@ class EventController extends SenDb_Controller
     public function listAction()
     {
         $auth = authenticate();
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         if($auth['level'] != 'admin' && $auth['level'] != 'user') {
             throw new SenDb_Exception_NotAuthorised();
             return;
@@ -228,15 +226,13 @@ class EventController extends SenDb_Controller
 
     protected function _emailAnnounce($values, $hostGroupName)
     {
-        global $config;
-        $relativeUrl = $config->relativeUrl;
-
+        $url = $this->view->serverUrl($this->_helper->url->url(array(), null, true));
         $mailTo = "announce@lochac.sca.org";
 
         $mailSubj = "Event Notification for {$values['name']} on {$values['startdate']} ({$hostGroupName})";
 
         $mailBody = "Event notification for {$values['name']} on {$values['startdate']}\n" .
-                    "The following announcement has been generated from https://lochac.sca.org{$relativeUrl}\n" .
+                    "The following announcement has been generated from {$url}\n" .
                     "and forwarded to Lochac-Announce at the request of the Event Steward.\n\n" .
                     "EVENT DETAILS\n=============\n" .
                     "Event Name:\t" . $values['name'] . "\n" .
@@ -315,8 +311,6 @@ class EventController extends SenDb_Controller
 
     protected function _getGoogleCalendarService()
     {
-        require_once('Google/autoload.php');
-
         $serviceAccount = json_decode(file_get_contents('google-key.json'));
 
         $credentials = new Google_Auth_AssertionCredentials(
@@ -404,7 +398,7 @@ class EventController extends SenDb_Controller
             throw new SenDb_Exception_NotAuthorised();
             return;
         }
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         $groupList = $db->fetchPairs("SELECT id, groupname FROM scagroup WHERE status='live' ORDER BY groupname");
 
         $this->view->title = 'Edit Event Proposal';

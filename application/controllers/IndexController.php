@@ -23,8 +23,6 @@ class IndexController extends SenDb_Controller
         }
         $this->addAlert($currentUser);
 
-        $this->view->authlevel = $auth['level'];
-
     }
 
 }

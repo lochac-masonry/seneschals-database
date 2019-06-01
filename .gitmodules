@@ -1,3 +1,0 @@
-[submodule "library/google-api-php-client"]
-	path = library/google-api-php-client
-	url = https://github.com/google/google-api-php-client.git

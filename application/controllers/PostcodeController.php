@@ -9,7 +9,7 @@ class PostcodeController extends SenDb_Controller
 
     public function listAction()
     {
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer('echoMessage', null, true);
 
@@ -36,7 +36,7 @@ class PostcodeController extends SenDb_Controller
 
     public function queryAction()
     {
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         $this->view->title = 'Postcode Query';
         $this->view->showResults = false; // Default - will be changed if results are returned.
 
@@ -132,7 +132,7 @@ class PostcodeController extends SenDb_Controller
     public function assignAction()
     {
         $auth = authenticate();
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         if($auth['level'] != 'admin') {
             throw new SenDb_Exception_NotAuthorised();
             return;
@@ -193,7 +193,7 @@ class PostcodeController extends SenDb_Controller
 
         if($form->isValid($_POST)) {
             // Process uploaded file
-            global $db;
+            $db = Zend_Db_Table::getDefaultAdapter();
             $dir='/var/tmp';
 
             $filter = new Zend_Filter();

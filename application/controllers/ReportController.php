@@ -5,7 +5,7 @@ class ReportController extends SenDb_Controller
     public function indexAction()
     {
         $auth = authenticate();
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         if($auth['level'] != 'admin' && $auth['level'] != 'user') {
             throw new SenDb_Exception_NotAuthorised();
             return;

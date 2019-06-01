@@ -12,8 +12,6 @@ class ToolsController extends SenDb_Controller
         $this->_helper->viewRenderer('echoMessage', null, true);
         $this->view->title = 'Version';
 
-        require_once('Google/autoload.php');
-
         $this->view->message = 'Lochac Seneschals\' Database: ' . SENDB_VERSION . "<br />\n"
                              . 'Zend Framework: ' . Zend_Version::VERSION . "<br />\n"
                              . 'Google API PHP Client: ' . Google_Client::LIBVER;
@@ -26,7 +24,8 @@ class ToolsController extends SenDb_Controller
     private function passwordReminderAction()
     {
         $auth = authenticate();
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
+        $url = $this->view->serverUrl($this->_helper->url->url(array(), null, true));
         if($auth['level'] != 'admin') {
             throw new SenDb_Exception_NotAuthorised();
             return;
@@ -47,8 +46,8 @@ class ToolsController extends SenDb_Controller
                         "This message is being sent to you because you are listed as the seneschal of the " .
                         "{$group->type} of {$group->groupname}. If this is not the case, please delete this message.\n\n" .
                         "To access the Lochac Seneschals' Database for quarterly reporting, editing email aliases or " .
-                        "updating the details of your Baron and Baroness, please go to https://lochac.sca.org" .
-                        Zend_Layout::getMvcInstance()->relativeUrl . " and enter the username and password listed below.\n\n" .
+                        "updating the details of your Baron and Baroness, please go to " .
+                        $url . " and enter the username and password listed below.\n\n" .
                         "Username: " . strtolower(str_replace(' ','',$group->groupname)) . "\n" .
                         "Password: PASSWORD\n\n" .
                         "Kind regards,\n" .

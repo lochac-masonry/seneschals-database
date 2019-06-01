@@ -9,7 +9,7 @@ class GroupController extends SenDb_Controller
 
     public function listAction()
     {
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer('echoMessage', null, true);
 
@@ -40,7 +40,7 @@ class GroupController extends SenDb_Controller
     {
         $this->view->title = 'Group Roster';
 
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         $db->setFetchMode(Zend_Db::FETCH_OBJ);
         $sql = 'SELECT groupname, type, status, scaname, realname, email, website, area FROM scagroup ORDER BY groupname';
         $results = $db->fetchAll($sql);
@@ -55,7 +55,7 @@ class GroupController extends SenDb_Controller
     public function editAction()
     {
         $auth = authenticate();
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         if($auth['level'] != 'admin') {
             throw new SenDb_Exception_NotAuthorised();
             return;
@@ -96,12 +96,14 @@ class GroupController extends SenDb_Controller
                     $values['id'] = NULL;
                     try {
                         $changed = $db->insert('scagroup',$values);
+                        $refreshUrl = $this->_helper->url->url()
+                            . '?' . http_build_query(array('groupid' => $db->lastInsertId()));
 
                         if($changed == 1) {
-                            $this->addAlert('Successfully added group ' . $values['groupname'] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/edit?groupid=' . $db->lastInsertId() . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
+                            $this->addAlert('Successfully added group ' . $values['groupname'] . '. <a href="' . $refreshUrl . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                         } else {
-                            $this->addAlert('Creating group ' . $values['groupname'] . ' failed. This is usually caused by a database issue. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/edit?groupid=' . $db->lastInsertId() . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
+                            $this->addAlert('Creating group ' . $values['groupname'] . ' failed. This is usually caused by a database issue. <a href="' . $refreshUrl . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                         }
 
                     } catch(Exception $e) {
@@ -118,12 +120,14 @@ class GroupController extends SenDb_Controller
                             $values,
                             "id={$db->quote($values['id'],Zend_Db::INT_TYPE)}"
                         );
+                        $refreshUrl = $this->_helper->url->url()
+                            . '?' . http_build_query(array('groupid' => $db->lastInsertId()));
 
                         if($changed == 1) {
-                            $this->addAlert('Successfully updated group ' . $values['groupname'] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/edit?groupid=' . $db->lastInsertId() . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
+                            $this->addAlert('Successfully updated group ' . $values['groupname'] . '. <a href="' . $refreshUrl . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                         } else {
-                            $this->addAlert('Updating group ' . $values['groupname'] . ' failed. The group might not exist. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/edit?groupid=' . $db->lastInsertId() . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
+                            $this->addAlert('Updating group ' . $values['groupname'] . ' failed. The group might not exist. <a href="' . $refreshUrl . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                         }
 
                     } catch(Exception $e) {
@@ -159,7 +163,7 @@ class GroupController extends SenDb_Controller
     public function closeAction()
     {
         $auth = authenticate();
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         if($auth['level'] != 'admin') {
             throw new SenDb_Exception_NotAuthorised();
             return;
@@ -208,7 +212,7 @@ class GroupController extends SenDb_Controller
     public function aliasesAction()
     {
         $auth = authenticate();
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         if($auth['level'] != 'admin' && $auth['level'] != 'user') {
             throw new SenDb_Exception_NotAuthorised();
             return;
@@ -237,6 +241,8 @@ class GroupController extends SenDb_Controller
             } else {
                 $groupid = $auth['id'];
             }
+            $refreshUrl = $this->_helper->url->url()
+                . '?' . http_build_query(array('groupid' => $groupid));
 
             // Find which domains this group can edit, form an appropriate regex and explanatory message.
             $domains = $db->fetchCol("SELECT domain FROM domains WHERE groupid={$db->quote($groupid,Zend_Db::INT_TYPE)}");
@@ -289,10 +295,10 @@ class GroupController extends SenDb_Controller
                             $changed = $db->delete('virtusers', "row_id={$db->quote($id,Zend_Db::INT_TYPE)}");
 
                             if($changed == 1) {
-                                $this->addAlert('Successfully deleted alias ' . $values['alias'.$id] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
+                                $this->addAlert('Successfully deleted alias ' . $values['alias'.$id] . '. <a href="' . $refreshUrl . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->addAlert('Deleting alias ' . $values['alias'.$id] . ' failed. The alias may have already been deleted. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
+                                $this->addAlert('Deleting alias ' . $values['alias'.$id] . ' failed. The alias may have already been deleted. <a href="' . $refreshUrl . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
@@ -311,10 +317,10 @@ class GroupController extends SenDb_Controller
                             );
 
                             if($changed == 1) {
-                                $this->addAlert('Successfully updated alias ' . $values['alias'.$id] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
+                                $this->addAlert('Successfully updated alias ' . $values['alias'.$id] . '. <a href="' . $refreshUrl . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->addAlert('Updating alias ' . $values['alias'.$id] . ' failed. The alias might not exist. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
+                                $this->addAlert('Updating alias ' . $values['alias'.$id] . ' failed. The alias might not exist. <a href="' . $refreshUrl . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
@@ -365,10 +371,10 @@ class GroupController extends SenDb_Controller
                         );
 
                         if($changed == 1) {
-                            $this->addAlert('Successfully added alias ' . $values['aliasnew'] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
+                            $this->addAlert('Successfully added alias ' . $values['aliasnew'] . '. <a href="' . $refreshUrl . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                         } else {
-                            $this->addAlert('Adding alias ' . $values['aliasnew'] . ' may have failed. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/aliases?groupid=' . $groupid . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
+                            $this->addAlert('Adding alias ' . $values['aliasnew'] . ' may have failed. <a href="' . $refreshUrl . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                         }
 
                     } catch(Exception $e) {
@@ -399,7 +405,8 @@ class GroupController extends SenDb_Controller
     public function domainsAction()
     {
         $auth = authenticate();
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
+        $refreshUrl = $this->_helper->url->url();
         if($auth['level'] != 'admin') {
             throw new SenDb_Exception_NotAuthorised();
             return;
@@ -449,10 +456,10 @@ class GroupController extends SenDb_Controller
                             $changed = $db->delete('domains', "id={$db->quote($id,Zend_Db::INT_TYPE)}");
 
                             if($changed == 1) {
-                                $this->addAlert('Successfully deleted domain ' . $values['domain'.$id] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
+                                $this->addAlert('Successfully deleted domain ' . $values['domain'.$id] . '. <a href="' . $refreshUrl . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->addAlert('Deleting domain ' . $values['domain'.$id] . ' failed. The domain may have already been deleted. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
+                                $this->addAlert('Deleting domain ' . $values['domain'.$id] . ' failed. The domain may have already been deleted. <a href="' . $refreshUrl . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
@@ -471,10 +478,10 @@ class GroupController extends SenDb_Controller
                             );
 
                             if($changed == 1) {
-                                $this->addAlert('Successfully updated domain ' . $values['domain'.$id] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
+                                $this->addAlert('Successfully updated domain ' . $values['domain'.$id] . '. <a href="' . $refreshUrl . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->addAlert('Updating domain ' . $values['domain'.$id] . ' failed. The domain might not exist. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
+                                $this->addAlert('Updating domain ' . $values['domain'.$id] . ' failed. The domain might not exist. <a href="' . $refreshUrl . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
@@ -522,10 +529,10 @@ class GroupController extends SenDb_Controller
                     );
 
                     if($changed == 1) {
-                        $this->addAlert('Successfully added domain ' . $values['domainnew'] . '. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
+                        $this->addAlert('Successfully added domain ' . $values['domainnew'] . '. <a href="' . $refreshUrl . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                     } else {
-                        $this->addAlert('Adding domain ' . $values['domainnew'] . ' may have failed. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/domains">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
+                        $this->addAlert('Adding domain ' . $values['domainnew'] . ' may have failed. <a href="' . $refreshUrl . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                     }
 
                 } catch(Exception $e) {
@@ -547,7 +554,7 @@ class GroupController extends SenDb_Controller
     public function baronBaronessAction()
     {
         $auth = authenticate();
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         if($auth['level'] != 'admin' && $auth['level'] != 'user') {
             throw new SenDb_Exception_NotAuthorised();
             return;
@@ -578,6 +585,8 @@ class GroupController extends SenDb_Controller
             } else {
                 $values['groupid'] = $auth['id'];
             }
+            $refreshUrl = $this->_helper->url->url()
+                . '?' . http_build_query(array('groupid' => $values['groupid']));
 
                                                             //----------------------------------------------------------
                                                             // Build B&B editing form
@@ -603,10 +612,10 @@ class GroupController extends SenDb_Controller
                             $changed = $db->insert('barony',$values);
 
                             if($changed == 1) {
-                                $this->addAlert('Successfully added barony. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/baron-baroness?groupid=' . $values['groupid'] . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
+                                $this->addAlert('Successfully added barony. <a href="' . $refreshUrl . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->addAlert('Adding barony failed. The barony may already exist. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/baron-baroness?groupid=' . $values['groupid'] . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
+                                $this->addAlert('Adding barony failed. The barony may already exist. <a href="' . $refreshUrl . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {
@@ -623,10 +632,10 @@ class GroupController extends SenDb_Controller
                             );
 
                             if($changed == 1) {
-                                $this->addAlert('Successfully updated barony. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/baron-baroness?groupid=' . $values['groupid'] . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
+                                $this->addAlert('Successfully updated barony. <a href="' . $refreshUrl . '">Click to continue.</a>', SenDb_Controller::ALERT_GOOD);
 
                             } else {
-                                $this->addAlert('Updating barony failed. The barony might not exist. <a href="' . Zend_Layout::getMvcInstance()->relativeUrl . '/group/baron-baroness?groupid=' . $values['groupid'] . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
+                                $this->addAlert('Updating barony failed. The barony might not exist. <a href="' . $refreshUrl . '">Refresh to check.</a>', SenDb_Controller::ALERT_BAD);
                             }
 
                         } catch(Exception $e) {

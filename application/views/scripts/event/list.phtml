@@ -1,5 +1,10 @@
-<?php $url = Zend_Layout::getMvcInstance()->relativeUrl;
-$thisUrl = $_SERVER['REQUEST_URI']; ?>
+<?php
+$editUrl = $this->url(
+    array('controller' => 'event', 'action' => 'edit'),
+    null,
+    true
+);
+?>
 <p>This page allows you to review event proposals associated with your group.<br />
 Choose a status and press 'Select' to view the different events:<br />
 <b>approved</b> events, <b>rejected</b> events and <b>new</b> events (awaiting review).<br />
@@ -23,10 +28,14 @@ if(0 < count($this->events)) {
     <tbody>
 <?php foreach($this->events as $id => $event) { ?>
         <tr>
-            <td><?php echo $this->escape($event->name); ?></td>
-            <td><?php echo $this->escape($event->startdate); ?></td>
-            <td><?php echo $this->escape($event->lastchange); ?></td>
-            <td><a href='<?php echo $url; ?>/event/edit?eventid=<?php echo $event->eventid; ?>'>View/Edit</a></td>
+            <td><?= $this->escape($event->name) ?></td>
+            <td><?= $this->escape($event->startdate) ?></td>
+            <td><?= $this->escape($event->lastchange) ?></td>
+            <td>
+                <a href="<?= $editUrl . '?' . http_build_query(array('eventid' => $event->eventid)) ?>">
+                    View/Edit
+                </a>
+            </td>
         </tr>
 <?php } ?>
     </tbody>

@@ -13,10 +13,10 @@
     </tr>
 <?php foreach($this->results as $row) { ?>
     <tr>
-        <td><?php echo $this->escape($row->postcode); ?></td>
-        <td><?php echo $this->escape($row->localities); ?></td>
-        <td><?php echo $this->escape($row->state); ?></td>
-        <td><?php echo $this->escape($row->groupname); ?></td>
+        <td><?= $this->escape($row->postcode) ?></td>
+        <td><?= $this->escape($row->localities) ?></td>
+        <td><?= $this->escape($row->state) ?></td>
+        <td><?= $this->escape($row->groupname) ?></td>
     </tr>
 <?php } ?>
 </table>
@@ -25,7 +25,7 @@ echo 'Number of rows: ' . count($this->results) . "<br />\n";
 
 foreach($this->alerts as $alert) {
     if (is_array($alert)) { ?>
-        <?php echo $alert['message']; ?><br />
+        <?= $alert['message'] ?><br />
 <?php } else { ?>
-        <?php echo $alert; ?><br />
+        <?= $alert ?><br />
 <?php } }

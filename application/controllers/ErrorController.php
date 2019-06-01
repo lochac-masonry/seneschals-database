@@ -4,7 +4,7 @@ class ErrorController extends SenDb_Controller
 {
     public function errorAction()
     {
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         global $config;
 
         $this->view->errors = $this->_getParam('error_handler');

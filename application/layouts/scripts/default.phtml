@@ -1,4 +1,3 @@
-<?php $url = $this->layout()->relativeUrl; ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -7,8 +6,8 @@
     <title>Lochac Seneschals' Database</title>
     <meta http-equiv="content-type"
         content="text/html;charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="<?php echo $url; ?>/resources/seneschal.css"/>
-    <link rel="stylesheet" type="text/css" href="<?php echo $url; ?>/resources/sen-print.css" media="print"/>
+    <link rel="stylesheet" type="text/css" href="<?= $this->baseUrl() ?>/resources/seneschal.css"/>
+    <link rel="stylesheet" type="text/css" href="<?= $this->baseUrl() ?>/resources/sen-print.css" media="print"/>
     <style type="text/css">.center {text-align: center;}</style>
 </head>
 
@@ -16,7 +15,7 @@
 
 <div id="Container">
     <div class="Navigation">
-        <img src="<?php echo $url; ?>/resources/kingdom-seneschal-device.png" alt="Office of the Seneschal of Lochac" width="250" height="269" usemap="#SenLinks" />
+        <img src="<?= $this->baseUrl() ?>/resources/kingdom-seneschal-device.png" alt="Office of the Seneschal of Lochac" width="250" height="269" usemap="#SenLinks" />
         <map id="SenLinks" name="SenLinks">
             <area shape="poly" coords="83,47,165,48,165,104,125,144,83,103" href="https://lochac.sca.org/lochac" target="_blank" alt="Kingdom of Lochac" />
             <area shape="circle" coords="125,197,33" href="https://seneschal.lochac.sca.org" alt="The Office of the Seneschal" />
@@ -25,38 +24,38 @@
         <p>
             <a href="https://lochac.sca.org/lochac">Lochac Homepage</a><br />
             <a href="https://seneschal.lochac.sca.org">From the Seneschal <small>(Home)</small></a><br />
-            <a href="<?php echo $url . '/'; ?>">Database</a><br />
+            <a href="<?= $this->url(array(), null, true) ?>">Database</a><br />
             <span class="subNav">
-<?php foreach(buildMenu($this->layout()->authlevel) as $item) { ?>
-                <a href="<?php echo $url . $item['link']; ?>"><?php echo $item['name']; ?></a><br />
+<?php foreach(buildMenu() as $item) { ?>
+                <a href="<?= $this->url($item['link']) ?>"><?= $item['name'] ?></a><br />
 <?php } ?>
             </span>
         </p>
 
-        <img alt="Navigation Border" src="<?php echo $url; ?>/resources/nav-bottom.png" width="250" height="59"/>
+        <img alt="Navigation Border" src="<?= $this->baseUrl() ?>/resources/nav-bottom.png" width="250" height="59"/>
     </div>
 
     <div class="PageContent">
         <div class="headerImg">
-            <img alt="The Office of the Seneschal - Kingdom of Lochac" src="<?php echo $url; ?>/resources/office-of-the-seneschal.png" width="555" height="81"/>
+            <img alt="The Office of the Seneschal - Kingdom of Lochac" src="<?= $this->baseUrl() ?>/resources/office-of-the-seneschal.png" width="555" height="81"/>
         </div>
         <a name="top"></a>
 
-        <h1 class="center"><?php echo $this->escape($this->title); ?></h1>
+        <h1 class="center"><?= $this->escape($this->title) ?></h1>
 
 <?php
 if(isset($this->alerts)) {
     foreach($this->alerts as $alert) {
         if (is_array($alert)) { ?>
-        <div class="<?php echo $alert['type']; ?>"><?php echo $alert['message']; ?></div><br />
+        <div class="<?= $alert['type'] ?>"><?= $alert['message'] ?></div><br />
 <?php   } else { ?>
-        <?php echo $alert; ?><br />
+        <?= $alert ?><br />
 <?php   }
     }
 } ?>
 
         <!-- Start page content -->
-<?php echo $this->layout()->content; ?>
+<?= $this->layout()->content ?>
 
         <!-- End page content -->
 
