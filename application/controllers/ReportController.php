@@ -190,6 +190,7 @@ class ReportController extends \SenDb\Controller
                                . "\n\n== Chatelaine/Hospitaller\n" . $values['sumchatelaine']
                                . "\n\n== Lists\n" . $values['sumlists']
                                . "\n\n== Youth\n" . $values['sumyouth']
+                               . "\n\n== Historian\n" . $values['sumhistorian']
                                . "\n"
                                . "\nSUMMARY OF SUB-GROUPS"
                                . "\n======================";
