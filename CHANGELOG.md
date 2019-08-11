@@ -7,6 +7,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.0.0] - 2019-08-11
+
 ### Added
 
 * README, with development and deployment instructions.
@@ -45,7 +47,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v1.6.0
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.0.0
+[2.0.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.0.0..v1.6.0
 [1.6.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.6.0..v1.5.0
 [1.5.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.5.0..v1.4.0
 [1.4.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.4.0..v1.3.0

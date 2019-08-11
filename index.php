@@ -2,7 +2,7 @@
 
 $startTime = microtime(true);
 
-define('SENDB_VERSION', '1.6.0');
+define('SENDB_VERSION', '2.0.0');
 
 // Define path to application directory
 defined('APPLICATION_PATH')
