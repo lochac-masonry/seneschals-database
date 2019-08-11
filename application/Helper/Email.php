@@ -1,8 +1,13 @@
 <?php
 
-class SenDb_Helper_Email
+namespace SenDb\Helper;
+
+use IllegalArgumentException;
+
+class Email
 {
-    public static function send($to, $subject, $body, $header = null) {
+    public static function send($to, $subject, $body, $header = null)
+    {
         global $config;
 
         if (is_array($to)) {

@@ -1,17 +1,21 @@
 <?php
 
-class ReportController extends SenDb_Controller
+use SenDb\Exception\NotAuthorised;
+use SenDb\Form;
+use SenDb\Helper\Email;
+
+class ReportController extends \SenDb\Controller
 {
     public function indexAction()
     {
         $auth = authenticate();
-        global $db;
-        if($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            throw new SenDb_Exception_NotAuthorised();
+        $db = Zend_Db_Table::getDefaultAdapter();
+        if ($auth['level'] != 'admin' && $auth['level'] != 'user') {
+            throw new NotAuthorised();
             return;
         }
 
-        $this->_helper->viewRenderer('echoMessage',null,true);
+        $this->_helper->viewRenderer('echoMessage', null, true);
         $this->view->title = 'Submit Quarterly Report';
         $this->view->message = '';
         $groupList = $db->fetchPairs('SELECT id, groupname FROM scagroup ORDER BY groupname');
@@ -20,17 +24,17 @@ class ReportController extends SenDb_Controller
                                                             // Group selection form
                                                             // Enabled for admin, disabled for regular groups
                                                             //----------------------------------------------------------
-        $groupSelectForm = new SenDb_Form_GroupSelect(array('method' => 'get'));
+        $groupSelectForm = new Form\GroupSelect(array('method' => 'get'));
         $groupSelectForm->groupid->options = $groupList;
 
-        if($auth['level'] != 'admin') {
+        if ($auth['level'] != 'admin') {
             $groupSelectForm->groupid->disabled = true;
             $groupSelectForm->submit->disabled = true;
         }
 
-        if($groupSelectForm->isValid($_GET)) {
+        if ($groupSelectForm->isValid($_GET)) {
             //Show relevant details for the selected group.
-            if($auth['level'] == 'admin') {
+            if ($auth['level'] == 'admin') {
                 $values['id'] = $groupSelectForm->getValue('groupid');
             } else {
                 $values['id'] = $auth['id'];
@@ -38,19 +42,20 @@ class ReportController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Build the report form
                                                             //----------------------------------------------------------
-            $detailsForm = new SenDb_Form_Report(array('method' => 'post'));
+            $detailsForm = new Form\Report(array('method' => 'post'));
             $detailsForm->parentid->options = $groupList;
 
                                                             //----------------------------------------------------------
                                                             // Section - subgroups, if any
                                                             //----------------------------------------------------------
             $db->setFetchMode(Zend_Db::FETCH_OBJ);
-            $subgroups = $db->fetchAll("SELECT id, type, groupname FROM scagroup WHERE parentid={$db->quote($values['id'],Zend_Db::INT_TYPE)} " .
+            $subgroups = $db->fetchAll("SELECT id, type, groupname FROM scagroup " .
+                                       "WHERE parentid={$db->quote($values['id'], Zend_Db::INT_TYPE)} " .
                                        "AND (status='live' OR status='proposed')");
-            foreach($subgroups as $subgroup) {
+            foreach ($subgroups as $subgroup) {
                 $detailsForm->addElement(
                     'textarea',
-                    'subgroup'.$subgroup->id,
+                    'subgroup' . $subgroup->id,
                     array(
                         'label' => $subgroup->type . ' of ' . $subgroup->groupname,
                         'cols'  => 50,
@@ -59,9 +64,9 @@ class ReportController extends SenDb_Controller
                     )
                 );
 
-                $subgroupFields[] = 'subgroup'.$subgroup->id;
+                $subgroupFields[] = 'subgroup' . $subgroup->id;
             }
-            if(!empty($subgroupFields)) {
+            if (!empty($subgroupFields)) {
                 $detailsForm->addDisplayGroup(
                     $subgroupFields,
                     'subgroups',
@@ -87,17 +92,19 @@ class ReportController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Process the submitted report
                                                             //----------------------------------------------------------
-            if($detailsForm->isValid($_POST)) {
+            if ($detailsForm->isValid($_POST)) {
                 $values = array_merge($values, $detailsForm->getValues());
 
-                if($detailsForm->reset->isChecked()) {
+                if ($detailsForm->reset->isChecked()) {
                     $detailsForm->reset();
-
-                } elseif($detailsForm->submit->isChecked()) {
+                } elseif ($detailsForm->submit->isChecked()) {
                     // Fetch fixed information.
                     $db->setFetchMode(Zend_Db::FETCH_ASSOC);
-                    $values = array_merge($values, $db->fetchRow("SELECT type, groupname, parentid FROM scagroup WHERE id=" .
-                                                                 $db->quote($values['id'],Zend_Db::INT_TYPE)));
+                    $values = array_merge(
+                        $values,
+                        $db->fetchRow("SELECT type, groupname, parentid FROM scagroup WHERE id=" .
+                                      $db->quote($values['id'], Zend_Db::INT_TYPE))
+                    );
 
                                                             //----------------------------------------------------------
                                                             // Update database with latest group details
@@ -121,12 +128,11 @@ class ReportController extends SenDb_Controller
                     try {
                         $changed = $db->update(
                             'scagroup',
-                            array_intersect_key($values,array_flip($keys)),
-                            "id={$db->quote($values['id'],Zend_Db::INT_TYPE)}"
+                            array_intersect_key($values, array_flip($keys)),
+                            "id={$db->quote($values['id'], Zend_Db::INT_TYPE)}"
                         );
-
-                    } catch(Exception $e) {
-                        $this->addAlert('Possible error updating group details.', SenDb_Controller::ALERT_BAD);
+                    } catch (Exception $e) {
+                        $this->addAlert('Possible error updating group details.', self::ALERT_BAD);
                     }
                     $this->addAlert($changed . ' record(s) affected.');
 
@@ -184,27 +190,29 @@ class ReportController extends SenDb_Controller
                                . "\n\n== Chatelaine/Hospitaller\n" . $values['sumchatelaine']
                                . "\n\n== Lists\n" . $values['sumlists']
                                . "\n\n== Youth\n" . $values['sumyouth']
+                               . "\n\n== Historian\n" . $values['sumhistorian']
                                . "\n"
                                . "\nSUMMARY OF SUB-GROUPS"
                                . "\n======================";
 
-                    foreach($subgroups as $subgroup) {
+                    foreach ($subgroups as $subgroup) {
                         $mailbody .= "\nSummary report for " . $subgroup->type . " of " . $subgroup->groupname;
-                        $mailbody .= "\n" . $values['subgroup'.$subgroup->id] . "\n";
+                        $mailbody .= "\n" . $values['subgroup' . $subgroup->id] . "\n";
                     }
 
-                    $mailto[] = $db->fetchOne("SELECT email FROM scagroup WHERE id={$db->quote($values['parentid'],Zend_Db::INT_TYPE)}");
+                    $mailto[] = $db->fetchOne("SELECT email FROM scagroup " .
+                                              "WHERE id={$db->quote($values['parentid'], Zend_Db::INT_TYPE)}");
                     $mailto[] = $values['email'];
-                    if($values['copyhospit']) {
+                    if ($values['copyhospit']) {
                         $mailto[] = "hospitaller@lochac.sca.org";
                     }
-                    if($values['copychirurgeon']) {
+                    if ($values['copychirurgeon']) {
                         $mailto[] = "chirurgeon@lochac.sca.org";
                     }
-                    if(!empty($values['othercopy1'])) {
+                    if (!empty($values['othercopy1'])) {
                         $mailto[] = $values['othercopy1'];
                     }
-                    if(!empty($values['othercopy2'])) {
+                    if (!empty($values['othercopy2'])) {
                         $mailto[] = $values['othercopy2'];
                     }
 
@@ -213,20 +221,21 @@ class ReportController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Send report
                                                             //----------------------------------------------------------
-                    if(SenDb_Helper_Email::send($mailto,$mailsubj,$mailbody,$mailheaders)) {
-                        $this->addAlert('Report sent to ' . count($mailto) . ' recipient(s).', SenDb_Controller::ALERT_GOOD);
+                    if (Email::send($mailto, $mailsubj, $mailbody, $mailheaders)) {
+                        $this->addAlert('Report sent to ' . count($mailto) . ' recipient(s).', self::ALERT_GOOD);
                     } else {
-                        $this->addAlert('Failed to send report.', SenDb_Controller::ALERT_BAD);
+                        $this->addAlert('Failed to send report.', self::ALERT_BAD);
                     }
-
                 }
             }
                                                             //----------------------------------------------------------
                                                             // Populate the form with current information
                                                             //----------------------------------------------------------
-            if(!empty($values['id'])) {
+            if (!empty($values['id'])) {
                 $db->setFetchMode(Zend_Db::FETCH_ASSOC);
-                $defaults = $db->fetchRow("SELECT * FROM scagroup WHERE id={$db->quote($values['id'],Zend_Db::INT_TYPE)}");
+                $defaults = $db->fetchRow(
+                    "SELECT * FROM scagroup WHERE id={$db->quote($values['id'], Zend_Db::INT_TYPE)}"
+                );
                 $detailsForm->setDefaults($defaults);
             }
         }
@@ -234,15 +243,13 @@ class ReportController extends SenDb_Controller
                                                             //----------------------------------------------------------
                                                             // Pre-select the user's group and render the form(s)
                                                             //----------------------------------------------------------
-        if($auth['level'] == 'user') {
+        if ($auth['level'] == 'user') {
             $groupSelectForm->setDefaults(array('groupid' => $auth['id']));
         }
 
         $this->view->message .= "\n\n" . $groupSelectForm;
-        if(!empty($detailsForm)) {
+        if (!empty($detailsForm)) {
             $this->view->message .= "\n\n" . $detailsForm;
         }
     }
-
 }
-

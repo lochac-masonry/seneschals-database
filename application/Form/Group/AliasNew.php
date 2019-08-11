@@ -1,18 +1,18 @@
 <?php
 
-class SenDb_Form_Group_Alias extends Zend_Form
+namespace SenDb\Form\Group;
+
+class AliasNew extends \Zend_Form
 {
     public function init()
     {
-        $id = $this->getAttrib('suffix');
-
         $this->setAction('#');
         $this->setDecorators(array('FormElements', 'Form'));
         $this->setElementDecorators(array('ViewHelper'));
 
         $this->addElement(
             'text',
-            'alias'.$id,
+            'aliasnew',
             array(
                 'required'   => true,
                 'size'       => 25,
@@ -22,7 +22,7 @@ class SenDb_Form_Group_Alias extends Zend_Form
         );
         $this->addElement(
             'text',
-            'address'.$id,
+            'addressnew',
             array(
                 'required'   => true,
                 'size'       => 25,
@@ -32,19 +32,10 @@ class SenDb_Form_Group_Alias extends Zend_Form
         );
         $this->addElement(
             'submit',
-            'submit'.$id,
+            'submitnew',
             array(
-                'label' => 'Save'
+                'label' => 'Add New'
             )
         );
-        $this->addElement(
-            'submit',
-            'delete'.$id,
-            array(
-                'label' => 'Delete'
-            )
-        );
-
     }
-
 }

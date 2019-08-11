@@ -1,10 +1,12 @@
 <?php
 
-class ErrorController extends SenDb_Controller
+use SenDb\Helper\Email;
+
+class ErrorController extends \SenDb\Controller
 {
     public function errorAction()
     {
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
         global $config;
 
         $this->view->errors = $this->_getParam('error_handler');
@@ -26,19 +28,17 @@ class ErrorController extends SenDb_Controller
                 )
             );
         } catch (Exception $e) {
-            if(isset($config->exception->email)) {
+            if (isset($config->exception->email)) {
                 $mailSubj = 'Lochac Seneschals\' Database: Unhandled Exception';
 
                 $mailBody = "An error occurred in the error handler - something is probably going wrong.\n\n"
-                          . "New exception:\n" . $e.getMessage() . "\n\n"
+                          . "New exception:\n" . $e->getMessage() . "\n\n"
                           . "Original exception:\n" . print_r($exception, true);
 
                 $mailHead = "From: information@lochac.sca.org";
 
-                SenDb_Helper_Email::send($config->exception->email, $mailSubj, $mailBody, $mailHead);
+                Email::send($config->exception->email, $mailSubj, $mailBody, $mailHead);
             }
         }
     }
-
 }
-

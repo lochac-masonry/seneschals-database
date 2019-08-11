@@ -1,0 +1,20 @@
+{
+    "name": "lochac/seneschals-database",
+    "type": "project",
+    "require": {
+        "zendframework/zendframework1": "^1.12",
+        "google/apiclient": "1.1.4"
+    },
+    "authors": [
+        {
+            "name": "Dylan Kerr",
+            "email": "dylan-kerr@users.noreply.github.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"SenDb\\": "application/"}
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.4"
+    }
+}

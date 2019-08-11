@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_Report extends Zend_Form
+namespace SenDb\Form;
+
+class Report extends \Zend_Form
 {
     public function init()
     {
@@ -456,6 +458,16 @@ class SenDb_Form_Report extends Zend_Form
                 'wrap'  => 'virtual'
             )
         );
+        $this->addElement(
+            'textarea',
+            'sumhistorian',
+            array(
+                'label' => 'Historian',
+                'cols'  => 50,
+                'rows'  => 10,
+                'wrap'  => 'virtual'
+            )
+        );
         $this->addDisplayGroup(
             array(
                 'summarshal',
@@ -467,12 +479,11 @@ class SenDb_Form_Report extends Zend_Form
                 'sumchronicler',
                 'sumchatelaine',
                 'sumlists',
-                'sumyouth'
+                'sumyouth',
+                'sumhistorian'
             ),
             'officers',
             array('legend' => 'Summary of Officer Reports')
         );
-
     }
-
 }

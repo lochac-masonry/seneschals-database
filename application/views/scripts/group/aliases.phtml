@@ -1,14 +1,21 @@
-<p>From this page, you can edit email aliases associated with your group. 'Alias' gives the lochac.sca.org (or other appropriately configured subdomain) address, while 'Destination Address' is where mail sent to the alias will be forwarded.<br />
-To add a new alias, fill in the last row of the table and press 'Add New'.<br />
-To modify an existing alias, change the alias or destination address in the relevant row and press 'Save'.<br />
-To remove an alias permanently, press 'Delete' in the relevant row.</p>
+<p>
+    From this page, you can edit email aliases associated with your group. 'Alias' gives the
+    lochac.sca.org (or other appropriately configured subdomain) address, while 'Destination Address'
+    is where mail sent to the alias will be forwarded.
+    <br />
+    To add a new alias, fill in the last row of the table and press 'Add New'.
+    <br />
+    To modify an existing alias, change the alias or destination address in the relevant row and press 'Save'.
+    <br />
+    To remove an alias permanently, press 'Delete' in the relevant row.
+</p>
 
 <p>Changes may take up to one hour to take effect.</p>
 
 <?php
 echo $this->groupSelectForm;
-if(0 < count($this->aliasForms)) {
-?>
+if (0 < count($this->aliasForms)) {
+    ?>
 
 
 <style type="text/css">
@@ -22,16 +29,16 @@ if(0 < count($this->aliasForms)) {
         <th></th>
         <th></th>
     </tr>
-<?php foreach($this->aliasForms as $aliasForm) { ?>
+    <?php foreach ($this->aliasForms as $aliasForm) { ?>
     <tr>
         <td colspan='4'>
-<?php echo $aliasForm; ?>
+        <?= $aliasForm ?>
         </td>
     </tr>
-<?php } ?>
+    <?php } ?>
 </table>
-<?php
-echo count($this->aliasForms)-1 . " record(s) displayed.<br />\n";
+    <?php
+    echo count($this->aliasForms) - 1 . " record(s) displayed.<br />\n";
 }
 ?>
 

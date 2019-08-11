@@ -1,15 +1,30 @@
-<p>From this page you can control which subdomains of lochac.sca.org can be used by which groups for their email aliases. 'Group' is the name of the group controlling a domain, and 'Domain' is the name of the domain which must be lower-case letters only. For instance, for riverhaven.lochac.sca.org the domain is 'riverhaven'. A group can control multiple domains, and a domain can be controlled by multiple groups.<br />
-To add a new domain, select the desired group and enter an appropriate domain in the last row of the table below, and press 'Add New'.<br />
-To modify an existing domain, select a new group or change the domain name in the relevant row and press 'Save'.<br />
-To remove a domain completely, press 'Delete' in the relevant row.</p>
+<p>
+    From this page you can control which subdomains of lochac.sca.org can be used by which groups
+    for their email aliases. 'Group' is the name of the group controlling a domain, and 'Domain'
+    is the name of the domain which must be lower-case letters only. For instance, for
+    riverhaven.lochac.sca.org the domain is 'riverhaven'. A group can control multiple domains,
+    and a domain can be controlled by multiple groups.
+    <br />
+    To add a new domain, select the desired group and enter an appropriate domain in the last row
+    of the table below, and press 'Add New'.
+    <br />
+    To modify an existing domain, select a new group or change the domain name in the relevant row
+    and press 'Save'.
+    <br />
+    To remove a domain completely, press 'Delete' in the relevant row.
+</p>
 
-<p>Before changing or removing a domain, ensure the group has no aliases under that domain using Manage Group Email Aliases. You may wish to record them so that you can recreate them under the new domain.</p>
+<p>
+    Before changing or removing a domain, ensure the group has no aliases under that domain using
+    Manage Group Email Aliases. You may wish to record them so that you can recreate them under
+    the new domain.
+</p>
 
 <p>Changes may take up to one hour to take effect.</p>
 
 <?php
-if(0 < count($this->domainForms)) {
-?>
+if (0 < count($this->domainForms)) {
+    ?>
 
 
 <style type="text/css">
@@ -23,16 +38,16 @@ if(0 < count($this->domainForms)) {
         <th></th>
         <th></th>
     </tr>
-<?php foreach($this->domainForms as $domainForm) { ?>
+    <?php foreach ($this->domainForms as $domainForm) { ?>
     <tr>
         <td colspan='4'>
-<?php echo $domainForm; ?>
+        <?= $domainForm ?>
         </td>
     </tr>
-<?php } ?>
+    <?php } ?>
 </table>
-<?php
-echo count($this->domainForms)-1 . " record(s) displayed.<br />\n";
+    <?php
+    echo count($this->domainForms) - 1 . " record(s) displayed.<br />\n";
 }
 ?>
 

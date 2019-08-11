@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_Group_Nobility extends Zend_Form
+namespace SenDb\Form\Group;
+
+class Nobility extends \Zend_Form
 {
     public function init()
     {
@@ -240,7 +242,5 @@ class SenDb_Form_Group_Nobility extends Zend_Form
                 'label' => 'Reset'
             )
         );
-
     }
-
 }

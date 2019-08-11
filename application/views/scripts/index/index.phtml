@@ -1,6 +1,10 @@
 <p>This site is an interface to the database of Lochac group information, with facilities for seneschals to report and update details, and for the public to find group areas and contact information.</p>
 
-<h3 class="center"><a href="<?php echo Zend_Layout::getMvcInstance()->relativeUrl; ?>/index/home">Log in for seneschals' functions</a></h3>
+<h3 class="center">
+   <a href="<?= $this->url(array('controller' => 'index', 'action' => 'home'), null, true) ?>">
+      Log in for seneschals' functions
+   </a>
+</h3>
 <hr />
 <br />
 

@@ -1,22 +1,59 @@
-<p>This site is an interface to the database of Lochac group information, with facilities for seneschals to report and update details, and for the public to find group areas and contact information.</p>
+<?php global $authLevel; ?>
+<p>
+    This site is an interface to the database of Lochac group information, with facilities for
+    seneschals to report and update details, and for the public to find group areas and contact
+    information.
+</p>
 
 <br /><hr /><br />
 
 <p>Briefly,</p>
 <ul>
-<?php switch($this->authlevel) {
-    case 'admin':?>
-   <li>Edit Group Details: The Lochac Seneschal can change group status and contact information, or add new groups.</li>
-   <li>Close a Group: Re-assign all of a group's postcodes to another group, as when closing a group. Group status still needs to be changed in Edit Group Details.</li>
-   <li>Assign Postcodes: Allocate a range of postcodes to a group.</li>
-   <li>Upload Postcodes File: Update the list of assignable postcodes from Australia Post's list.</li>
-   <li>Manage Group Email Domains: Control which groups can use which subdomains for their aliases.</li>
-<?php case 'user':?>
-   <li>Manage Group Email Aliases: lochac.sca.org email redirects can be updated here.</li>
-   <li>Quarterly Reports: Group Seneschals can submit their quarterly report here.</li>
-   <li>Baron and Baroness Details: Barony Seneschals can update the name and contact information of their Baron and Baroness here.</li>
-<?php default:?>
-   <li>Postcode Query: Members of the public can find out which postcodes belong to which group, searching by postcode, range, suburb name or group name.</li>
-   <li>Group Roster: View summary information for all groups.</li>
+<?php
+switch ($authLevel) {
+    case 'admin':
+        ?>
+    <li>
+        Edit Group Details: The Lochac Seneschal can change group status and contact information,
+        or add new groups.
+    </li>
+    <li>
+        Close a Group: Re-assign all of a group's postcodes to another group, as when closing a
+        group. Group status still needs to be changed in Edit Group Details.
+    </li>
+    <li>
+        Assign Postcodes: Allocate a range of postcodes to a group.
+    </li>
+    <li>
+        Upload Postcodes File: Update the list of assignable postcodes from Australia Post's list.
+    </li>
+    <li>
+        Manage Group Email Domains: Control which groups can use which subdomains for their aliases.
+    </li>
+        <?php
+        // Fall through
+    case 'user':
+        ?>
+    <li>
+        Manage Group Email Aliases: lochac.sca.org email redirects can be updated here.
+    </li>
+    <li>
+        Quarterly Reports: Group Seneschals can submit their quarterly report here.
+    </li>
+    <li>
+        Baron and Baroness Details: Barony Seneschals can update the name and contact information
+        of their Baron and Baroness here.
+    </li>
+        <?php
+        // Fall through
+    default:
+        ?>
+    <li>
+        Postcode Query: Members of the public can find out which postcodes belong to which group,
+        searching by postcode, range, suburb name or group name.
+    </li>
+    <li>
+        Group Roster: View summary information for all groups.
+    </li>
 <?php } ?>
 </ul>

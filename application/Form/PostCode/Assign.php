@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_PostCode_Assign extends Zend_Form
+namespace SenDb\Form\PostCode;
+
+class Assign extends \Zend_Form
 {
     public function init()
     {
@@ -19,7 +21,7 @@ class SenDb_Form_PostCode_Assign extends Zend_Form
                     array(
                         'stringLength',
                         false,
-                        array(0,4)
+                        array(0, 4)
                     )
                 )
             )
@@ -37,7 +39,7 @@ class SenDb_Form_PostCode_Assign extends Zend_Form
                     array(
                         'stringLength',
                         false,
-                        array(0,4)
+                        array(0, 4)
                     )
                 )
             )
@@ -65,7 +67,5 @@ class SenDb_Form_PostCode_Assign extends Zend_Form
             ),
             'assign'
         );
-
     }
-
 }

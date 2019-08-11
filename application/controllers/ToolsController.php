@@ -1,6 +1,6 @@
 <?php
 
-class ToolsController extends SenDb_Controller
+class ToolsController extends \SenDb\Controller
 {
     public function indexAction()
     {
@@ -11,8 +11,6 @@ class ToolsController extends SenDb_Controller
     {
         $this->_helper->viewRenderer('echoMessage', null, true);
         $this->view->title = 'Version';
-
-        require_once('Google/autoload.php');
 
         $this->view->message = 'Lochac Seneschals\' Database: ' . SENDB_VERSION . "<br />\n"
                              . 'Zend Framework: ' . Zend_Version::VERSION . "<br />\n"
@@ -26,9 +24,10 @@ class ToolsController extends SenDb_Controller
     private function passwordReminderAction()
     {
         $auth = authenticate();
-        global $db;
+        $db = Zend_Db_Table::getDefaultAdapter();
+        $url = $this->view->serverUrl($this->_helper->url->url(array(), null, true));
         if($auth['level'] != 'admin') {
-            throw new SenDb_Exception_NotAuthorised();
+            throw new NotAuthorised();
             return;
         }
 
@@ -44,11 +43,12 @@ class ToolsController extends SenDb_Controller
             $mailSubj = "Lochac Seneschals' Database Password Reminder";
 
             $mailBody = "Greetings {$group->scaname}!\n\n" .
-                        "This message is being sent to you because you are listed as the seneschal of the " .
-                        "{$group->type} of {$group->groupname}. If this is not the case, please delete this message.\n\n" .
-                        "To access the Lochac Seneschals' Database for quarterly reporting, editing email aliases or " .
-                        "updating the details of your Baron and Baroness, please go to https://lochac.sca.org" .
-                        Zend_Layout::getMvcInstance()->relativeUrl . " and enter the username and password listed below.\n\n" .
+                        "This message is being sent to you because you are listed as the " .
+                        "seneschal of the {$group->type} of {$group->groupname}. " .
+                        "If this is not the case, please delete this message.\n\n" .
+                        "To access the Lochac Seneschals' Database for quarterly reporting, editing " .
+                        "email aliases or updating the details of your Baron and Baroness, please go to " .
+                        $url . " and enter the username and password listed below.\n\n" .
                         "Username: " . strtolower(str_replace(' ','',$group->groupname)) . "\n" .
                         "Password: PASSWORD\n\n" .
                         "Kind regards,\n" .
@@ -56,10 +56,13 @@ class ToolsController extends SenDb_Controller
 
             $mailHead = "From:{$group->email}";
 
-            if(SenDb_Helper_Email::send($mailTo, $mailSubj, $mailBody, $mailHead)) {
+            if(Email::send($mailTo, $mailSubj, $mailBody, $mailHead)) {
                 $successCount++;
             } else {
-                $this->addAlert('Sending to seneschal of ' . $group->groupname . ' failed. Try emailing manually.', SenDb_Controller::ALERT_BAD);
+                $this->addAlert(
+                    'Sending to seneschal of ' . $group->groupname . ' failed. Try emailing manually.',
+                    self::ALERT_BAD
+                );
             }
 
             $totalCount++;
@@ -69,5 +72,4 @@ class ToolsController extends SenDb_Controller
         $this->addAlert($successCount . ' out of ' . $totalCount . ' emails sent successfully.');
     }
     */
-
 }

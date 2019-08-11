@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_GroupSelect extends Zend_Form
+namespace SenDb\Form;
+
+class GroupSelect extends \Zend_Form
 {
     public function init()
     {
@@ -26,7 +28,5 @@ class SenDb_Form_GroupSelect extends Zend_Form
                 'decorators' => array('ViewHelper')
             )
         );
-
     }
-
 }

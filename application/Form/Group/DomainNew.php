@@ -1,6 +1,8 @@
 <?php
 
-class SenDb_Form_Group_AliasNew extends Zend_Form
+namespace SenDb\Form\Group;
+
+class DomainNew extends \Zend_Form
 {
     public function init()
     {
@@ -9,23 +11,19 @@ class SenDb_Form_Group_AliasNew extends Zend_Form
         $this->setElementDecorators(array('ViewHelper'));
 
         $this->addElement(
-            'text',
-            'aliasnew',
-            array(
-                'required'   => true,
-                'size'       => 25,
-                'filters'    => array('stringTrim'),
-                'validators' => array('emailAddress')
-            )
+            'select',
+            'groupidnew'
         );
         $this->addElement(
             'text',
-            'addressnew',
+            'domainnew',
             array(
                 'required'   => true,
-                'size'       => 25,
-                'filters'    => array('stringTrim'),
-                'validators' => array('emailAddress')
+                'filters'    => array(
+                    'stringTrim',
+                    'stringToLower'
+                ),
+                'validators' => array('alnum')
             )
         );
         $this->addElement(
@@ -35,7 +33,5 @@ class SenDb_Form_Group_AliasNew extends Zend_Form
                 'label' => 'Add New'
             )
         );
-
     }
-
 }
