@@ -10,8 +10,14 @@ class Module
 
     public function onBootstrap(MvcEvent $e)
     {
-        $eventManager = $e->getApplication()->getEventManager();
-        $errorListener = new ErrorListener($e->getApplication()->getServiceManager());
+        $application = $e->getApplication();
+        $eventManager = $application->getEventManager();
+        $serviceManager = $application->getServiceManager();
+
+        $errorListener = new ErrorListener(
+            $serviceManager->get('config'),
+            $serviceManager->get('Zend\Db\Adapter\AdapterInterface')
+        );
         $errorListener->attach($eventManager);
     }
 

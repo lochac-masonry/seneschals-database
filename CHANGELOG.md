@@ -7,6 +7,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Changed
+
+* Refactored \Application\ErrorListener to inject true dependencies instead of a service locator.
+
 ## [2.1.0] - 2019-08-29
 
 ### Changed
