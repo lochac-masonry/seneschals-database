@@ -11,6 +11,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 * Refactored \Application\ErrorListener to inject true dependencies instead of a service locator.
 
+### Removed
+
+* Remove Zend Framework version from Tools/Version page - Zend no longer has a single centralised version number.
+
 ## [2.1.0] - 2019-08-29
 
 ### Changed
