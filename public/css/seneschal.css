@@ -1,0 +1,208 @@
+body {
+    background-image: url(../img/body-bkgd.jpg);
+    background-repeat: repeat-y;
+    background-color: #E8DFCE;
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+    background-position: center top;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color:#990000;
+    font-weight: normal;
+}
+
+h1 {
+    font-size: 28px;
+    margin-top: 0px;
+    padding-bottom: 15px;
+}
+
+h2 {
+    font-size: 22px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+h4 {
+    font-size: 15px;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+a:link {
+    color: #990000;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #000099;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #990000;
+    text-decoration: none;
+}
+
+a:visited:hover {
+    color: #000099;
+    text-decoration: underline;
+}
+
+.center {
+    text-align: center;
+}
+
+#Container {
+    background-image: url(../img/body-bkgd.jpg);
+    background-repeat: repeat-y;
+    width: 950px;
+    text-align: left;
+    vertical-align: top;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    line-height: normal;
+    color: #000000;
+    text-decoration: none;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    padding: 0px;
+    position: static;
+}
+
+.Navigation {
+    float:left;
+    width: 250px;
+    text-align: center;
+    vertical-align: top;
+    color: #990000;
+    margin: 0px;
+    padding: 0px;
+    font-size: 15px;
+    line-height: 24px;
+    position: absolute;
+    top: 0px;
+}
+
+.subNav {
+    color: #990000;
+    margin: 0px;
+    padding: 0px;
+    font-size: 12px;
+    line-height: 15px;
+}
+
+.PageContent {
+    max-width: 660px;
+    padding-top: 20px;
+    padding-left: 270px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    vertical-align: top;
+}
+
+img {
+    border: none;
+}
+
+.headerImg {
+    text-align: center;
+    padding-bottom: 40px;
+}
+
+.copyright {
+    text-align: center;
+    vertical-align: top;
+    padding-bottom: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 30px;
+}
+
+.colouredTable {
+    border: 3px solid #FFFFFF;
+}
+
+.colouredTable td {
+    border: 1px solid #FFFFFF;
+}
+
+.colouredTable tr.r1 td,
+.colouredTable tr.r1 th {
+    background-color: #C0C0C0;
+}
+
+.bad,
+.good {
+        font-weight: bold;
+    padding: 15px;
+    border: 1px solid #000000;
+    background-color: #EEEEEE;
+}
+
+.good:before {
+    content: url(../img/tick.png);
+}
+
+.bad:before {
+    content: url(../img/cross.png);
+}
+
+#eventList {
+    border: 3px solid #FFFFFF;
+}
+
+#eventList td {
+    border: 1px solid #FFFFFF;
+}
+
+#eventList th {
+    border: 1px solid #FFFFFF;
+    font-weight: bold;
+    background-color: #ccddff;
+    padding: 4px;
+}
+
+#eventList .tablesorter-header {
+    background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
+    background-repeat: no-repeat;
+    background-position: center right;
+    padding: 4px 18px 4px 4px;
+    white-space: normal;
+    cursor: pointer;
+}
+
+#eventList .tablesorter-headerAsc {
+    background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+    background-color: #aabbdd;
+}
+
+#eventList .tablesorter-headerDesc {
+    background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
+    background-color: #aabbdd;
+}
+
+#eventList thead .sorter-false {
+    background-image: none;
+    cursor: default;
+    padding: 4px;
+}
+
+/* We want radio buttons and multi-checkbox groups to display alongside their labels, so exclude them here. */
+.form--block fieldset,
+.form--block input:not([type=radio]):not([type=checkbox]),
+.form--block select,
+.form--block textarea {
+    display: block;
+    margin: 10px 40px;
+}

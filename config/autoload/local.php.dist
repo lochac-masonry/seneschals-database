@@ -1,0 +1,51 @@
+<?php
+/**
+ * Local Configuration Override
+ *
+ * This configuration override file is for overriding environment-specific and
+ * security-sensitive configuration information. Copy this file without the
+ * .dist extension at the end and populate values as needed.
+ *
+ * @NOTE: This file is ignored from Git by default with the .gitignore included
+ * in ZendSkeletonApplication. This is a good practice, as it prevents sensitive
+ * credentials from accidentally being committed into version control.
+ */
+
+return [
+    // For each user/role, provide the username and SHA256 hash of the password.
+    // (Users/roles are hardcoded and cannot be changed here.)
+    'auth' => [
+        'admin' => [
+            'username' => 'placeholder value',
+            'passhash' => 'placeholder value',
+        ],
+        'wheel' => [
+            'username' => 'placeholder value',
+            'passhash' => 'placeholder value',
+        ],
+        'user' => [
+            'passhash' => 'placeholder value',
+        ],
+    ],
+
+    // Provide database connection details.
+    'db' => [
+        'driver'   => 'Mysqli',
+        'hostname' => 'placeholder value',
+        'username' => 'placeholder value',
+        'password' => 'placeholder value',
+        'database' => 'placeholder value',
+    ],
+
+    // Uncomment the following and provide an email address to redirect all application emails to that address.
+    // 'debugEmail' => 'email@address.com',
+
+    // Uncomment the following and provide an email address to send error reports to that address.
+    // 'exceptionEmail' => 'email@address.com',
+
+    // Uncomment the following to display useful debugging information on the 404 and error pages.
+    // 'view_manager' => [
+    //     'display_not_found_reason' => true,
+    //     'display_exceptions'       => true,
+    // ],
+];

@@ -7,6 +7,13 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Changed
+
+* Migrated to Zend 2.5.
+* Migrated to Zend 3.1.
+* Removed all sensitive config files/values from the repository - these should be set in `config/autoload/local.php`.
+* Slight tweaks to style rules - enforce short array syntax and no space after the `!` operator.
+
 ## [2.0.0] - 2019-08-11
 
 ### Added

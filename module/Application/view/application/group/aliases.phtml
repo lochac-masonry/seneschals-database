@@ -1,0 +1,46 @@
+<p>
+    From this page, you can edit email aliases associated with your group. 'Alias' gives the
+    lochac.sca.org (or other appropriately configured subdomain) address, while 'Destination Address'
+    is where mail sent to the alias will be forwarded.
+    <br />
+    To add a new alias, fill in the last row of the table and press 'Add New'.
+    <br />
+    To modify an existing alias, change the alias or destination address in the relevant row and press 'Save'.
+    <br />
+    To remove an alias permanently, press 'Delete' in the relevant row.
+</p>
+
+<p>Changes may take up to one hour to take effect.</p>
+
+<?= $this->form($groupSelectForm) ?>
+
+<?php
+if (isset($permittedDomains)) {
+    echo '<p>' . $this->escapeHtml($permittedDomains) . '</p>';
+}
+
+// Do not render validation messages alongside each form element.
+$this->formRow()->setRenderErrors(false);
+?>
+
+<style type="text/css">
+    table {border: 3px solid #FFFFFF;}
+    td {border: 1px solid #FFFFFF;}
+</style>
+<table>
+    <tr>
+        <th>Alias</th>
+        <th>Destination Address</th>
+        <th></th>
+        <th></th>
+    </tr>
+    <?php foreach ($aliasForms as $aliasForm) { ?>
+    <tr>
+        <td colspan='4'>
+        <?= $this->form($aliasForm) ?>
+        </td>
+    </tr>
+    <?php } ?>
+</table>
+
+<p><?= count($aliasForms) - 1 ?> record(s) displayed.</p>

@@ -1,0 +1,18 @@
+<p>
+    Use this page to edit the name and contact details of the Baron and Baroness of your group.
+    <br />
+    When finished, press 'Submit' at the bottom to save your changes or 'Reset' to return to the
+    values saved in the database.
+</p>
+
+<?php
+// Do not render validation messages alongside each form element.
+if (isset($groupSelectForm)) {
+    $this->formRow()->setRenderErrors(false);
+    echo $this->form($groupSelectForm);
+    $this->formRow()->setRenderErrors(true);
+}
+
+if (isset($detailsForm)) {
+    echo $this->form($detailsForm);
+}

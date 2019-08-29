@@ -1,0 +1,5 @@
+Postcode, (empty)Locality, State, Group Name<br />
+<?php
+foreach ($postcodeResultSet as $row) {
+    echo "{$row['postcode']},,{$row['state']},{$row['groupname']}<br />\n";
+}
