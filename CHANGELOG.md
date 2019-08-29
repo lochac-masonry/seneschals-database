@@ -7,6 +7,15 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.1.0] - 2019-08-29
+
+### Changed
+
+* Migrated to Zend 2.5.
+* Migrated to Zend 3.1.
+* Removed all sensitive config files/values from the repository - these should be set in `config/autoload/local.php`.
+* Slight tweaks to style rules - enforce short array syntax and no space after the `!` operator.
+
 ## [2.0.0] - 2019-08-11
 
 ### Added
@@ -16,7 +25,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 * Changelog, with placeholders for old releases.
 * Composer integration to manage dependencies.
 * Style checks using PHP_CodeSniffer.
-* Youth section to officer report form.
+* Historian section to officer report form.
 
 ### Changed
 
@@ -47,7 +56,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.0.0
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.1.0
+[2.1.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.1.0..v2.0.0
 [2.0.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.0.0..v1.6.0
 [1.6.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.6.0..v1.5.0
 [1.5.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.5.0..v1.4.0

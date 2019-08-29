@@ -1,8 +1,0 @@
-# set as appropriate - defaults to staging if none set
-#SetEnv APPLICATION_ENV "production"
-SetEnv APPLICATION_ENV "staging"
-
-RewriteEngine on
-RewriteRule !\.(js|ico|gif|jpg|png|css)$ index.php
-
-php_value upload_max_filesize 3M

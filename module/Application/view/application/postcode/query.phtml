@@ -1,0 +1,64 @@
+<?php
+if ($printable) { ?>
+    <html>
+    <head>
+    <title>Lochac Seneschals' Database - Postcode Query Results</title>
+    </head>
+
+    <body>
+<?php } else { ?>
+    <p>
+        Use this page to find which geographical area a group operates in, or which group operates in a
+        particular geographical area.
+    </p>
+    You can:
+    <ul>
+        <li>
+            Search by Group: Select a group name from the list and press 'Submit' to get a list of
+            suburbs controlled by that group.
+        </li>
+        <li>
+            Search by Postcode: Enter a numerical postcode and press 'Submit' to find the group
+            operating in that suburb.
+        </li>
+        <li>
+            Search by Postcode Range: Submit a start and end postcode to get a list of suburbs in that
+            range with the group controlling each.
+        </li>
+        <li>
+            Search by Suburb Name: Submit a suburb or locality name to find the group operating in that area.
+        </li>
+    </ul>
+    <p>
+        In any case, check the "Printable Report" button to remove the graphics and navigation from the
+        results page.
+    </p>
+<?php }
+
+if (isset($resultSet)) { ?>
+    <table class="colouredTable">
+        <tr class="r1">
+            <th>Postcode</th>
+            <th>Locality</th>
+            <th>State</th>
+            <th>Group</th>
+        </tr>
+        <?php $i = 0; foreach ($resultSet as $row) { ?>
+        <tr class="r<?= ($i & 1) ?>">
+            <td><?= $this->escapeHtml($row['postcode']) ?></td>
+            <td><?= $this->escapeHtml($row['localities']) ?></td>
+            <td><?= $this->escapeHtml($row['state']) ?></td>
+            <td><?= $this->escapeHtml($row['groupname']) ?></td>
+        </tr>
+            <?php $i++;
+        } ?>
+    </table>
+    <p>Number of rows: <?= $i ?></p>
+<?php }
+
+if (!$printable) {
+    echo $this->form($form);
+} else { ?>
+    </body>
+    </html>
+<?php }

@@ -1,0 +1,97 @@
+<?= $this->doctype(); ?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?= $this->headTitle('Lochac Seneschals\' Database')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?= $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <?= $this->headLink()
+            ->prependStylesheet($this->basePath('css/seneschal.css'))
+            ->prependStylesheet($this->basePath('css/sen-print.css'), $media = 'print')
+        ?>
+
+        <?= $this->headScript() ?>
+    </head>
+    <body>
+        <div id="Container">
+        <div class="Navigation">
+            <img src="<?= $this->basePath('img/kingdom-seneschal-device.png') ?>"
+                alt="Office of the Seneschal of Lochac" width="250" height="269" usemap="#SenLinks" />
+            <map id="SenLinks" name="SenLinks">
+                <area shape="poly" coords="83,47,165,48,165,104,125,144,83,103"
+                    href="https://lochac.sca.org/lochac" target="_blank" alt="Kingdom of Lochac" />
+                <area shape="circle" coords="125,197,33" href="https://seneschal.lochac.sca.org"
+                    alt="The Office of the Seneschal" />
+            </map>
+
+            <p>
+                <a href="https://lochac.sca.org/lochac">Lochac Homepage</a><br />
+                <a href="https://seneschal.lochac.sca.org">From the Seneschal <small>(Home)</small></a><br />
+                <a href="<?= $this->url('default') ?>">Database</a><br />
+                <span class="subNav">
+    <?php foreach (buildMenu() as $item) { ?>
+                    <a href="<?= $this->url('default', $item['link']) ?>"><?= $item['name'] ?></a><br />
+    <?php } ?>
+                </span>
+            </p>
+
+            <img alt="Navigation Border" src="<?= $this->basePath('img/nav-bottom.png') ?>" width="250" height="59"/>
+        </div>
+
+        <div class="PageContent">
+            <div class="headerImg">
+                <img alt="The Office of the Seneschal - Kingdom of Lochac"
+                    src="<?= $this->basePath('img/office-of-the-seneschal.png') ?>" width="555" height="81"/>
+            </div>
+            <a name="top"></a>
+
+            <h1 class="center"><?= $this->escapeHtml($this->title) ?></h1>
+
+    <?php
+    if (isset($this->alerts)) {
+        foreach ($this->alerts as $alert) {
+            if (is_array($alert)) { ?>
+            <div class="<?= $alert['type'] ?>"><?= $alert['message'] ?></div><br />
+            <?php   } else { ?>
+                <?= $alert ?><br />
+            <?php   }
+        }
+    } ?>
+
+            <!-- Start page content -->
+    <?= $this->content ?>
+
+            <!-- End page content -->
+
+            <div class="copyright">
+                <hr />
+                <p>
+                    This page is maintained by the Publications/Technical Deputy to the Kingdom Seneschal
+                    <br />
+                    Comments or suggestions to
+                    <a href="mailto:information&#64;lochac.sca.org">information&#64;lochac.sca.org</a>
+                </p>
+                <p style="font-size: 10px;">Application Code: Lord Edmund Kerr</p>
+                <p style="font-size: 10px;">Site Design: Lord Ronan mac Briain</p>
+            </div>
+        </div>
+    </div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-101506183-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+        <?= $this->inlineScript() ?>
+    </body>
+</html>
