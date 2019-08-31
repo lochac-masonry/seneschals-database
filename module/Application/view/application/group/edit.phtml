@@ -8,5 +8,11 @@
     submitting appropriate information for that group.
 </p>
 
-<?= $this->form($groupSelectForm) ?>
+<?php
+// Do not render validation messages alongside each form element.
+$this->formRow()->setRenderErrors(false);
+echo $this->form($groupSelectForm);
+$this->formRow()->setRenderErrors(true);
+?>
+
 <?= $this->form($detailsForm) ?>

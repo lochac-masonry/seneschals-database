@@ -61,11 +61,9 @@ class GroupController extends BaseController
     {
         $this->layout()->title = 'Edit Group Details';
         $db = $this->getDb();
-        $auth = $this->authenticate();
-        if (!$auth) {
-            return $this->response;
-        } elseif ($auth['level'] != 'admin') {
-            return $this->redirect()->toRoute();
+        $authResponse = $this->ensureAuthLevel(['admin']);
+        if ($authResponse) {
+            return $authResponse;
         }
 
         $groupList = $this->arrayIndex(
@@ -172,8 +170,7 @@ class GroupController extends BaseController
                         // Something went wrong
                         $this->addAlert("{$operation} group failed, please try again.", self::ALERT_BAD);
                     } else {
-                        $refreshUrl = $this->url()->fromRoute(null, [], [], true)
-                            . '?' . http_build_query(['groupid' => $groupId]);
+                        $refreshUrl = $this->getCurrentUrl();
                         $this->addAlert(
                             "{$operation} group succeeded. <a href='{$refreshUrl}'>Click to continue</a>.",
                             self::ALERT_GOOD
@@ -193,11 +190,9 @@ class GroupController extends BaseController
     {
         $this->layout()->title = 'Close Group';
         $db = $this->getDb();
-        $auth = $this->authenticate();
-        if (!$auth) {
-            return $this->response;
-        } elseif ($auth['level'] != 'admin') {
-            return $this->redirect()->toRoute();
+        $authResponse = $this->ensureAuthLevel(['admin']);
+        if ($authResponse) {
+            return $authResponse;
         }
 
         $groupList = $this->arrayIndex(
@@ -247,11 +242,9 @@ class GroupController extends BaseController
     {
         $this->layout()->title = 'Manage Group Email Aliases';
         $db = $this->getDb();
-        $auth = $this->authenticate();
-        if (!$auth) {
-            return $this->response;
-        } elseif ($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            return $this->redirect()->toRoute();
+        $authResponse = $this->ensureAuthLevel(['admin', 'user']);
+        if ($authResponse) {
+            return $authResponse;
         }
 
         $groupList = $this->arrayIndex(
@@ -271,10 +264,10 @@ class GroupController extends BaseController
         ];
 
         $request = $this->getRequest();
-        if ($auth['level'] == 'admin') {
+        if ($this->auth['level'] == 'admin') {
             $groupSelectForm->setData(['groupid' => $request->getQuery()['groupid'] ?: 0]);
         } else {
-            $groupSelectForm->setData(['groupid' => $auth['id']]);
+            $groupSelectForm->setData(['groupid' => $this->auth['id']]);
             $groupSelectForm->get('groupid')->setAttribute('disabled', true);
             $groupSelectForm->get('submit')->setAttribute('disabled', true);
         }
@@ -284,8 +277,7 @@ class GroupController extends BaseController
         }
 
         $groupId = $groupSelectForm->getData()['groupid'];
-        $refreshUrl = $this->url()->fromRoute(null, [], [], true)
-            . '?' . http_build_query(['groupid' => $groupId]);
+        $refreshUrl = $this->getCurrentUrl();
 
         // Find which domains this group can edit, form an appropriate regex and explanatory message.
         $domains = $db->query(
@@ -450,13 +442,11 @@ class GroupController extends BaseController
     {
         $this->layout()->title = 'Manage Group Domains';
         $db = $this->getDb();
-        $auth = $this->authenticate();
-        if (!$auth) {
-            return $this->response;
-        } elseif ($auth['level'] != 'admin') {
-            return $this->redirect()->toRoute();
+        $authResponse = $this->ensureAuthLevel(['admin']);
+        if ($authResponse) {
+            return $authResponse;
         }
-        $refreshUrl = $this->url()->fromRoute(null, [], [], true);
+        $refreshUrl = $this->getCurrentUrl();
 
         $groupList = $this->arrayIndex(
             $db->query('SELECT id, groupname FROM scagroup ORDER BY groupname', []),
@@ -660,11 +650,9 @@ class GroupController extends BaseController
     {
         $this->layout()->title = 'Baron and Baroness Details';
         $db = $this->getDb();
-        $auth = $this->authenticate();
-        if (!$auth) {
-            return $this->response;
-        } elseif ($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            return $this->redirect()->toRoute();
+        $authResponse = $this->ensureAuthLevel(['admin', 'user']);
+        if ($authResponse) {
+            return $authResponse;
         }
 
         $groupList = $this->arrayIndex(
@@ -674,7 +662,7 @@ class GroupController extends BaseController
         );
 
         // Reject non-Barony users.
-        if ($auth['level'] != 'admin' && !array_key_exists($auth['id'], $groupList)) {
+        if ($this->auth['level'] != 'admin' && !array_key_exists($this->auth['id'], $groupList)) {
             $this->addAlert('Available for baronies only.', self::ALERT_BAD);
             return;
         }
@@ -686,10 +674,10 @@ class GroupController extends BaseController
         $groupSelectForm = new Form\GroupSelect($groupList);
 
         $request = $this->getRequest();
-        if ($auth['level'] == 'admin') {
+        if ($this->auth['level'] == 'admin') {
             $groupSelectForm->setData($request->getQuery());
         } else {
-            $groupSelectForm->setData(['groupid' => $auth['id']]);
+            $groupSelectForm->setData(['groupid' => $this->auth['id']]);
             $groupSelectForm->get('groupid')->setAttribute('disabled', true);
             $groupSelectForm->get('submit')->setAttribute('disabled', true);
         }

@@ -144,11 +144,9 @@ class EventController extends BaseController
     {
         $this->layout()->title = 'Review Event Proposals';
         $db = $this->getDb();
-        $auth = $this->authenticate();
-        if (!$auth) {
-            return $this->response;
-        } elseif ($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            return $this->redirect()->toRoute();
+        $authResponse = $this->ensureAuthLevel(['admin', 'user']);
+        if ($authResponse) {
+            return $authResponse;
         }
 
         $groupList = $this->arrayIndex(
@@ -161,7 +159,7 @@ class EventController extends BaseController
                                                             // List filter form
                                                             //----------------------------------------------------------
         $filterForm = new Form\Event\ListFilter(['all' => 'All Groups'] + $groupList);
-        $filterForm->get('groupid')->setAttribute('disabled', $auth['level'] != 'admin');
+        $filterForm->get('groupid')->setAttribute('disabled', $this->auth['level'] != 'admin');
         $viewModel = [
             'filterForm' => $filterForm,
             'events'     => [],
@@ -170,7 +168,7 @@ class EventController extends BaseController
         $request = $this->getRequest();
         $queryData = $request->getQuery();
         $filterForm->setData([
-            'groupid' => $auth['level'] == 'admin' ? ($queryData['groupid'] ?: 'all') : $auth['id'],
+            'groupid' => $this->auth['level'] == 'admin' ? ($queryData['groupid'] ?: 'all') : $this->auth['id'],
             'status'  => $queryData['status'] ?: 'new',
             'tense'   => $queryData['tense'] ?: 'future',
         ]);
@@ -380,11 +378,9 @@ class EventController extends BaseController
     {
         $this->layout()->title = 'Edit Event Proposal';
         $db = $this->getDb();
-        $auth = $this->authenticate();
-        if (!$auth) {
-            return $this->response;
-        } elseif ($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            return $this->redirect()->toRoute();
+        $authResponse = $this->ensureAuthLevel(['admin', 'user']);
+        if ($authResponse) {
+            return $authResponse;
         }
 
         $groupList = $this->arrayIndex(
@@ -415,7 +411,7 @@ class EventController extends BaseController
             return $this->notFoundAction();
         }
         $initialData = (array) $initialData[0];
-        if ($auth['level'] != 'admin' && $auth['id'] != $initialData['groupid']) {
+        if ($this->auth['level'] != 'admin' && $this->auth['id'] != $initialData['groupid']) {
             return $this->notFoundAction();
         }
 

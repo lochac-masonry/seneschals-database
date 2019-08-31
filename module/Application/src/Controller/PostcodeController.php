@@ -111,11 +111,9 @@ class PostcodeController extends BaseController
     {
         $this->layout()->title = 'Assign Postcodes';
         $db = $this->getDb();
-        $auth = $this->authenticate();
-        if (!$auth) {
-            return $this->response;
-        } elseif ($auth['level'] != 'admin') {
-            return $this->redirect()->toRoute();
+        $authResponse = $this->ensureAuthLevel(['admin']);
+        if ($authResponse) {
+            return $authResponse;
         }
 
         $groupList = $this->arrayIndex(
@@ -163,11 +161,9 @@ class PostcodeController extends BaseController
     {
         $this->layout()->title = 'Upload Postcodes File';
         $db = $this->getDb();
-        $auth = $this->authenticate();
-        if (!$auth) {
-            return $this->response;
-        } elseif ($auth['level'] != 'admin') {
-            return $this->redirect()->toRoute();
+        $authResponse = $this->ensureAuthLevel(['admin']);
+        if ($authResponse) {
+            return $authResponse;
         }
 
         $form = new Form\Postcode\Upload();

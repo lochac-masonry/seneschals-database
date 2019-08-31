@@ -101,11 +101,9 @@ class ReportController extends BaseController
     {
         $this->layout()->title = 'Submit Quarterly Report';
         $db = $this->getDb();
-        $auth = $this->authenticate();
-        if (!$auth) {
-            return $this->response;
-        } elseif ($auth['level'] != 'admin' && $auth['level'] != 'user') {
-            return $this->redirect()->toRoute();
+        $authResponse = $this->ensureAuthLevel(['admin', 'user']);
+        if ($authResponse) {
+            return $authResponse;
         }
 
         $groupList = $this->arrayIndex(
@@ -122,10 +120,10 @@ class ReportController extends BaseController
         $detailsForm = null;
 
         $request = $this->getRequest();
-        if ($auth['level'] == 'admin') {
+        if ($this->auth['level'] == 'admin') {
             $groupSelectForm->setData($request->getQuery());
         } else {
-            $groupSelectForm->setData(['groupid' => $auth['id']]);
+            $groupSelectForm->setData(['groupid' => $this->auth['id']]);
             $groupSelectForm->get('groupid')->setAttribute('disabled', true);
             $groupSelectForm->get('submit')->setAttribute('disabled', true);
         }

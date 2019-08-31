@@ -10,6 +10,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 ### Changed
 
 * Refactored \Application\ErrorListener to inject true dependencies instead of a service locator.
+* Moved to session-backed authentication using Zend-Session and Zend-Authentication.
 
 ### Removed
 
