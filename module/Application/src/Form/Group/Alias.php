@@ -35,6 +35,15 @@ class Alias extends Form implements InputFilterProviderInterface
             ],
         ]);
 
+        $this->add([
+            'type'    => 'csrf',
+            'name'    => 'csrf' . $id,
+            'options' => [
+                'csrf_options' => ['timeout' => 60 * 30],
+            ],
+            'attributes' => [],
+        ]);
+
         // Add action buttons - update/delete for existing records, create for new.
         if ($existing) {
             $this->add([

@@ -66,5 +66,14 @@ class Close extends Form
                 return [];
             }
         });
+
+        $this->add([
+            'type'    => 'csrf',
+            'name'    => 'csrf',
+            'options' => [
+                'csrf_options' => ['timeout' => 60 * 30],
+            ],
+            'attributes' => [],
+        ]);
     }
 }

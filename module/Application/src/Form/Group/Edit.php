@@ -299,6 +299,15 @@ class Edit extends Form
         });
 
         $this->add([
+            'type'    => 'csrf',
+            'name'    => 'csrf',
+            'options' => [
+                'csrf_options' => ['timeout' => 60 * 30],
+            ],
+            'attributes' => [],
+        ]);
+
+        $this->add([
             'type'       => 'submit',
             'name'       => 'submit',
             'options'    => [],

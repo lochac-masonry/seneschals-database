@@ -7,10 +7,22 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Added
+
+* CSRF protection has been added to all forms that mutate data.
+* Several security-focused HTTP headers have been added:
+  * Content-Security-Policy
+  * Feature-Policy
+  * Referrer-Policy
+  * X-Content-Type-Options
+  * X-Frame-Options
+
 ### Changed
 
 * Refactored \Application\ErrorListener to inject true dependencies instead of a service locator.
 * Moved to session-backed authentication using Zend-Session and Zend-Authentication.
+* Removed all inline styles and scripts (moved to separate files).
+* HTTP requests now redirect to HTTPS by default.
 
 ### Removed
 

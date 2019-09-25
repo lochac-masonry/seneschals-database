@@ -29,6 +29,7 @@ class GroupController extends BaseController
     public function rosterAction()
     {
         $this->layout()->title = 'Group Roster';
+        $this->layout()->fullWidth = true;
         $db = $this->getDb();
 
         $sql = (new Sql($db))->buildSqlString(
@@ -346,6 +347,28 @@ class GroupController extends BaseController
             $update = isset($requestData['update' . $aliasId]);
             $delete = isset($requestData['delete' . $aliasId]);
 
+            if (!$create && !$update && !$delete) {
+                // Nothing to do for this alias.
+                continue;
+            }
+
+            $aliasForm->setData($requestData);
+            if (!$aliasForm->isValid()) {
+                // Report validation issues for each element.
+                foreach ($aliasForm->getMessages() as $element => $messages) {
+                    $elementName = '';
+                    if (strpos($element, 'alias') === 0) {
+                        $elementName = 'Alias: ';
+                    } elseif (strpos($element, 'address') === 0) {
+                        $elementName = 'Destination Address: ';
+                    }
+
+                    // Get first message value - only expect one as validator chain stops on first error.
+                    $this->addAlert($elementName . reset($messages), self::ALERT_BAD);
+                }
+                continue;
+            }
+
             if ($delete) {
                 $db->query(
                     (new Sql($db))->buildSqlString(
@@ -362,76 +385,63 @@ class GroupController extends BaseController
                 continue;
             }
 
-            if ($create || $update) {
-                $aliasForm->setData($requestData);
-                if (!$aliasForm->isValid()) {
-                    // Report validation issues for each element.
-                    foreach ($aliasForm->getMessages() as $element => $messages) {
-                        $elementName = strpos($element, 'alias') === 0 ? 'Alias' : 'Destination Address';
-                        // Get first message value - only expect one as validator chain stops on first error.
-                        $this->addAlert($elementName . ': ' . reset($messages), self::ALERT_BAD);
-                    }
-                    continue;
-                }
+            // Form is valid - transform the values into those expected by the database.
+            $rawValues = $aliasForm->getData();
+            $values = [
+                'alias'   => $rawValues['alias' . $aliasId],
+                'address' => $rawValues['address' . $aliasId],
+                'groupid' => $groupId,
+                'comment' => '',
+            ];
 
-                // Form is valid - transform the values into those expected by the database.
-                $rawValues = $aliasForm->getData();
-                $values = [
-                    'alias'   => $rawValues['alias' . $aliasId],
-                    'address' => $rawValues['address' . $aliasId],
-                    'groupid' => $groupId,
-                    'comment' => '',
-                ];
+            // Check if the alias has been used elsewhere.
+            $conflictingAliases = $db->query(
+                (new Sql($db))->buildSqlString(
+                    (new Select())
+                        ->from('virtusers')
+                        ->where(function ($where) use ($aliasId, $values) {
+                            $where
+                                ->equalTo('alias', $values['alias'])
+                                ->notEqualTo('row_id', $aliasId);
+                        })
+                ),
+                []
+            )->toArray();
+            if (count($conflictingAliases) > 0) {
+                $this->addAlert(
+                    "{$values['alias']} is already in use, and cannot be duplicated.",
+                    self::ALERT_BAD
+                );
+                continue;
+            }
 
-                // Check if the alias has been used elsewhere.
-                $conflictingAliases = $db->query(
+            if ($create) {
+                $db->query(
                     (new Sql($db))->buildSqlString(
-                        (new Select())
-                            ->from('virtusers')
-                            ->where(function ($where) use ($aliasId, $values) {
-                                $where
-                                    ->equalTo('alias', $values['alias'])
-                                    ->notEqualTo('row_id', $aliasId);
-                            })
+                        (new Insert('virtusers'))
+                            ->values($values)
                     ),
-                    []
-                )->toArray();
-                if (count($conflictingAliases) > 0) {
-                    $this->addAlert(
-                        "{$values['alias']} is already in use, and cannot be duplicated.",
-                        self::ALERT_BAD
-                    );
-                    continue;
-                }
-
-                if ($create) {
-                    $db->query(
-                        (new Sql($db))->buildSqlString(
-                            (new Insert('virtusers'))
-                                ->values($values)
-                        ),
-                        $db::QUERY_MODE_EXECUTE
-                    );
-                    $this->addAlert(
-                        "Successfully added alias {$values['alias']}. " .
-                        "<a href='{$refreshUrl}'>Click to continue</a>.",
-                        self::ALERT_GOOD
-                    );
-                } else {
-                    $db->query(
-                        (new Sql($db))->buildSqlString(
-                            (new Update('virtusers'))
-                                ->set($values)
-                                ->where(['row_id' => $aliasId])
-                        ),
-                        $db::QUERY_MODE_EXECUTE
-                    );
-                    $this->addAlert(
-                        "Successfully updated alias {$values['alias']}. " .
-                        "<a href='{$refreshUrl}'>Click to continue</a>.",
-                        self::ALERT_GOOD
-                    );
-                }
+                    $db::QUERY_MODE_EXECUTE
+                );
+                $this->addAlert(
+                    "Successfully added alias {$values['alias']}. " .
+                    "<a href='{$refreshUrl}'>Click to continue</a>.",
+                    self::ALERT_GOOD
+                );
+            } else {
+                $db->query(
+                    (new Sql($db))->buildSqlString(
+                        (new Update('virtusers'))
+                            ->set($values)
+                            ->where(['row_id' => $aliasId])
+                    ),
+                    $db::QUERY_MODE_EXECUTE
+                );
+                $this->addAlert(
+                    "Successfully updated alias {$values['alias']}. " .
+                    "<a href='{$refreshUrl}'>Click to continue</a>.",
+                    self::ALERT_GOOD
+                );
             }
         }
 
@@ -495,18 +505,29 @@ class GroupController extends BaseController
             $update = isset($requestData['update' . $domainId]);
             $delete = isset($requestData['delete' . $domainId]);
 
-            if ($create) {
-                $domainForm->setData($requestData);
-                if (!$domainForm->isValid()) {
-                    // Report validation issues for each element.
-                    foreach ($domainForm->getMessages() as $element => $messages) {
-                        $elementName = strpos($element, 'groupid') === 0 ? 'Group' : 'Domain';
-                        // Get first message value - only expect one as validator chain stops on first error.
-                        $this->addAlert($elementName . ': ' . reset($messages), self::ALERT_BAD);
-                    }
-                    continue;
-                }
+            if (!$create && !$update && !$delete) {
+                // Nothing to do for this domain.
+                continue;
+            }
 
+            $domainForm->setData($requestData);
+            if (!$domainForm->isValid()) {
+                // Report validation issues for each element.
+                foreach ($domainForm->getMessages() as $element => $messages) {
+                    $elementName = '';
+                    if (strpos($element, 'groupid') === 0) {
+                        $elementName = 'Group: ';
+                    } elseif (strpos($element, 'domain') === 0) {
+                        $elementName = 'Domain: ';
+                    }
+
+                    // Get first message value - only expect one as validator chain stops on first error.
+                    $this->addAlert($elementName . reset($messages), self::ALERT_BAD);
+                }
+                continue;
+            }
+
+            if ($create) {
                 // Form is valid - transform the values into those expected by the database.
                 $rawValues = $domainForm->getData();
                 $values = [
@@ -542,104 +563,89 @@ class GroupController extends BaseController
                 continue;
             }
 
-            if ($update || $delete) {
-                // Find old data for this domain.
-                $oldEntry = null;
-                foreach ($existingDomains as $domain) {
-                    if ($domain['id'] == $domainId) {
-                        $oldEntry = $domain;
-                    }
+            // Find old data for this domain.
+            $oldEntry = null;
+            foreach ($existingDomains as $domain) {
+                if ($domain['id'] == $domainId) {
+                    $oldEntry = $domain;
                 }
-                if ($oldEntry == null) {
-                    $this->addAlert('Unable to find domain to edit.', self::ALERT_BAD);
-                    continue;
-                }
-
-                // Check for any aliases still using the old domain and group.
-                $aliasCount = count($db->query(
-                    (new Sql($db))->buildSqlString(
-                        (new Select())
-                            ->from('virtusers')
-                            ->where(function ($where) use ($oldEntry) {
-                                $where
-                                    ->equalTo('groupid', $oldEntry['groupid'])
-                                    ->like('alias', '%@' . $oldEntry['domain'] . '.lochac.sca.org');
-                            })
-                    ),
-                    []
-                )->toArray());
-                if ($aliasCount > 0) {
-                    $this->addAlert(
-                        "That group has {$aliasCount} aliases under the domain {$oldEntry['domain']}.lochac.sca.org. " .
-                        "Please remove these aliases or move them to a different domain before changing this domain.",
-                        self::ALERT_BAD
-                    );
-                    continue;
-                }
-
-                // No conflicting aliases - validate the form data.
-                $domainForm->setData($requestData);
-                if (!$domainForm->isValid()) {
-                    // Report validation issues for each element.
-                    foreach ($domainForm->getMessages() as $element => $messages) {
-                        $elementName = strpos($element, 'groupid') === 0 ? 'Group' : 'Domain';
-                        // Get first message value - only expect one as validator chain stops on first error.
-                        $this->addAlert($elementName . ': ' . reset($messages), self::ALERT_BAD);
-                    }
-                    continue;
-                }
-
-                // Form is valid - transform the values into those expected by the database.
-                $rawValues = $domainForm->getData();
-                $values = [
-                    'groupid' => $rawValues['groupid' . $domainId],
-                    'domain'  => $rawValues['domain' . $domainId],
-                ];
-
-                // Check for an existing entry for the same domain and group.
-                if ($update) {
-                    $conflictingDomains = false;
-                    foreach ($existingDomains as $domain) {
-                        if ($domain['groupid'] == $values['groupid'] && $domain['domain'] == $values['domain']) {
-                            $conflictingDomains = true;
-                        }
-                    }
-                    if ($conflictingDomains) {
-                        $this->addAlert('That group already has access to that domain.', self::ALERT_BAD);
-                        continue;
-                    }
-                }
-
-                // All clear to update or delete.
-                if ($update) {
-                    $db->query(
-                        (new Sql($db))->buildSqlString(
-                            (new Update('domains'))
-                                ->set($values)
-                                ->where(['id' => $domainId])
-                        ),
-                        $db::QUERY_MODE_EXECUTE
-                    );
-                    $this->addAlert(
-                        "Successfully updated domain {$values['domain']}. " .
-                        "<a href='{$refreshUrl}'>Click to continue</a>.",
-                        self::ALERT_GOOD
-                    );
-                } else {
-                    $db->query(
-                        (new Sql($db))->buildSqlString(
-                            (new Delete('domains'))
-                                ->where(['id' => $domainId])
-                        ),
-                        $db::QUERY_MODE_EXECUTE
-                    );
-                    $this->addAlert(
-                        "Successfully deleted domain. " .
-                        "<a href='{$refreshUrl}'>Click to continue</a>.",
-                        self::ALERT_GOOD
-                    );
-                }
+            }
+            if ($oldEntry == null) {
+                $this->addAlert('Unable to find domain to edit.', self::ALERT_BAD);
                 continue;
+            }
+
+            // Check for any aliases still using the old domain and group.
+            $aliasCount = count($db->query(
+                (new Sql($db))->buildSqlString(
+                    (new Select())
+                        ->from('virtusers')
+                        ->where(function ($where) use ($oldEntry) {
+                            $where
+                                ->equalTo('groupid', $oldEntry['groupid'])
+                                ->like('alias', '%@' . $oldEntry['domain'] . '.lochac.sca.org');
+                        })
+                ),
+                []
+            )->toArray());
+            if ($aliasCount > 0) {
+                $this->addAlert(
+                    "That group has {$aliasCount} aliases under the domain {$oldEntry['domain']}.lochac.sca.org. " .
+                    "Please remove these aliases or move them to a different domain before changing this domain.",
+                    self::ALERT_BAD
+                );
+                continue;
+            }
+
+            // Form is valid - transform the values into those expected by the database.
+            $rawValues = $domainForm->getData();
+            $values = [
+                'groupid' => $rawValues['groupid' . $domainId],
+                'domain'  => $rawValues['domain' . $domainId],
+            ];
+
+            // Check for an existing entry for the same domain and group.
+            if ($update) {
+                $conflictingDomains = false;
+                foreach ($existingDomains as $domain) {
+                    if ($domain['groupid'] == $values['groupid'] && $domain['domain'] == $values['domain']) {
+                        $conflictingDomains = true;
+                    }
+                }
+                if ($conflictingDomains) {
+                    $this->addAlert('That group already has access to that domain.', self::ALERT_BAD);
+                    continue;
+                }
+            }
+
+            // All clear to update or delete.
+            if ($update) {
+                $db->query(
+                    (new Sql($db))->buildSqlString(
+                        (new Update('domains'))
+                            ->set($values)
+                            ->where(['id' => $domainId])
+                    ),
+                    $db::QUERY_MODE_EXECUTE
+                );
+                $this->addAlert(
+                    "Successfully updated domain {$values['domain']}. " .
+                    "<a href='{$refreshUrl}'>Click to continue</a>.",
+                    self::ALERT_GOOD
+                );
+            } else {
+                $db->query(
+                    (new Sql($db))->buildSqlString(
+                        (new Delete('domains'))
+                            ->where(['id' => $domainId])
+                    ),
+                    $db::QUERY_MODE_EXECUTE
+                );
+                $this->addAlert(
+                    "Successfully deleted domain. " .
+                    "<a href='{$refreshUrl}'>Click to continue</a>.",
+                    self::ALERT_GOOD
+                );
             }
         }
 

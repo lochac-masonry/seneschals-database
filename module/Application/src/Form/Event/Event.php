@@ -423,6 +423,15 @@ class Event extends Form
             });
         }
 
+        $this->add([
+            'type'    => 'csrf',
+            'name'    => 'csrf',
+            'options' => [
+                'csrf_options' => ['timeout' => 60 * 30],
+            ],
+            'attributes' => [],
+        ]);
+
         // Add cross-element validation as soon as the input data has been populated.
         $this->setInputFilter(new class extends InputFilter {
             public function setData($data)
