@@ -31,7 +31,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ### Removed
 
-* Remove Zend Framework version from Tools/Version page - Zend no longer has a single centralised version number.
+* Removed Zend Framework version from Tools/Version page - Zend no longer has a single centralised version number.
+* Removed `.htaccess` file - all of the settings there have been moved to the VHost config for performance reasons.
 
 ## [2.1.0] - 2019-08-29
 

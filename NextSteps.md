@@ -1,6 +1,5 @@
 # Things to do next
 
-* Enable HSTS on subdomains.
 * Use models and the Zend DB table adapters.
 * Use the ~~session~~, ~~auth~~ and ACL components.
 * Use Zend_Application_Resource_Navigation to define and render the menu:
