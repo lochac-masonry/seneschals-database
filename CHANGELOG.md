@@ -16,6 +16,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
   * Referrer-Policy
   * X-Content-Type-Options
   * X-Frame-Options
+* When a form is returned to the user with validation errors, focus and scroll to the first error.
 
 ### Changed
 
@@ -23,6 +24,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 * Moved to session-backed authentication using Zend-Session and Zend-Authentication.
 * Removed all inline styles and scripts (moved to separate files).
 * HTTP requests now redirect to HTTPS by default.
+
+### Fixed
+
+* Added missing length validation to event names.
 
 ### Removed
 

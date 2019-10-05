@@ -152,6 +152,7 @@ switch ($authLevel) {
     </div>
 
         <?= $this->inlineScript()
+            ->appendFile($this->basePath('js/focus-on-first-error.js'))
             ->appendFile($this->basePath('js/google-analytics.js'))
         ?>
     </body>

@@ -31,7 +31,8 @@ class Event extends Form
                         'label' => 'Name of Event',
                     ],
                     'attributes' => [
-                        'required' => true,
+                        'required'  => true,
+                        'maxlength' => 64,
                     ],
                 ]);
                 $this->add([
@@ -150,6 +151,9 @@ class Event extends Form
                         'required' => true,
                         'filters'  => [
                             ['name' => 'stringTrim'],
+                        ],
+                        'validators' => [
+                            ['name' => 'stringLength', 'options' => ['max' => 64]],
                         ],
                     ],
                     'setupTime' => [
