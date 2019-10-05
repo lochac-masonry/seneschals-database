@@ -8,7 +8,7 @@ use Zend\Session\SessionManager;
 
 class Module
 {
-    const VERSION = '2.1.0';
+    const VERSION = '2.2.0';
 
     public function onBootstrap(MvcEvent $e)
     {
