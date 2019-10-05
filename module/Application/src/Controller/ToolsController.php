@@ -15,7 +15,6 @@ class ToolsController extends BaseController
 
         return [
             'appVersion'    => \Application\Module::VERSION,
-            'zendVersion'   => \Zend\Version\Version::VERSION,
             'googleVersion' => \Google_Client::LIBVER,
         ];
     }

@@ -12,21 +12,16 @@
 
 <p>Changes may take up to one hour to take effect.</p>
 
-<?= $this->form($groupSelectForm) ?>
-
 <?php
+// Do not render validation messages alongside each form element.
+$this->formRow()->setRenderErrors(false);
+echo $this->form($groupSelectForm);
+
 if (isset($permittedDomains)) {
     echo '<p>' . $this->escapeHtml($permittedDomains) . '</p>';
 }
-
-// Do not render validation messages alongside each form element.
-$this->formRow()->setRenderErrors(false);
 ?>
 
-<style type="text/css">
-    table {border: 3px solid #FFFFFF;}
-    td {border: 1px solid #FFFFFF;}
-</style>
 <table>
     <tr>
         <th>Alias</th>

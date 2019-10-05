@@ -31,7 +31,8 @@ class Event extends Form
                         'label' => 'Name of Event',
                     ],
                     'attributes' => [
-                        'required' => true,
+                        'required'  => true,
+                        'maxlength' => 64,
                     ],
                 ]);
                 $this->add([
@@ -150,6 +151,9 @@ class Event extends Form
                         'required' => true,
                         'filters'  => [
                             ['name' => 'stringTrim'],
+                        ],
+                        'validators' => [
+                            ['name' => 'stringLength', 'options' => ['max' => 64]],
                         ],
                     ],
                     'setupTime' => [
@@ -422,6 +426,15 @@ class Event extends Form
                 }
             });
         }
+
+        $this->add([
+            'type'    => 'csrf',
+            'name'    => 'csrf',
+            'options' => [
+                'csrf_options' => ['timeout' => 60 * 30],
+            ],
+            'attributes' => [],
+        ]);
 
         // Add cross-element validation as soon as the input data has been populated.
         $this->setInputFilter(new class extends InputFilter {

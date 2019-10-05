@@ -3,21 +3,86 @@
 namespace Application\Controller;
 
 use InvalidArgumentException;
+use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\MvcEvent;
 
 class BaseController extends AbstractActionController
 {
     const ALERT_GOOD = 'good';
     const ALERT_BAD  = 'bad';
 
+    protected $auth;
+    protected $authService;
     protected $config;
     protected $db;
 
-    public function __construct(array $config, AdapterInterface $db)
-    {
+    public function __construct(
+        AuthenticationServiceInterface $authService,
+        array $config,
+        AdapterInterface $db
+    ) {
+        $this->authService = $authService;
         $this->config = $config;
         $this->db = $db;
+    }
+
+    private function prepareAuthMetadata()
+    {
+        // Prepare list of known users based on groups.
+        $groupResultSet = $this->db->query('SELECT id, groupname FROM scagroup', []);
+        $groupList = [];
+        foreach ($groupResultSet as $group) {
+            $groupList[$group->id] = strtolower(str_replace(' ', '', $group->groupname));
+        }
+
+        // Determine auth metadata based on the logged-in identity.
+        $auth = ['id' => null, 'level' => 'anyone'];
+        $identity = $this->authService->getIdentity();
+        if ($identity != null) {
+            if ($identity == 'seneschal') {
+                $auth = ['id' => 1, 'level' => 'admin'];
+            } elseif (in_array($identity, $groupList)) {
+                $auth = ['id' => array_search($identity, $groupList), 'level' => 'user'];
+            }
+        }
+
+        // Store auth info ready for access by the controller or layout.
+        $this->auth = $auth;
+        $this->layout()->authLevel = $auth['level'];
+    }
+
+    public function onDispatch(MvcEvent $e)
+    {
+        $this->prepareAuthMetadata();
+        return parent::onDispatch($e);
+    }
+
+    protected function getCurrentUrl()
+    {
+        return $this->getRequest()->getUri()
+            ->setScheme(null)
+            ->setHost(null)
+            ->setPort(null)
+            ->setUserInfo(null)
+            ->toString();
+    }
+
+    protected function ensureAuthLevel(array $permittedLevels)
+    {
+        if ($this->auth['level'] == 'anyone') {
+            // Not logged in - redirect to login page.
+            return $this->redirect()->toRoute(
+                null,
+                ['controller' => 'auth', 'action' => 'login'],
+                ['query' => ['redirectUrl' => $this->getCurrentUrl()]],
+            );
+        }
+        if (!in_array($this->auth['level'], $permittedLevels)) {
+            // Logged in but insufficient permissions - redirect to home page.
+            return $this->redirect()->toRoute();
+        }
     }
 
     protected function addAlert($message, $type = null)
@@ -52,44 +117,6 @@ class BaseController extends AbstractActionController
     protected function getDb()
     {
         return $this->db;
-    }
-
-    protected function authenticate()
-    {
-        global $authLevel;
-        $config = $this->config['auth'];
-        $db = $this->getDb();
-
-        $groupResultSet = $db->query('SELECT id, groupname FROM scagroup', []);
-        $groupList = [];
-        foreach ($groupResultSet as $group) {
-            $groupList[$group->id] = strtolower(str_replace(' ', '', $group->groupname));
-        }
-
-        $username = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null;
-        $passhash = isset($_SERVER['PHP_AUTH_PW']) ? hash('sha256', $_SERVER['PHP_AUTH_PW']) : null;
-
-        if (isset($_GET['bypass']) && $_GET['bypass'] == 'true') {
-            $auth['level'] = 'anyone';
-        } elseif ($username == $config['admin']['username'] && $passhash == $config['admin']['passhash']) {
-            $auth['level'] = 'admin';
-            $auth['id'] = 1;
-        } elseif ($username == $config['wheel']['username'] && $passhash == $config['wheel']['passhash']) {
-            $auth['level'] = 'admin';
-            $auth['id'] = 1;
-        } elseif (in_array($username, $groupList) && $passhash == $config['user']['passhash']) {
-            $auth['level'] = 'user';
-            $auth['id'] = array_search($_SERVER['PHP_AUTH_USER'], $groupList);
-        } elseif ($username == 'guest') {
-            $auth['level'] = 'anyone';
-        } else {
-            $this->response->setStatusCode(401);
-            Header('WWW-Authenticate: Basic realm="Seneschals\' Database"');
-            return false;
-        }
-
-        $authLevel = $auth['level'];
-        return $auth;
     }
 
     protected function forwardToAction($action)

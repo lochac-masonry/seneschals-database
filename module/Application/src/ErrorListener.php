@@ -2,18 +2,20 @@
 
 namespace Application;
 
+use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Sql\{Insert, Sql};
 use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\{Application, MvcEvent};
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ErrorListener
 {
-    protected $services;
+    private $config;
+    private $db;
 
-    public function __construct(ServiceLocatorInterface $services)
+    public function __construct(array $config, AdapterInterface $db)
     {
-        $this->services = $services;
+        $this->config = $config;
+        $this->db = $db;
     }
 
     public function attach(EventManagerInterface $events)
@@ -49,10 +51,9 @@ class ErrorListener
 
     private function logExceptionToDatabase($exception)
     {
-        $db = $this->services->get('Zend\Db\Adapter\Adapter');
         try {
-            $db->query(
-                (new Sql($db))->buildSqlString(
+            $this->db->query(
+                (new Sql($this->db))->buildSqlString(
                     (new Insert('errorLog'))
                         ->values([
                             'errorDateTime'  => date('Y-m-d H:i:s'),
@@ -60,7 +61,7 @@ class ErrorListener
                             'message'        => substr($exception->getMessage(), 0, 512),
                         ])
                 ),
-                $db::QUERY_MODE_EXECUTE
+                $this->db::QUERY_MODE_EXECUTE
             );
         } catch (\Throwable $ex) {
             // Nothing more we can do.
@@ -69,8 +70,7 @@ class ErrorListener
 
     private function sendExceptionEmail($exception)
     {
-        $config = $this->services->get('config');
-        if (!isset($config['exceptionEmail'])) {
+        if (!isset($this->config['exceptionEmail'])) {
             return;
         }
 
@@ -89,6 +89,6 @@ class ErrorListener
 
         $mailHead = "From: information@lochac.sca.org\r\nContent-Type: text/plain;charset=utf-8";
 
-        mail($config['exceptionEmail'], $mailSubj, $mailBody, $mailHead);
+        mail($this->config['exceptionEmail'], $mailSubj, $mailBody, $mailHead);
     }
 }

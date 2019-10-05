@@ -7,6 +7,35 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.2.0] - 2019-10-05
+
+### Added
+
+* CSRF protection has been added to all forms that mutate data.
+* Several security-focused HTTP headers have been added:
+  * Content-Security-Policy
+  * Feature-Policy
+  * Referrer-Policy
+  * X-Content-Type-Options
+  * X-Frame-Options
+* When a form is returned to the user with validation errors, focus and scroll to the first error.
+
+### Changed
+
+* Refactored \Application\ErrorListener to inject true dependencies instead of a service locator.
+* Moved to session-backed authentication using Zend-Session and Zend-Authentication.
+* Removed all inline styles and scripts (moved to separate files).
+* HTTP requests now redirect to HTTPS by default.
+
+### Fixed
+
+* Added missing length validation to event names.
+
+### Removed
+
+* Removed Zend Framework version from Tools/Version page - Zend no longer has a single centralised version number.
+* Removed `.htaccess` file - all of the settings there have been moved to the VHost config for performance reasons.
+
 ## [2.1.0] - 2019-08-29
 
 ### Changed
@@ -56,7 +85,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.1.0
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.2.0
+[2.2.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.0..v2.1.0
 [2.1.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.1.0..v2.0.0
 [2.0.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.0.0..v1.6.0
 [1.6.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.6.0..v1.5.0

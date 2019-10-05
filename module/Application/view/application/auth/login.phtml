@@ -1,0 +1,13 @@
+<?php
+if (!empty($messages)) { ?>
+<p>Authentication messages:</p>
+<ul>
+    <?php
+    foreach ($messages as $message) {
+        echo '<li>' . $this->escapeHtml($message) . '</li>';
+    }
+    ?>
+</ul>
+<?php } ?>
+
+<?= $this->form($loginForm) ?>

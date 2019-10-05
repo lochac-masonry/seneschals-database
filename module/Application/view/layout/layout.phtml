@@ -1,5 +1,66 @@
-<?= $this->doctype(); ?>
+<?php
+// Set up main menu based on authLevel. All cases fall through to build an authLevel-cumulative menu.
+// Links are relative to application root.
+$menu = [];
+switch ($authLevel) {
+    case 'admin':
+        $menu[] = [
+            'link' => ['controller' => 'group', 'action' => 'edit'],
+            'name' => 'Edit Group Details'
+        ];
+        $menu[] = [
+            'link' => ['controller' => 'group', 'action' => 'close'],
+            'name' => 'Close a Group'
+        ];
+        $menu[] = [
+            'link' => ['controller' => 'postcode', 'action' => 'assign'],
+            'name' => 'Assign Postcodes'
+        ];
+        $menu[] = [
+            'link' => ['controller' => 'postcode', 'action' => 'upload'],
+            'name' => 'Upload Postcodes File'
+        ];
+        $menu[] = [
+            'link' => ['controller' => 'group', 'action' => 'domains'],
+            'name' => 'Manage Group Email Domains'
+        ];
+        // Fall through
+    case 'user':
+        $menu[] = [
+            'link' => ['controller' => 'group', 'action' => 'aliases'],
+            'name' => 'Manage Group Email Aliases'
+        ];
+        $menu[] = [
+            'link' => ['controller' => 'report', 'action' => null],
+            'name' => 'Quarterly Reports'
+        ];
+        $menu[] = [
+            'link' => ['controller' => 'event', 'action' => 'list'],
+            'name' => 'Event List'
+        ];
+        $menu[] = [
+            'link' => ['controller' => 'group', 'action' => 'baron-baroness'],
+            'name' => 'Baron and Baroness Details'
+        ];
+        // Fall through
+    default: // Equivalent to case 'anyone'
+        $menu[] = [
+            'link' => ['controller' => 'postcode', 'action' => null],
+            'name' => 'Postcode Query'
+        ];
+        $menu[] = [
+            'link' => ['controller' => 'group', 'action' => null],
+            'name' => 'Group Roster'
+        ];
+        $menu[] = [
+            'link' => ['controller' => 'event', 'action' => null],
+            'name' => 'Submit Event Proposal'
+        ];
+        break;
+}
+?>
 
+<?= $this->doctype(); ?>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -17,7 +78,7 @@
 
         <?= $this->headScript() ?>
     </head>
-    <body>
+    <body <?= isset($fullWidth) && $fullWidth ? 'class="fullwidth"' : '' ?>>
         <div id="Container">
         <div class="Navigation">
             <img src="<?= $this->basePath('img/kingdom-seneschal-device.png') ?>"
@@ -34,10 +95,15 @@
                 <a href="https://seneschal.lochac.sca.org">From the Seneschal <small>(Home)</small></a><br />
                 <a href="<?= $this->url('default') ?>">Database</a><br />
                 <span class="subNav">
-    <?php foreach (buildMenu() as $item) { ?>
+    <?php foreach ($menu as $item) { ?>
                     <a href="<?= $this->url('default', $item['link']) ?>"><?= $item['name'] ?></a><br />
     <?php } ?>
                 </span>
+                <?php
+                if ($authLevel != 'anyone') { ?>
+                <hr />
+                <a href="<?= $this->url('default', ['controller' => 'auth', 'action' => 'logout']) ?>">Log Out</a>
+                <?php } ?>
             </p>
 
             <img alt="Navigation Border" src="<?= $this->basePath('img/nav-bottom.png') ?>" width="250" height="59"/>
@@ -76,22 +142,18 @@
                     Comments or suggestions to
                     <a href="mailto:information&#64;lochac.sca.org">information&#64;lochac.sca.org</a>
                 </p>
-                <p style="font-size: 10px;">Application Code: Lord Edmund Kerr</p>
-                <p style="font-size: 10px;">Site Design: Lord Ronan mac Briain</p>
+                <small>
+                    Application Code: Lord Edmund Kerr
+                    <br />
+                    Site Design: Lord Ronan mac Briain
+                </small>
             </div>
         </div>
     </div>
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-101506183-1', 'auto');
-  ga('send', 'pageview');
-</script>
-
-        <?= $this->inlineScript() ?>
+        <?= $this->inlineScript()
+            ->appendFile($this->basePath('js/focus-on-first-error.js'))
+            ->appendFile($this->basePath('js/google-analytics.js'))
+        ?>
     </body>
 </html>

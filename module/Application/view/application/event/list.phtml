@@ -48,15 +48,12 @@ if (0 < count($events)) {
 </table>
 <p><?= count($events) ?> event(s) displayed.</p>
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.23.3/js/jquery.tablesorter.min.js">
-</script>
-<script type="text/javascript">
-    $(function () {
-        $("#eventList").tablesorter({ sortList: [[1, 0]] });
-    });
-</script>
+    <?php
+    $this->inlineScript()
+        ->appendFile('https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js')
+        ->appendFile('https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.23.3/js/jquery.tablesorter.min.js')
+        ->appendFile($this->basePath('js/sort-event-list.js'))
+    ?>
 
     <?php
 } else {
