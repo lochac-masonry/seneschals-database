@@ -7,6 +7,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Changed
+
+* The username field in the login form is now forced to lowercase to prevent case-sensitivity login issues.
+
 ## [2.2.0] - 2019-10-05
 
 ### Added

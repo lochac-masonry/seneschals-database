@@ -20,7 +20,10 @@ class Login extends Form implements InputFilterProviderInterface
                 'label' => 'Username',
             ],
             'attributes' => [
-                'required' => true,
+                'id'             => 'login-username',
+                'required'       => true,
+                'autocorrect'    => 'off',
+                'autocapitalize' => 'off',
             ],
         ]);
         $this->add([
@@ -64,6 +67,10 @@ class Login extends Form implements InputFilterProviderInterface
         return [
             'username' => [
                 'required' => true,
+                'filters'  => [
+                    ['name' => 'stringTrim'],
+                    ['name' => 'stringToLower'],
+                ],
             ],
             'password' => [
                 'required' => true,
