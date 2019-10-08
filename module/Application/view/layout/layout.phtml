@@ -1,6 +1,10 @@
 <?php
 // Set up main menu based on authLevel. All cases fall through to build an authLevel-cumulative menu.
 // Links are relative to application root.
+if (!isset($authLevel)) {
+    $authLevel = 'anyone';
+}
+
 $menu = [];
 switch ($authLevel) {
     case 'admin':

@@ -7,6 +7,12 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.2.2] - 2019-10-08
+
+### Fixed
+
+* Workaround for undefined variable notice in the layout when rendering error pages.
+
 ## [2.2.1] - 2019-10-08
 
 ### Changed
