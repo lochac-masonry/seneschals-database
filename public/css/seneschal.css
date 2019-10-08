@@ -214,3 +214,7 @@ td {
 .form--block label {
     display: block;
 }
+
+input#login-username {
+    text-transform: lowercase;
+}

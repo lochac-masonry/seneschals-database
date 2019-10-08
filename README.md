@@ -47,7 +47,7 @@ To set up the necessary credentials:
 ## Deployment
 
 1. Copy the code to the server, for example by using git to check out the master branch.
-1. The web server document root should be set to the `public` folder, where `public/.htaccess` will redirect all requests to `public/index.php`.
+1. The web server document root should be set to the `public` folder and all requests that do not resolve to a file should be redirected to `public/index.php`.
 1. Create (or check if any changes are needed in) `config\autoload\local.php` using `config\autoload\local.php.dist` as a template.
 1. Ensure the `google-key.json` file exists in the project root.
 1. Install dependencies according to the versions in `composer.lock`, excluding development dependencies and taking extra time to optimise the autoloader for runtime performance:

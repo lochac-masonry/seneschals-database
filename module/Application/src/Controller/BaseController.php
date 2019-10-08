@@ -43,6 +43,8 @@ class BaseController extends AbstractActionController
         if ($identity != null) {
             if ($identity == 'seneschal') {
                 $auth = ['id' => 1, 'level' => 'admin'];
+            } elseif ($identity == 'servers') {
+                $auth = ['id' => 1, 'level' => 'admin'];
             } elseif (in_array($identity, $groupList)) {
                 $auth = ['id' => array_search($identity, $groupList), 'level' => 'user'];
             }
