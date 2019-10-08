@@ -7,9 +7,15 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.2.1] - 2019-10-08
+
 ### Changed
 
 * The username field in the login form is now forced to lowercase to prevent case-sensitivity login issues.
+
+### Fixed
+
+* Reinstated `servers` login which was missed in the authentication rewrite.
 
 ## [2.2.0] - 2019-10-05
 
@@ -89,7 +95,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.2.0
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.2.1
+[2.2.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.1..v2.2.0
 [2.2.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.0..v2.1.0
 [2.1.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.1.0..v2.0.0
 [2.0.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.0.0..v1.6.0
