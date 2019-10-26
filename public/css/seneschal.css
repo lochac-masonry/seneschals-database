@@ -80,7 +80,7 @@ a:visited:hover {
     position: static;
 }
 
-.Navigation {
+.side-panel {
     float:left;
     width: 250px;
     text-align: center;
@@ -88,18 +88,24 @@ a:visited:hover {
     color: #990000;
     margin: 0px;
     padding: 0px;
-    font-size: 15px;
-    line-height: 24px;
     position: absolute;
     top: 0px;
 }
 
-.subNav {
-    color: #990000;
-    margin: 0px;
+.navigation {
+    list-style: none;
     padding: 0px;
     font-size: 12px;
-    line-height: 15px;
+    line-height: 2;
+}
+
+.navigation > .active > a {
+    color: #000000;
+    text-decoration: underline;
+}
+
+.navigation__link--large {
+    font-size: 15px;
 }
 
 .PageContent {

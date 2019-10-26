@@ -52,7 +52,6 @@ class BaseController extends AbstractActionController
 
         // Store auth info ready for access by the controller or layout.
         $this->auth = $auth;
-        $this->layout()->authLevel = $auth['level'];
     }
 
     public function onDispatch(MvcEvent $e)
@@ -119,18 +118,6 @@ class BaseController extends AbstractActionController
     protected function getDb()
     {
         return $this->db;
-    }
-
-    protected function forwardToAction($action)
-    {
-        $this->getEvent()->getRouteMatch()->setParam('action', $action);
-        $method = static::getMethodFromAction($action);
-
-        if (!method_exists($this, $method)) {
-            $method = 'notFoundAction';
-        }
-
-        return $this->$method();
     }
 
     protected function sendEmail($to, $subject, $body, $header = null)

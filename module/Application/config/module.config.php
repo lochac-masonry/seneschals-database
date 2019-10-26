@@ -3,6 +3,7 @@
 namespace Application;
 
 use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\Permissions\Acl\AclInterface;
 use Zend\Router\Http\Segment;
 use Zend\Session\Storage\SessionArrayStorage;
 use Zend\Session\Validator\HttpUserAgent;
@@ -47,8 +48,119 @@ return [
             Controller\ToolsController::class    => Controller\BaseControllerFactory::class,
         ],
     ],
+    'navigation' => [
+        'default' => [
+            [
+                'label' => 'Lochac Homepage',
+                'uri'   => 'https://lochac.sca.org/lochac',
+                'class' => 'navigation__link--large',
+            ],
+            [
+                'label' => 'From the Seneschal (Home)',
+                'uri'   => 'https://seneschal.lochac.sca.org',
+                'class' => 'navigation__link--large',
+            ],
+            [
+                'label'      => 'Database',
+                'controller' => 'index',
+                'class'      => 'navigation__link--large',
+            ],
+            [
+                'label'      => 'Edit Group Details',
+                'controller' => 'group',
+                'action'     => 'edit',
+                'resource'   => 'group',
+                'privilege'  => 'edit',
+            ],
+            [
+                'label'      => 'Close a Group',
+                'controller' => 'group',
+                'action'     => 'close',
+                'resource'   => 'group',
+                'privilege'  => 'close',
+            ],
+            [
+                'label'      => 'Assign Postcodes',
+                'controller' => 'postcode',
+                'action'     => 'assign',
+                'resource'   => 'postcode',
+                'privilege'  => 'assign',
+            ],
+            [
+                'label'      => 'Upload Postcodes File',
+                'controller' => 'postcode',
+                'action'     => 'upload',
+                'resource'   => 'postcode',
+                'privilege'  => 'upload',
+            ],
+            [
+                'label'      => 'Manage Group Email Domains',
+                'controller' => 'group',
+                'action'     => 'domains',
+                'resource'   => 'group',
+                'privilege'  => 'manage_domains',
+            ],
+            [
+                'label'      => 'Manage Group Email Aliases',
+                'controller' => 'group',
+                'action'     => 'aliases',
+                'resource'   => 'group',
+                'privilege'  => 'manage_aliases',
+            ],
+            [
+                'label'      => 'Quarterly Reports',
+                'controller' => 'report',
+                'resource'   => 'report',
+                'privilege'  => 'submit',
+            ],
+            [
+                'label'      => 'Event List',
+                'controller' => 'event',
+                'action'     => 'list',
+                'resource'   => 'event',
+                'privilege'  => 'list',
+            ],
+            [
+                'label'      => 'Baron and Baroness Details',
+                'controller' => 'group',
+                'action'     => 'baron-baroness',
+                'resource'   => 'group',
+                'privilege'  => 'update_nobility',
+            ],
+            [
+                'label'      => 'Postcode Query',
+                'controller' => 'postcode',
+                'action'     => 'query',
+                'resource'   => 'postcode',
+                'privilege'  => 'list',
+            ],
+            [
+                'label'      => 'Group Roster',
+                'controller' => 'group',
+                'action'     => 'roster',
+                'resource'   => 'group',
+                'privilege'  => 'list',
+            ],
+            [
+                'label'      => 'Submit Event Proposal',
+                'controller' => 'event',
+                'action'     => 'new',
+                'resource'   => 'event',
+                'privilege'  => 'create',
+            ],
+            [
+                'label'      => 'Log Out',
+                'controller' => 'auth',
+                'action'     => 'logout',
+                'class'      => 'navigation__link--large',
+                'resource'   => 'auth',
+                'privilege'  => 'logout',
+            ],
+        ],
+    ],
     'service_manager' => [
         'factories' => [
+            AclInterface::class                   => AclFactory::class,
             AuthenticationServiceInterface::class => AuthenticationServiceFactory::class,
         ],
     ],

@@ -10,7 +10,7 @@ class GroupController extends BaseController
 {
     public function indexAction()
     {
-        return $this->forwardToAction('roster');
+        return $this->redirect()->toRoute(null, ['action' => 'roster'], [], true);
     }
 
     public function listAction()

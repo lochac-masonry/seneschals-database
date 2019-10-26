@@ -10,7 +10,7 @@ class PostcodeController extends BaseController
 {
     public function indexAction()
     {
-        return $this->forwardToAction('query');
+        return $this->redirect()->toRoute(null, ['action' => 'query'], [], true);
     }
 
     public function listAction()

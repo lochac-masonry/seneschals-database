@@ -1,0 +1,26 @@
+NAVIGATION-ONLY ACL
+
+Resources|Privileges
+group|edit,close,manage_domains,manage_aliases,update_nobility,list
+postcode|assign,upload,list
+report|submit
+event|create,list,edit
+tools
+auth|logout
+
+Roles
+admin
+seneschal extends guest
+guest
+
+Rules
+allow(admin)
+allow(seneschal, group, manage_aliases)
+allow(seneschal, group, update_nobility)
+allow(seneschal, report, submit)
+allow(seneschal, event, list)
+allow(seneschal, event, edit)
+allow(seneschal, auth, logout)
+allow(guest, group, list)
+allow(guest, postcode, list)
+allow(guest, event, create)

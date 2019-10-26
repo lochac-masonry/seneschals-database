@@ -6,7 +6,7 @@ class ToolsController extends BaseController
 {
     public function indexAction()
     {
-        return $this->forwardToAction('version');
+        return $this->redirect()->toRoute(null, ['action' => 'version'], [], true);
     }
 
     public function versionAction()

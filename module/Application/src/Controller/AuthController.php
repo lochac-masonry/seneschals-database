@@ -9,7 +9,7 @@ class AuthController extends BaseController
 {
     public function indexAction()
     {
-        return $this->forwardToAction('login');
+        return $this->redirect()->toRoute(null, ['action' => 'login'], [], true);
     }
 
     public function loginAction()

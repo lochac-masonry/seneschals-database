@@ -7,6 +7,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Changed
+
+* Navigation menu is now rendered using Zend-Navigation and Zend-Permissions-Acl.
+
 ## [2.2.2] - 2019-10-08
 
 ### Fixed

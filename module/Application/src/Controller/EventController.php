@@ -12,7 +12,7 @@ class EventController extends BaseController
 
     public function indexAction()
     {
-        return $this->forwardToAction('new');
+        return $this->redirect()->toRoute(null, ['action' => 'new'], [], true);
     }
 
     private function emailSteward($values, $hostGroupName)
@@ -396,7 +396,7 @@ class EventController extends BaseController
         $request = $this->getRequest();
         $eventId = $request->getQuery()['eventid'];
         if (!is_numeric($eventId)) {
-            return $this->forwardToAction('new');
+            return $this->notFoundAction();
         }
         $eventId = floor($eventId); // Convert to int.
         $initialData = $db->query(
