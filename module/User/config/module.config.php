@@ -66,4 +66,12 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+    'view_helpers' => [
+        'factories' => [
+            View\Helper\LogInOrOut::class => View\Helper\Factory\LogInOrOutFactory::class,
+        ],
+        'aliases' => [
+            'logInOrOut' => View\Helper\LogInOrOut::class,
+        ],
+    ],
 ];

@@ -342,13 +342,6 @@ return [
                 'resource'  => 'event',
                 'privilege' => 'create',
             ],
-            [
-                'label'     => 'Log Out',
-                'route'     => 'auth/logout',
-                'class'     => 'navigation__link--large',
-                'resource'  => 'auth',
-                'privilege' => 'logout',
-            ],
         ],
     ],
     'view_manager' => [

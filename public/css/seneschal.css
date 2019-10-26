@@ -90,13 +90,14 @@ a:visited:hover {
     padding: 0px;
     position: absolute;
     top: 0px;
+    font-size: 15px;
+    line-height: 2;
 }
 
 .navigation {
     list-style: none;
     padding: 0px;
     font-size: 12px;
-    line-height: 2;
 }
 
 .navigation > .active > a {
