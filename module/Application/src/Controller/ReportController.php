@@ -5,7 +5,7 @@ namespace Application\Controller;
 use Application\Form;
 use Zend\Db\Sql\{Select, Sql, Update};
 
-class ReportController extends BaseController
+class ReportController extends DatabaseController
 {
     private function sendReportEmails($reportData, $groupData, $parentGroupEmail, $subgroups)
     {
@@ -91,17 +91,17 @@ class ReportController extends BaseController
                                                             // Send report
                                                             //----------------------------------------------------------
         if ($this->sendEmail($mailto, $mailsubj, $mailbody, $mailheaders)) {
-            $this->addAlert('Report sent to ' . count($mailto) . ' recipient(s).', self::ALERT_GOOD);
+            $this->alert()->good('Report sent to ' . count($mailto) . ' recipient(s).');
         } else {
-            $this->addAlert('Failed to send report.', self::ALERT_BAD);
+            $this->alert()->bad('Failed to send report.');
         }
     }
 
     public function indexAction()
     {
         $this->layout()->title = 'Submit Quarterly Report';
-        $db = $this->getDb();
-        $authResponse = $this->ensureAuthLevel(['admin', 'user']);
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
         if ($authResponse) {
             return $authResponse;
         }
@@ -120,10 +120,10 @@ class ReportController extends BaseController
         $detailsForm = null;
 
         $request = $this->getRequest();
-        if ($this->auth['level'] == 'admin') {
+        if ($this->auth()->getLevel() == 'admin') {
             $groupSelectForm->setData($request->getQuery());
         } else {
-            $groupSelectForm->setData(['groupid' => $this->auth['id']]);
+            $groupSelectForm->setData(['groupid' => $this->auth()->getId()]);
             $groupSelectForm->get('groupid')->setAttribute('disabled', true);
             $groupSelectForm->get('submit')->setAttribute('disabled', true);
         }
@@ -218,7 +218,7 @@ class ReportController extends BaseController
                         $db::QUERY_MODE_EXECUTE
                     );
 
-                    $this->addAlert($updateResult->getAffectedRows() . ' row(s) updated.');
+                    $this->alert($updateResult->getAffectedRows() . ' row(s) updated.');
 
                     $this->sendReportEmails($values, $initialData, $parentGroupEmail, $subgroups);
                 }

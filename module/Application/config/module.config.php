@@ -2,50 +2,255 @@
 
 namespace Application;
 
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Permissions\Acl\AclInterface;
-use Zend\Router\Http\Segment;
-use Zend\Session\Storage\SessionArrayStorage;
-use Zend\Session\Validator\HttpUserAgent;
-use Zend\Session\Validator\RemoteAddr;
+use Zend\Router\Http\Literal;
 
 return [
     'router' => [
         'routes' => [
-            'default' => [
-                'type'    => Segment::class,
+            'home' => [
+                'type' => Literal::class,
                 'options' => [
-                    'route'       => '/[:controller[/:action]]',
-                    'constraints' => [
-                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    ],
+                    'route'    => '/',
                     'defaults' => [
-                        'controller'    => 'index',
-                        'action'        => 'index',
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+            ],
+            'event' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/event',
+                    'defaults' => [
+                        'controller' => Controller\EventController::class,
+                    ],
+                ],
+                'child_routes' => [
+                    'edit' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/edit',
+                            'defaults' => [
+                                'action' => 'edit',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'list' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/list',
+                            'defaults' => [
+                                'action' => 'list',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'new' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/new',
+                            'defaults' => [
+                                'action' => 'new',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                ],
+            ],
+            'group' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/group',
+                    'defaults' => [
+                        'controller' => Controller\GroupController::class,
+                    ],
+                ],
+                'child_routes' => [
+                    'aliases' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/aliases',
+                            'defaults' => [
+                                'action' => 'aliases',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'baron-baroness' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/baron-baroness',
+                            'defaults' => [
+                                'action' => 'baron-baroness',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'close' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/close',
+                            'defaults' => [
+                                'action' => 'close',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'domains' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/domains',
+                            'defaults' => [
+                                'action' => 'domains',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'edit' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/edit',
+                            'defaults' => [
+                                'action' => 'edit',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'list' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/list',
+                            'defaults' => [
+                                'action' => 'list',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'roster' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/roster',
+                            'defaults' => [
+                                'action' => 'roster',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                ],
+            ],
+            'postcode' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/postcode',
+                    'defaults' => [
+                        'controller' => Controller\PostcodeController::class,
+                    ],
+                ],
+                'child_routes' => [
+                    'assign' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/assign',
+                            'defaults' => [
+                                'action' => 'assign',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'list' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/list',
+                            'defaults' => [
+                                'action' => 'list',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'query' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/query',
+                            'defaults' => [
+                                'action' => 'query',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'upload' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/upload',
+                            'defaults' => [
+                                'action' => 'upload',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                ],
+            ],
+            'report' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/report',
+                    'defaults' => [
+                        'controller' => Controller\ReportController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+            ],
+            'tools' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/tools',
+                    'defaults' => [
+                        'controller' => Controller\ToolsController::class,
+                    ],
+                ],
+                'child_routes' => [
+                    'login' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/version',
+                            'defaults' => [
+                                'action' => 'version',
+                            ],
+                        ],
+                        'may_terminate' => true,
                     ],
                 ],
             ],
         ],
     ],
     'controllers' => [
-        'aliases' => [
-            'auth'     => Controller\AuthController::class,
-            'event'    => Controller\EventController::class,
-            'group'    => Controller\GroupController::class,
-            'index'    => Controller\IndexController::class,
-            'postcode' => Controller\PostcodeController::class,
-            'report'   => Controller\ReportController::class,
-            'tools'    => Controller\ToolsController::class,
+        'invokables' => [
+            Controller\ToolsController::class => Controller\ToolsController::class,
         ],
         'factories' => [
-            Controller\AuthController::class     => Controller\BaseControllerFactory::class,
-            Controller\EventController::class    => Controller\BaseControllerFactory::class,
-            Controller\GroupController::class    => Controller\BaseControllerFactory::class,
-            Controller\IndexController::class    => Controller\BaseControllerFactory::class,
-            Controller\PostcodeController::class => Controller\BaseControllerFactory::class,
-            Controller\ReportController::class   => Controller\BaseControllerFactory::class,
-            Controller\ToolsController::class    => Controller\BaseControllerFactory::class,
+            Controller\EventController::class    => Controller\DatabaseControllerFactory::class,
+            Controller\GroupController::class    => Controller\DatabaseControllerFactory::class,
+            Controller\IndexController::class    => Controller\DatabaseControllerFactory::class,
+            Controller\PostcodeController::class => Controller\DatabaseControllerFactory::class,
+            Controller\ReportController::class   => Controller\DatabaseControllerFactory::class,
+        ],
+    ],
+    'controller_plugins' => [
+        'invokables' => [
+            Controller\Plugin\Alert::class      => Controller\Plugin\Alert::class,
+            Controller\Plugin\ArrayIndex::class => Controller\Plugin\ArrayIndex::class,
+            Controller\Plugin\CurrentUrl::class => Controller\Plugin\CurrentUrl::class,
+        ],
+        'factories' => [
+            Controller\Plugin\SendEmail::class => Controller\Plugin\Factory\SendEmailFactory::class,
+        ],
+        'aliases' => [
+            'alert'      => Controller\Plugin\Alert::class,
+            'arrayIndex' => Controller\Plugin\ArrayIndex::class,
+            'currentUrl' => Controller\Plugin\CurrentUrl::class,
+            'sendEmail'  => Controller\Plugin\SendEmail::class,
         ],
     ],
     'navigation' => [
@@ -61,132 +266,92 @@ return [
                 'class' => 'navigation__link--large',
             ],
             [
-                'label'      => 'Database',
-                'controller' => 'index',
-                'class'      => 'navigation__link--large',
+                'label' => 'Database',
+                'route' => 'home',
+                'class' => 'navigation__link--large',
             ],
             [
-                'label'      => 'Edit Group Details',
-                'controller' => 'group',
-                'action'     => 'edit',
-                'resource'   => 'group',
-                'privilege'  => 'edit',
+                'label'     => 'Edit Group Details',
+                'route'     => 'group/edit',
+                'resource'  => 'group',
+                'privilege' => 'edit',
             ],
             [
-                'label'      => 'Close a Group',
-                'controller' => 'group',
-                'action'     => 'close',
-                'resource'   => 'group',
-                'privilege'  => 'close',
+                'label'     => 'Close a Group',
+                'route'     => 'group/close',
+                'resource'  => 'group',
+                'privilege' => 'close',
             ],
             [
-                'label'      => 'Assign Postcodes',
-                'controller' => 'postcode',
-                'action'     => 'assign',
-                'resource'   => 'postcode',
-                'privilege'  => 'assign',
+                'label'     => 'Assign Postcodes',
+                'route'     => 'postcode/assign',
+                'resource'  => 'postcode',
+                'privilege' => 'assign',
             ],
             [
-                'label'      => 'Upload Postcodes File',
-                'controller' => 'postcode',
-                'action'     => 'upload',
-                'resource'   => 'postcode',
-                'privilege'  => 'upload',
+                'label'     => 'Upload Postcodes File',
+                'route'     => 'postcode/upload',
+                'resource'  => 'postcode',
+                'privilege' => 'upload',
             ],
             [
-                'label'      => 'Manage Group Email Domains',
-                'controller' => 'group',
-                'action'     => 'domains',
-                'resource'   => 'group',
-                'privilege'  => 'manage_domains',
+                'label'     => 'Manage Group Email Domains',
+                'route'     => 'group/domains',
+                'resource'  => 'group',
+                'privilege' => 'manage_domains',
             ],
             [
-                'label'      => 'Manage Group Email Aliases',
-                'controller' => 'group',
-                'action'     => 'aliases',
-                'resource'   => 'group',
-                'privilege'  => 'manage_aliases',
+                'label'     => 'Manage Group Email Aliases',
+                'route'     => 'group/aliases',
+                'resource'  => 'group',
+                'privilege' => 'manage_aliases',
             ],
             [
-                'label'      => 'Quarterly Reports',
-                'controller' => 'report',
-                'resource'   => 'report',
-                'privilege'  => 'submit',
+                'label'     => 'Quarterly Reports',
+                'route'     => 'report',
+                'resource'  => 'report',
+                'privilege' => 'submit',
             ],
             [
-                'label'      => 'Event List',
-                'controller' => 'event',
-                'action'     => 'list',
-                'resource'   => 'event',
-                'privilege'  => 'list',
+                'label'     => 'Event List',
+                'route'     => 'event/list',
+                'resource'  => 'event',
+                'privilege' => 'list',
             ],
             [
-                'label'      => 'Baron and Baroness Details',
-                'controller' => 'group',
-                'action'     => 'baron-baroness',
-                'resource'   => 'group',
-                'privilege'  => 'update_nobility',
+                'label'     => 'Baron and Baroness Details',
+                'route'     => 'group/baron-baroness',
+                'resource'  => 'group',
+                'privilege' => 'update_nobility',
             ],
             [
-                'label'      => 'Postcode Query',
-                'controller' => 'postcode',
-                'action'     => 'query',
-                'resource'   => 'postcode',
-                'privilege'  => 'list',
+                'label'     => 'Postcode Query',
+                'route'     => 'postcode/query',
+                'resource'  => 'postcode',
+                'privilege' => 'list',
             ],
             [
-                'label'      => 'Group Roster',
-                'controller' => 'group',
-                'action'     => 'roster',
-                'resource'   => 'group',
-                'privilege'  => 'list',
+                'label'     => 'Group Roster',
+                'route'     => 'group/roster',
+                'resource'  => 'group',
+                'privilege' => 'list',
             ],
             [
-                'label'      => 'Submit Event Proposal',
-                'controller' => 'event',
-                'action'     => 'new',
-                'resource'   => 'event',
-                'privilege'  => 'create',
+                'label'     => 'Submit Event Proposal',
+                'route'     => 'event/new',
+                'resource'  => 'event',
+                'privilege' => 'create',
             ],
             [
-                'label'      => 'Log Out',
-                'controller' => 'auth',
-                'action'     => 'logout',
-                'class'      => 'navigation__link--large',
-                'resource'   => 'auth',
-                'privilege'  => 'logout',
+                'label'     => 'Log Out',
+                'route'     => 'auth/logout',
+                'class'     => 'navigation__link--large',
+                'resource'  => 'auth',
+                'privilege' => 'logout',
             ],
         ],
-    ],
-    'service_manager' => [
-        'factories' => [
-            AclInterface::class                   => AclFactory::class,
-            AuthenticationServiceInterface::class => AuthenticationServiceFactory::class,
-        ],
-    ],
-    'session_config' => [
-        'cookie_httponly' => true,
-        'cookie_lifetime' => 60 * 60 * 1,
-        'gc_maxlifetime'  => 60 * 60 * 24 * 30,
-    ],
-    'session_manager' => [
-        'validators' => [
-            RemoteAddr::class,
-            HttpUserAgent::class,
-        ],
-    ],
-    'session_storage' => [
-        'type' => SessionArrayStorage::class,
-    ],
-    'translator' => [
-        // Value not important, but if it isn't set it tries to determine a
-        // default locale using the intl extension which is not installed.
-        'locale' => 'en_US',
     ],
     'view_manager' => [
-        'doctype'             => 'HTML5',
-        'not_found_template'  => 'error/404',
-        'exception_template'  => 'error/index',
         'template_path_stack' => [
             __DIR__ . '/../view',
         ],

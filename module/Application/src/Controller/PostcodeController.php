@@ -6,13 +6,8 @@ use Application\Form;
 use Zend\Db\Sql\{Delete, Expression, Select, Sql, Update};
 use Zend\View\Model\ViewModel;
 
-class PostcodeController extends BaseController
+class PostcodeController extends DatabaseController
 {
-    public function indexAction()
-    {
-        return $this->redirect()->toRoute(null, ['action' => 'query'], [], true);
-    }
-
     public function listAction()
     {
         $sql = "SELECT DISTINCT a.postcode AS postcode, a.state AS state, " .
@@ -20,14 +15,14 @@ class PostcodeController extends BaseController
                "ON a.groupid=b.id ORDER BY a.postcode, a.state";
 
         return (new ViewModel([
-            'postcodeResultSet' => $this->getDb()->query($sql, [])->toArray(),
+            'postcodeResultSet' => $this->db->query($sql, [])->toArray(),
         ]))->setTerminal(true);
     }
 
     public function queryAction()
     {
         $this->layout()->title = 'Postcode Query';
-        $db = $this->getDb();
+        $db = $this->db;
 
         $groupList = $this->arrayIndex(
             $db->query('SELECT id, groupname FROM scagroup ORDER BY groupname', []),
@@ -110,8 +105,8 @@ class PostcodeController extends BaseController
     public function assignAction()
     {
         $this->layout()->title = 'Assign Postcodes';
-        $db = $this->getDb();
-        $authResponse = $this->ensureAuthLevel(['admin']);
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin']);
         if ($authResponse) {
             return $authResponse;
         }
@@ -148,7 +143,7 @@ class PostcodeController extends BaseController
                     $db::QUERY_MODE_EXECUTE
                 );
 
-                $this->addAlert($result->getAffectedRows() . ' row(s) updated.', self::ALERT_GOOD);
+                $this->alert()->good($result->getAffectedRows() . ' row(s) updated.');
             }
         }
 
@@ -160,8 +155,8 @@ class PostcodeController extends BaseController
     public function uploadAction()
     {
         $this->layout()->title = 'Upload Postcodes File';
-        $db = $this->getDb();
-        $authResponse = $this->ensureAuthLevel(['admin']);
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin']);
         if ($authResponse) {
             return $authResponse;
         }
@@ -245,9 +240,8 @@ class PostcodeController extends BaseController
                             );
                             $insertCount += $result->getAffectedRows();
                         } catch (Exception $e) {
-                            $this->addAlert(
-                                "Possible error adding {$row[Locality]}, {$row[Pcode]}, {$row[State]}.",
-                                self::ALERT_BAD
+                            $this->alert()->bad(
+                                "Possible error adding {$row[Locality]}, {$row[Pcode]}, {$row[State]}."
                             );
                             $errorCount++;
                         }
@@ -277,9 +271,8 @@ class PostcodeController extends BaseController
                             );
                             $updateCount += $result->getAffectedRows();
                         } catch (Exception $e) {
-                            $this->addAlert(
-                                "Possible error updating {$row[Locality]}, {$row[Pcode]}, {$row[State]}.",
-                                self::ALERT_BAD
+                            $this->alert()->bad(
+                                "Possible error updating {$row[Locality]}, {$row[Pcode]}, {$row[State]}."
                             );
                             $errorCount++;
                         }
@@ -297,13 +290,13 @@ class PostcodeController extends BaseController
                     );
                     $deleteCount += $result->getAffectedRows();
                 } catch (Exception $e) {
-                    $this->addAlert('Possible error deleting old entries.', self::ALERT_BAD);
+                    $this->alert()->bad('Possible error deleting old entries.');
                     $errorCount++;
                 }
-                $this->addAlert($insertCount . ' row(s) added.');
-                $this->addAlert($updateCount . ' row(s) updated.');
-                $this->addAlert($deleteCount . ' row(s) deleted.');
-                $this->addAlert($errorCount . ' error(s) encountered.');
+                $this->alert($insertCount . ' row(s) added.');
+                $this->alert($updateCount . ' row(s) updated.');
+                $this->alert($deleteCount . ' row(s) deleted.');
+                $this->alert($errorCount . ' error(s) encountered.');
 
                 fclose($file);
             }

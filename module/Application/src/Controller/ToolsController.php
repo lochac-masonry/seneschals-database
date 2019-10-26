@@ -2,13 +2,10 @@
 
 namespace Application\Controller;
 
-class ToolsController extends BaseController
-{
-    public function indexAction()
-    {
-        return $this->redirect()->toRoute(null, ['action' => 'version'], [], true);
-    }
+use Zend\Mvc\Controller\AbstractActionController;
 
+class ToolsController extends AbstractActionController
+{
     public function versionAction()
     {
         $this->layout()->title = 'Version';

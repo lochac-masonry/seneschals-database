@@ -6,14 +6,9 @@ use Application\Form;
 use Zend\Db\Sql\{Insert, Select, Sql, Update};
 use Zend\Uri\Http;
 
-class EventController extends BaseController
+class EventController extends DatabaseController
 {
     private $googleMetadata;
-
-    public function indexAction()
-    {
-        return $this->redirect()->toRoute(null, ['action' => 'new'], [], true);
-    }
 
     private function emailSteward($values, $hostGroupName)
     {
@@ -77,7 +72,7 @@ class EventController extends BaseController
     public function newAction()
     {
         $this->layout()->title = 'Submit Event Proposal';
-        $db = $this->getDb();
+        $db = $this->db;
 
         $groupList = $this->arrayIndex(
             $db->query("SELECT id, groupname FROM scagroup WHERE status = 'live' ORDER BY groupname", []),
@@ -111,12 +106,12 @@ class EventController extends BaseController
             ),
             $db::QUERY_MODE_EXECUTE
         );
-        $this->addAlert("Successfully added event {$values['name']}.", self::ALERT_GOOD);
+        $this->alert()->good("Successfully added event {$values['name']}.");
 
         if ($this->emailSteward($values, $groupList[$values['groupid']])) {
-            $this->addAlert('Notification email sent to steward.', self::ALERT_GOOD);
+            $this->alert()->good('Notification email sent to steward.');
         } else {
-            $this->addAlert('Failed to send notification email to steward.', self::ALERT_BAD);
+            $this->alert()->bad('Failed to send notification email to steward.');
         }
 
         $seneschal = (array) $db->query(
@@ -129,11 +124,10 @@ class EventController extends BaseController
             []
         )->toArray()[0];
         if ($this->emailSeneschal($seneschal)) {
-            $this->addAlert('Notification email sent to group seneschal.', self::ALERT_GOOD);
+            $this->alert()->good('Notification email sent to group seneschal.');
         } else {
-            $this->addAlert(
-                'Failed to send email to group seneschal. Please contact them manually.',
-                self::ALERT_BAD
+            $this->alert()->bad(
+                'Failed to send email to group seneschal. Please contact them manually.'
             );
         }
 
@@ -143,8 +137,8 @@ class EventController extends BaseController
     public function listAction()
     {
         $this->layout()->title = 'Review Event Proposals';
-        $db = $this->getDb();
-        $authResponse = $this->ensureAuthLevel(['admin', 'user']);
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
         if ($authResponse) {
             return $authResponse;
         }
@@ -159,7 +153,7 @@ class EventController extends BaseController
                                                             // List filter form
                                                             //----------------------------------------------------------
         $filterForm = new Form\Event\ListFilter(['all' => 'All Groups'] + $groupList);
-        $filterForm->get('groupid')->setAttribute('disabled', $this->auth['level'] != 'admin');
+        $filterForm->get('groupid')->setAttribute('disabled', $this->auth()->getLevel() != 'admin');
         $viewModel = [
             'filterForm' => $filterForm,
             'events'     => [],
@@ -168,7 +162,9 @@ class EventController extends BaseController
         $request = $this->getRequest();
         $queryData = $request->getQuery();
         $filterForm->setData([
-            'groupid' => $this->auth['level'] == 'admin' ? ($queryData['groupid'] ?: 'all') : $this->auth['id'],
+            'groupid' => $this->auth()->getLevel() == 'admin'
+                ? ($queryData['groupid'] ?: 'all')
+                : $this->auth()->getId(),
             'status'  => $queryData['status'] ?: 'new',
             'tense'   => $queryData['tense'] ?: 'future',
         ]);
@@ -348,7 +344,7 @@ class EventController extends BaseController
 
             return $event->id;
         } catch (\Google_Service_Exception $e) {
-            $this->addAlert('GCal error: ' . $e->getMessage(), self::ALERT_BAD);
+            $this->alert()->bad('GCal error: ' . $e->getMessage());
             return false;
         }
     }
@@ -369,7 +365,7 @@ class EventController extends BaseController
 
             return true;
         } catch (\Google_Service_Exception $e) {
-            $this->addAlert('GCal error: ' . $e->getMessage(), self::ALERT_BAD);
+            $this->alert()->bad('GCal error: ' . $e->getMessage());
             return false;
         }
     }
@@ -377,8 +373,8 @@ class EventController extends BaseController
     public function editAction()
     {
         $this->layout()->title = 'Edit Event Proposal';
-        $db = $this->getDb();
-        $authResponse = $this->ensureAuthLevel(['admin', 'user']);
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
         if ($authResponse) {
             return $authResponse;
         }
@@ -411,7 +407,7 @@ class EventController extends BaseController
             return $this->notFoundAction();
         }
         $initialData = (array) $initialData[0];
-        if ($this->auth['level'] != 'admin' && $this->auth['id'] != $initialData['groupid']) {
+        if ($this->auth()->getLevel() != 'admin' && $this->auth()->getId() != $initialData['groupid']) {
             return $this->notFoundAction();
         }
 
@@ -473,15 +469,15 @@ class EventController extends BaseController
             ),
             $db::QUERY_MODE_EXECUTE
         );
-        $this->addAlert("Successfully updated event {$values['name']} in database.", self::ALERT_GOOD);
+        $this->alert()->good("Successfully updated event {$values['name']} in database.");
 
                                                             //----------------------------------------------------------
                                                             // Email the steward
                                                             //----------------------------------------------------------
         if ($this->emailSteward($values, $groupList[$values['groupid']])) {
-            $this->addAlert('Notification email sent to steward.', self::ALERT_GOOD);
+            $this->alert()->good('Notification email sent to steward.');
         } else {
-            $this->addAlert('Failed to send notification email to steward.', self::ALERT_BAD);
+            $this->alert()->bad('Failed to send notification email to steward.');
         }
 
                                                             //----------------------------------------------------------
@@ -499,9 +495,9 @@ class EventController extends BaseController
             )->toArray()[0];
 
             if ($this->emailPegasus($values, $hostGroup)) {
-                $this->addAlert('Event submitted to Pegasus.', self::ALERT_GOOD);
+                $this->alert()->good('Event submitted to Pegasus.');
             } else {
-                $this->addAlert('Failed to submit event to Pegasus.', self::ALERT_BAD);
+                $this->alert()->bad('Failed to submit event to Pegasus.');
             }
         }
 
@@ -513,9 +509,9 @@ class EventController extends BaseController
                 $result = $this->deleteCalendar($initialData['googleid']);
 
                 if ($result === false) {
-                    $this->addAlert('Failed to remove event from Kingdom Calendar.', self::ALERT_BAD);
+                    $this->alert()->bad('Failed to remove event from Kingdom Calendar.');
                 } else {
-                    $this->addAlert('Removed event from Kingdom Calendar.', self::ALERT_GOOD);
+                    $this->alert()->good('Removed event from Kingdom Calendar.');
 
                     // store updated googleId
                     $db->query(
@@ -526,7 +522,7 @@ class EventController extends BaseController
                         ),
                         $db::QUERY_MODE_EXECUTE
                     );
-                    $this->addAlert('Removed GCal event ID from database.', self::ALERT_GOOD);
+                    $this->alert()->good('Removed GCal event ID from database.');
                 }
             }
                                                             //----------------------------------------------------------
@@ -541,9 +537,9 @@ class EventController extends BaseController
                 );
 
                 if ($result === false) {
-                    $this->addAlert('Failed to update Kingdom Calendar.', self::ALERT_BAD);
+                    $this->alert()->bad('Failed to update Kingdom Calendar.');
                 } else {
-                    $this->addAlert('Updated Kingdom Calendar.', self::ALERT_GOOD);
+                    $this->alert()->good('Updated Kingdom Calendar.');
 
                     // store updated googleId
                     $db->query(
@@ -554,7 +550,7 @@ class EventController extends BaseController
                         ),
                         $db::QUERY_MODE_EXECUTE
                     );
-                    $this->addAlert('Stored GCal event ID in database.', self::ALERT_GOOD);
+                    $this->alert()->good('Stored GCal event ID in database.');
                 }
             }
         }
@@ -564,9 +560,9 @@ class EventController extends BaseController
                                                             //----------------------------------------------------------
         if (in_array('announce', $sendTo) && $values['status'] == 'approved') {
             if ($this->emailAnnounce($values, $groupList[$values['groupid']])) {
-                $this->addAlert('Notification email sent to Lochac-Announce.', self::ALERT_GOOD);
+                $this->alert()->good('Notification email sent to Lochac-Announce.');
             } else {
-                $this->addAlert('Failed to send notification email to Lochac-Announce.', self::ALERT_BAD);
+                $this->alert()->bad('Failed to send notification email to Lochac-Announce.');
             }
         }
 

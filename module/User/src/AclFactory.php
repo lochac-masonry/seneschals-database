@@ -1,6 +1,6 @@
 <?php
 
-namespace Application;
+namespace User;
 
 use Interop\Container\ContainerInterface;
 use Zend\Permissions\Acl\Acl;

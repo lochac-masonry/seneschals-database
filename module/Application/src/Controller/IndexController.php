@@ -2,13 +2,13 @@
 
 namespace Application\Controller;
 
-class IndexController extends BaseController
+class IndexController extends DatabaseController
 {
     public function indexAction()
     {
         $this->layout()->title = 'Lochac Seneschals\' Database';
         return [
-            'authLevel' => $this->auth['level'],
+            'authLevel' => $this->auth()->getLevel(),
         ];
     }
 }

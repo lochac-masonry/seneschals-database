@@ -6,13 +6,8 @@ use Application\Form;
 use Zend\Db\Sql\{Delete, Insert, Select, Sql, Update};
 use Zend\View\Model\ViewModel;
 
-class GroupController extends BaseController
+class GroupController extends DatabaseController
 {
-    public function indexAction()
-    {
-        return $this->redirect()->toRoute(null, ['action' => 'roster'], [], true);
-    }
-
     public function listAction()
     {
         $sql = "SELECT a.groupname AS parent, b.groupname AS child, " .
@@ -22,7 +17,7 @@ class GroupController extends BaseController
                "AND b.country <> 'NZ' ORDER BY a.groupname, b.groupname";
 
         return (new ViewModel([
-            'groupResultSet' => $this->getDb()->query($sql, [])->toArray(),
+            'groupResultSet' => $this->db->query($sql, [])->toArray(),
         ]))->setTerminal(true);
     }
 
@@ -30,7 +25,7 @@ class GroupController extends BaseController
     {
         $this->layout()->title = 'Group Roster';
         $this->layout()->fullWidth = true;
-        $db = $this->getDb();
+        $db = $this->db;
 
         $sql = (new Sql($db))->buildSqlString(
             (new Select())
@@ -61,8 +56,8 @@ class GroupController extends BaseController
     public function editAction()
     {
         $this->layout()->title = 'Edit Group Details';
-        $db = $this->getDb();
-        $authResponse = $this->ensureAuthLevel(['admin']);
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin']);
         if ($authResponse) {
             return $authResponse;
         }
@@ -169,12 +164,11 @@ class GroupController extends BaseController
 
                     if ($result->getAffectedRows() == 0) {
                         // Something went wrong
-                        $this->addAlert("{$operation} group failed, please try again.", self::ALERT_BAD);
+                        $this->alert()->bad("{$operation} group failed, please try again.");
                     } else {
-                        $refreshUrl = $this->getCurrentUrl();
-                        $this->addAlert(
-                            "{$operation} group succeeded. <a href='{$refreshUrl}'>Click to continue</a>.",
-                            self::ALERT_GOOD
+                        $refreshUrl = $this->currentUrl();
+                        $this->alert()->good(
+                            "{$operation} group succeeded. <a href='{$refreshUrl}'>Click to continue</a>."
                         );
                     }
                 }
@@ -190,8 +184,8 @@ class GroupController extends BaseController
     public function closeAction()
     {
         $this->layout()->title = 'Close Group';
-        $db = $this->getDb();
-        $authResponse = $this->ensureAuthLevel(['admin']);
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin']);
         if ($authResponse) {
             return $authResponse;
         }
@@ -219,7 +213,7 @@ class GroupController extends BaseController
 
         $values = $form->getData()['close'];
         if (!$form->get('close')->get('confirm')->isChecked()) {
-            $this->addAlert('Confirm was not checked, no action taken.');
+            $this->alert('Confirm was not checked, no action taken.');
             return $viewModel;
         }
 
@@ -231,10 +225,9 @@ class GroupController extends BaseController
             ),
             $db::QUERY_MODE_EXECUTE
         );
-        $this->addAlert(
+        $this->alert()->good(
             "{$result->getAffectedRows()} transferred from " .
-            "{$groupList[$values['group_close']]} to {$groupList[$values['group_get']]}.",
-            self::ALERT_GOOD
+            "{$groupList[$values['group_close']]} to {$groupList[$values['group_get']]}."
         );
         return $viewModel;
     }
@@ -242,8 +235,8 @@ class GroupController extends BaseController
     public function aliasesAction()
     {
         $this->layout()->title = 'Manage Group Email Aliases';
-        $db = $this->getDb();
-        $authResponse = $this->ensureAuthLevel(['admin', 'user']);
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
         if ($authResponse) {
             return $authResponse;
         }
@@ -265,10 +258,10 @@ class GroupController extends BaseController
         ];
 
         $request = $this->getRequest();
-        if ($this->auth['level'] == 'admin') {
+        if ($this->auth()->getLevel() == 'admin') {
             $groupSelectForm->setData(['groupid' => $request->getQuery()['groupid'] ?: 0]);
         } else {
-            $groupSelectForm->setData(['groupid' => $this->auth['id']]);
+            $groupSelectForm->setData(['groupid' => $this->auth()->getId()]);
             $groupSelectForm->get('groupid')->setAttribute('disabled', true);
             $groupSelectForm->get('submit')->setAttribute('disabled', true);
         }
@@ -278,7 +271,7 @@ class GroupController extends BaseController
         }
 
         $groupId = $groupSelectForm->getData()['groupid'];
-        $refreshUrl = $this->getCurrentUrl();
+        $refreshUrl = $this->currentUrl();
 
         // Find which domains this group can edit, form an appropriate regex and explanatory message.
         $domains = $db->query(
@@ -364,7 +357,7 @@ class GroupController extends BaseController
                     }
 
                     // Get first message value - only expect one as validator chain stops on first error.
-                    $this->addAlert($elementName . reset($messages), self::ALERT_BAD);
+                    $this->alert()->bad($elementName . reset($messages));
                 }
                 continue;
             }
@@ -377,10 +370,9 @@ class GroupController extends BaseController
                     ),
                     $db::QUERY_MODE_EXECUTE
                 );
-                $this->addAlert(
+                $this->alert()->good(
                     "Successfully deleted alias. " .
-                    "<a href='{$refreshUrl}'>Click to continue</a>.",
-                    self::ALERT_GOOD
+                    "<a href='{$refreshUrl}'>Click to continue</a>."
                 );
                 continue;
             }
@@ -408,9 +400,8 @@ class GroupController extends BaseController
                 []
             )->toArray();
             if (count($conflictingAliases) > 0) {
-                $this->addAlert(
-                    "{$values['alias']} is already in use, and cannot be duplicated.",
-                    self::ALERT_BAD
+                $this->alert()->bad(
+                    "{$values['alias']} is already in use, and cannot be duplicated."
                 );
                 continue;
             }
@@ -423,10 +414,9 @@ class GroupController extends BaseController
                     ),
                     $db::QUERY_MODE_EXECUTE
                 );
-                $this->addAlert(
+                $this->alert()->good(
                     "Successfully added alias {$values['alias']}. " .
-                    "<a href='{$refreshUrl}'>Click to continue</a>.",
-                    self::ALERT_GOOD
+                    "<a href='{$refreshUrl}'>Click to continue</a>."
                 );
             } else {
                 $db->query(
@@ -437,10 +427,9 @@ class GroupController extends BaseController
                     ),
                     $db::QUERY_MODE_EXECUTE
                 );
-                $this->addAlert(
+                $this->alert()->good(
                     "Successfully updated alias {$values['alias']}. " .
-                    "<a href='{$refreshUrl}'>Click to continue</a>.",
-                    self::ALERT_GOOD
+                    "<a href='{$refreshUrl}'>Click to continue</a>."
                 );
             }
         }
@@ -451,12 +440,12 @@ class GroupController extends BaseController
     public function domainsAction()
     {
         $this->layout()->title = 'Manage Group Domains';
-        $db = $this->getDb();
-        $authResponse = $this->ensureAuthLevel(['admin']);
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin']);
         if ($authResponse) {
             return $authResponse;
         }
-        $refreshUrl = $this->getCurrentUrl();
+        $refreshUrl = $this->currentUrl();
 
         $groupList = $this->arrayIndex(
             $db->query('SELECT id, groupname FROM scagroup ORDER BY groupname', []),
@@ -522,7 +511,7 @@ class GroupController extends BaseController
                     }
 
                     // Get first message value - only expect one as validator chain stops on first error.
-                    $this->addAlert($elementName . reset($messages), self::ALERT_BAD);
+                    $this->alert()->bad($elementName . reset($messages));
                 }
                 continue;
             }
@@ -543,7 +532,7 @@ class GroupController extends BaseController
                     }
                 }
                 if ($conflictingDomains) {
-                    $this->addAlert('That group already has access to that domain.', self::ALERT_BAD);
+                    $this->alert()->bad('That group already has access to that domain.');
                     continue;
                 }
 
@@ -555,10 +544,9 @@ class GroupController extends BaseController
                     ),
                     $db::QUERY_MODE_EXECUTE
                 );
-                $this->addAlert(
+                $this->alert()->good(
                     "Successfully added domain {$values['domain']}. " .
-                    "<a href='{$refreshUrl}'>Click to continue</a>.",
-                    self::ALERT_GOOD
+                    "<a href='{$refreshUrl}'>Click to continue</a>."
                 );
                 continue;
             }
@@ -571,7 +559,7 @@ class GroupController extends BaseController
                 }
             }
             if ($oldEntry == null) {
-                $this->addAlert('Unable to find domain to edit.', self::ALERT_BAD);
+                $this->alert()->bad('Unable to find domain to edit.');
                 continue;
             }
 
@@ -589,10 +577,9 @@ class GroupController extends BaseController
                 []
             )->toArray());
             if ($aliasCount > 0) {
-                $this->addAlert(
+                $this->alert()->bad(
                     "That group has {$aliasCount} aliases under the domain {$oldEntry['domain']}.lochac.sca.org. " .
-                    "Please remove these aliases or move them to a different domain before changing this domain.",
-                    self::ALERT_BAD
+                    "Please remove these aliases or move them to a different domain before changing this domain."
                 );
                 continue;
             }
@@ -613,7 +600,7 @@ class GroupController extends BaseController
                     }
                 }
                 if ($conflictingDomains) {
-                    $this->addAlert('That group already has access to that domain.', self::ALERT_BAD);
+                    $this->alert()->bad('That group already has access to that domain.');
                     continue;
                 }
             }
@@ -628,10 +615,9 @@ class GroupController extends BaseController
                     ),
                     $db::QUERY_MODE_EXECUTE
                 );
-                $this->addAlert(
+                $this->alert()->good(
                     "Successfully updated domain {$values['domain']}. " .
-                    "<a href='{$refreshUrl}'>Click to continue</a>.",
-                    self::ALERT_GOOD
+                    "<a href='{$refreshUrl}'>Click to continue</a>."
                 );
             } else {
                 $db->query(
@@ -641,10 +627,9 @@ class GroupController extends BaseController
                     ),
                     $db::QUERY_MODE_EXECUTE
                 );
-                $this->addAlert(
+                $this->alert()->good(
                     "Successfully deleted domain. " .
-                    "<a href='{$refreshUrl}'>Click to continue</a>.",
-                    self::ALERT_GOOD
+                    "<a href='{$refreshUrl}'>Click to continue</a>."
                 );
             }
         }
@@ -655,8 +640,8 @@ class GroupController extends BaseController
     public function baronBaronessAction()
     {
         $this->layout()->title = 'Baron and Baroness Details';
-        $db = $this->getDb();
-        $authResponse = $this->ensureAuthLevel(['admin', 'user']);
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
         if ($authResponse) {
             return $authResponse;
         }
@@ -668,8 +653,8 @@ class GroupController extends BaseController
         );
 
         // Reject non-Barony users.
-        if ($this->auth['level'] != 'admin' && !array_key_exists($this->auth['id'], $groupList)) {
-            $this->addAlert('Available for baronies only.', self::ALERT_BAD);
+        if ($this->auth()->getLevel() != 'admin' && !array_key_exists($this->auth()->getId(), $groupList)) {
+            $this->alert()->bad('Available for baronies only.');
             return;
         }
 
@@ -680,10 +665,10 @@ class GroupController extends BaseController
         $groupSelectForm = new Form\GroupSelect($groupList);
 
         $request = $this->getRequest();
-        if ($this->auth['level'] == 'admin') {
+        if ($this->auth()->getLevel() == 'admin') {
             $groupSelectForm->setData($request->getQuery());
         } else {
-            $groupSelectForm->setData(['groupid' => $this->auth['id']]);
+            $groupSelectForm->setData(['groupid' => $this->auth()->getId()]);
             $groupSelectForm->get('groupid')->setAttribute('disabled', true);
             $groupSelectForm->get('submit')->setAttribute('disabled', true);
         }
@@ -764,7 +749,7 @@ class GroupController extends BaseController
                 ),
                 $db::QUERY_MODE_EXECUTE
             );
-            $this->addAlert('Successfully updated nobility data for ' . $groupList[$groupId], self::ALERT_GOOD);
+            $this->alert()->good('Successfully updated nobility data for ' . $groupList[$groupId]);
         } else {
             $db->query(
                 (new Sql($db))->buildSqlString(
@@ -773,7 +758,7 @@ class GroupController extends BaseController
                 ),
                 $db::QUERY_MODE_EXECUTE
             );
-            $this->addAlert('Successfully created nobility data for ' . $groupList[$groupId], self::ALERT_GOOD);
+            $this->alert()->good('Successfully created nobility data for ' . $groupList[$groupId]);
         }
 
         return $viewModel;

@@ -10,6 +10,11 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 ### Changed
 
 * Navigation menu is now rendered using Zend-Navigation and Zend-Permissions-Acl.
+* All authentication/authorisation logic moved to new User module.
+* Non-module-specific config moved to `config/autoload/global.php`.
+* Moved all routing to named, literal routes.
+* All BaseController behaviour moved to controller plugins.
+* BaseController renamed to DatabaseController as its only purpose is to have `$this->db` injected by the factory.
 
 ## [2.2.2] - 2019-10-08
 

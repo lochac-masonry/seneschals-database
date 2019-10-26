@@ -10,7 +10,7 @@ if ($authLevel == 'admin') { ?>
 <p>You are currently logged in as Group Seneschal.</p>
 <?php } else { ?>
 <h3 class="center">
-    <a href="<?= $this->url('default', ['controller' => 'auth', 'action' => 'login']) ?>">
+    <a href="<?= $this->url('auth/login') ?>">
         Log in for seneschals' functions
     </a>
 </h3>

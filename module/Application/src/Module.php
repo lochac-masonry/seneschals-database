@@ -2,14 +2,10 @@
 
 namespace Application;
 
-use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Mvc\MvcEvent;
-use Zend\Navigation;
-use Zend\Permissions\Acl\AclInterface;
 use Zend\Session\Exception\RuntimeException as SessionValidationException;
 use Zend\Session\SessionManager;
-use Zend\View\Helper\Navigation as NavigationHelper;
 
 class Module
 {
@@ -37,33 +33,6 @@ class Module
             $sessionManager->destroy();
             $sessionManager->getValidatorChain()->clearListeners('session.validate');
         }
-
-        // Set default route name for navigation helpers.
-        Navigation\Page\Mvc::setDefaultRoute('default');
-
-        // Determine the user's role.
-        $groupResultSet = $db->query('SELECT id, groupname FROM scagroup', []);
-        $groupList = [];
-        foreach ($groupResultSet as $group) {
-            $groupList[$group->id] = strtolower(str_replace(' ', '', $group->groupname));
-        }
-
-        $authService = $serviceManager->get(AuthenticationServiceInterface::class);
-        $identity = $authService->getIdentity();
-        $role = 'guest';
-        if ($identity != null) {
-            if ($identity == 'seneschal') {
-                $role = 'admin';
-            } elseif ($identity == 'servers') {
-                $role = 'admin';
-            } elseif (in_array($identity, $groupList)) {
-                $role = 'seneschal';
-            }
-        }
-
-        // Inject ACL into navigation helpers.
-        NavigationHelper::setDefaultAcl($serviceManager->get(AclInterface::class));
-        NavigationHelper::setDefaultRole($role);
     }
 
     public function getConfig()

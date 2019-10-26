@@ -1,15 +1,19 @@
 <?php
 
-namespace Application\Controller;
+namespace User\Controller;
 
-use Application\Form;
+use User\Form;
+use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Uri\Uri;
 
-class AuthController extends BaseController
+class AuthController extends AbstractActionController
 {
-    public function indexAction()
+    private $authService;
+
+    public function __construct(AuthenticationServiceInterface $authService)
     {
-        return $this->redirect()->toRoute(null, ['action' => 'login'], [], true);
+        $this->authService = $authService;
     }
 
     public function loginAction()
@@ -48,7 +52,7 @@ class AuthController extends BaseController
 
             // If the redirect URL is not given or is not valid, redirect to the home page.
             if (empty($redirectUrl)) {
-                return $this->redirect()->toRoute();
+                return $this->redirect()->toRoute('home');
             }
             // Otherwise, redirect to that URL.
             return $this->redirect()->toUrl($redirectUrl);
@@ -60,6 +64,6 @@ class AuthController extends BaseController
     public function logoutAction()
     {
         $this->authService->clearIdentity();
-        return $this->redirect()->toRoute();
+        return $this->redirect()->toRoute('home');
     }
 }

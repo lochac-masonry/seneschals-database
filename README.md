@@ -17,7 +17,7 @@ composer cs-fix
 
 ## Configuration
 
-Most of the static configuration (i.e. abstracted from code but the same for all environments and not secure/sensitive) is provided in `module/Application/config/module.config.php`.
+Most of the static configuration (i.e. abstracted from code but the same for all environments and not secure/sensitive) is provided in `config/autoload/global.php` or `module/*/config/module.config.php`.
 For example, this is where you would register a new controller.
 
 Sensitive or environment-specific configuration is not stored in the repository, and should instead be provided in `config\autoload\local.php`.
