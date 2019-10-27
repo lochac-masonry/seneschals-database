@@ -40,11 +40,33 @@ return [
                     ],
                 ],
             ],
+            'user' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/user',
+                    'defaults' => [
+                        'controller' => Controller\UserController::class,
+                    ],
+                ],
+                'child_routes' => [
+                    'index' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/',
+                            'defaults' => [
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
         'factories' => [
             Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
+            Controller\UserController::class => Controller\Factory\UserControllerFactory::class,
         ],
     ],
     'controller_plugins' => [
@@ -59,6 +81,7 @@ return [
         'factories' => [
             AclInterface::class                   => AclFactory::class,
             AuthenticationServiceInterface::class => AuthenticationServiceFactory::class,
+            Model\UserTable::class                => Model\Factory\UserTableFactory::class,
         ],
     ],
     'view_manager' => [

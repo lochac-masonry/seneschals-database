@@ -1,0 +1,5 @@
+<ul>
+<?php foreach ($this->users as $user) { ?>
+    <li><?= $this->escapeHtml($user->username) ?></li>
+<?php } ?>
+</ul>
