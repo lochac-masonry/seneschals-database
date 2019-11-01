@@ -14,58 +14,61 @@ class Close extends Form
 
         $this->setAttribute('class', 'form--block');
 
-        $this->add(new class($groupOptions) extends Fieldset implements InputFilterProviderInterface {
-            public function __construct($groupOptions = [])
+        $this->add(
+            new class ($groupOptions) extends Fieldset implements InputFilterProviderInterface
             {
-                parent::__construct('close', []);
+                public function __construct($groupOptions = [])
+                {
+                    parent::__construct('close', []);
 
-                $this->add([
-                    'type'    => 'select',
-                    'name'    => 'group_close',
-                    'options' => [
-                        'label'         => 'Close group:',
-                        'empty_option'  => 'Please select one...',
-                        'value_options' => $groupOptions,
-                    ],
-                    'attributes' => [
-                        'required' => true,
-                    ],
-                ]);
-                $this->add([
-                    'type'    => 'select',
-                    'name'    => 'group_get',
-                    'options' => [
-                        'label'         => 'Give postcodes to:',
-                        'empty_option'  => 'Please select one...',
-                        'value_options' => $groupOptions,
-                    ],
-                    'attributes' => [
-                        'required' => true,
-                    ],
-                ]);
-                $this->add([
-                    'type'    => 'checkbox',
-                    'name'    => 'confirm',
-                    'options' => [
-                        'label' => 'Confirm:',
-                    ],
-                    'attributes' => [],
-                ]);
-                $this->add([
-                    'type'       => 'submit',
-                    'name'       => 'submit',
-                    'options'    => [],
-                    'attributes' => [
-                        'value' => 'Submit',
-                    ],
-                ]);
-            }
+                    $this->add([
+                        'type'    => 'select',
+                        'name'    => 'group_close',
+                        'options' => [
+                            'label'         => 'Close group:',
+                            'empty_option'  => 'Please select one...',
+                            'value_options' => $groupOptions,
+                        ],
+                        'attributes' => [
+                            'required' => true,
+                        ],
+                    ]);
+                    $this->add([
+                        'type'    => 'select',
+                        'name'    => 'group_get',
+                        'options' => [
+                            'label'         => 'Give postcodes to:',
+                            'empty_option'  => 'Please select one...',
+                            'value_options' => $groupOptions,
+                        ],
+                        'attributes' => [
+                            'required' => true,
+                        ],
+                    ]);
+                    $this->add([
+                        'type'    => 'checkbox',
+                        'name'    => 'confirm',
+                        'options' => [
+                            'label' => 'Confirm:',
+                        ],
+                        'attributes' => [],
+                    ]);
+                    $this->add([
+                        'type'       => 'submit',
+                        'name'       => 'submit',
+                        'options'    => [],
+                        'attributes' => [
+                            'value' => 'Submit',
+                        ],
+                    ]);
+                }
 
-            public function getInputFilterSpecification()
-            {
-                return [];
+                public function getInputFilterSpecification()
+                {
+                    return [];
+                }
             }
-        });
+        );
 
         $this->add([
             'type'    => 'csrf',

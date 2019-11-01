@@ -5,6 +5,7 @@
  *
  * It will be enabled when you enable development mode.
  */
+
 return [
     'zenddevelopertools' => [
         /**
