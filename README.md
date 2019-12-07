@@ -8,11 +8,24 @@ Dependencies are managed using [Composer](https://getcomposer.org), which will n
 
 The [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) is installed by Composer, configured in `phpcs.xml` and can be run though IDE plugins (such as [phpcs](https://marketplace.visualstudio.com/items?itemName=ikappas.phpcs) for VSCode) or from the command line:
 
-```
+```bash
 # Report issues:
 composer cs-check
 # Auto-fix where possible:
 composer cs-fix
+```
+
+## Development Mode
+
+Several development and debugging utilities are included in the dev dependencies, installed by running `composer install`. These include a toolbar that appears at the bottom of the app and exposes timing, memory, database and session information. Composer scripts are provided to toggle these:
+
+```bash
+# Check status of development mode:
+composer development-status
+# Enable the toolbar and profiling utilities:
+composer development-enable
+# Disable development mode:
+composer development-disable
 ```
 
 ## Configuration
@@ -48,22 +61,24 @@ To set up the necessary credentials:
 
 1. Copy the code to the server, for example by using git to check out the master branch.
 1. The web server document root should be set to the `public` folder and all requests that do not resolve to a file should be redirected to `public/index.php`.
+1. Ensure mod_xsendfile is installed and enabled, setting Apache config directives `XSendFile` to `On` and `XSendFilePath` to the absolute path of the `data/files` folder.
+1. ClamAV should be installed with `clamd` running as a service. If using AppArmor, add the absolute path of the `data/files` folder to the clamd AppArmor profile (i.e. add a line like `/app/data/files/** r,` to `/etc/apparmor.d/local/usr.sbin.clamd`).
 1. Create (or check if any changes are needed in) `config\autoload\local.php` using `config\autoload\local.php.dist` as a template.
 1. Ensure the `google-key.json` file exists in the project root.
 1. Install dependencies according to the versions in `composer.lock`, excluding development dependencies and taking extra time to optimise the autoloader for runtime performance:
 
-    ```
+    ```bash
     > composer install --no-dev -a
     ```
 
 1. Check that all platform requirements (e.g. PHP version) stated by the application or any of the dependencies are met:
 
-    ```
+    ```bash
     > composer check-platform-reqs
     ```
 
 1. Perform any necessary database migrations. These are scripted in the `sql` folder. For example:
 
-    ```
+    ```bash
     > mysql -u seneschal -D seneschal -p < sql/rollforward_1.1.0_1.2.0.sql
     ```

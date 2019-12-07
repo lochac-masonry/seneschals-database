@@ -8,7 +8,7 @@ use Zend\Validator\ValidatorChain;
 
 class Event extends Form
 {
-    public function __construct($groupOptions = [], $existing = false)
+    public function __construct($groupOptions = [], $existing = false, $attachments = [])
     {
         parent::__construct();
 
@@ -326,9 +326,99 @@ class Event extends Form
         );
 
                                                             //----------------------------------------------------------
+                                                            // Section - attachments
+                                                            //----------------------------------------------------------
+        $this->add(
+            new class ($attachments) extends Fieldset implements InputFilterProviderInterface
+            {
+                private $acceptedFileTypes = [
+                    'pdf'  => 'application/pdf',
+                    'doc'  => 'application/msword',
+                    'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'odt'  => 'application/vnd.oasis.opendocument.text',
+                    'xls'  => 'application/vnd.ms-excel',
+                    'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'ods'  => 'application/vnd.oasis.opendocument.spreadsheet',
+                    'ppt'  => 'application/vnd.ms-powerpoint',
+                    'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                    'odp'  => 'application/vnd.oasis.opendocument.presentation',
+                ];
+
+                public function __construct($attachments)
+                {
+                    parent::__construct('attachments', []);
+
+                    $this->setLabel('(Optional) Attachments');
+
+                    foreach ($attachments as $attachment) {
+                        $this->add(new AttachmentFieldset($attachment));
+                    }
+
+                    $this->add([
+                        'type'       => 'file',
+                        'name'       => 'files',
+                        'options'    => [
+                            'label' => 'Maximum 1MB per file, 3MB total. Common document formats only. ' .
+                                'Filename must not contain apostrophes/single quotes.',
+                        ],
+                        'attributes' => [
+                            'accept'   => $this->getAcceptAttribute(),
+                            'multiple' => true,
+                        ],
+                    ]);
+                }
+
+                public function getInputFilterSpecification()
+                {
+                    $filesSpec = $this->get('files')->getInputSpecification();
+                    $filesSpec['validators'] = [
+                        // In practice, total size is limited by the php.ini value upload_max_filesize.
+                        ['name' => 'fileFilesSize', 'options' => ['max' => '3MB']],
+                        ['name' => 'fileSize', 'options' => ['max' => '1MB']],
+                        ['name' => 'fileExtension', 'options' => ['extension' => $this->getAcceptedExtensions()]],
+                        ['name' => 'fileMimeType', 'options' => ['mimeType' => $this->getAcceptedMimeTypes()]],
+                    ];
+                    $filesSpec['filters'] = [
+                        ['name' => 'fileRenameUpload', 'options' => [
+                            'target'    => './data/files/',
+                            'randomize' => true
+                        ]],
+                    ];
+                    return [
+                        'files' => $filesSpec,
+                    ];
+                }
+
+                private function getAcceptedExtensions()
+                {
+                    return array_keys($this->acceptedFileTypes);
+                }
+
+                private function getAcceptedMimeTypes()
+                {
+                    return array_values($this->acceptedFileTypes);
+                }
+
+                private function getAcceptAttribute()
+                {
+                    $prefixDot = function ($ext) {
+                        return '.' . $ext;
+                    };
+                    return implode(
+                        ',',
+                        array_merge(
+                            array_map($prefixDot, $this->getAcceptedExtensions()),
+                            $this->getAcceptedMimeTypes()
+                        )
+                    );
+                }
+            }
+        );
+
+        if (!$existing) {
+                                                            //----------------------------------------------------------
                                                             // Section - anti-spam and submit
                                                             //----------------------------------------------------------
-        if (!$existing) {
             $this->add(
                 new class extends Fieldset implements InputFilterProviderInterface
                 {

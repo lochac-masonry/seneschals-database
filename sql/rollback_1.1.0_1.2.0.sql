@@ -82,7 +82,7 @@ migrate:BEGIN
                                                             #-----------------------------------------------------------
     INSERT INTO version (version) VALUES ('1.1.0');
 
-    SELECT 'Rollforward complete. Now at version 1.1.0.' AS result;
+    SELECT 'Rollback complete. Now at version 1.1.0.' AS result;
 
 END //
 

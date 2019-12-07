@@ -17,6 +17,7 @@ use Zend\Session\Validator\HttpUserAgent;
 use Zend\Session\Validator\RemoteAddr;
 
 return [
+    'clamd_socket' => 'unix:///var/run/clamav/clamd.ctl',
     'session_config' => [
         'cookie_httponly' => true,
         'cookie_lifetime' => 60 * 60 * 1,

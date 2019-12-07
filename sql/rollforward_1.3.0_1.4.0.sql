@@ -2,11 +2,11 @@
 #--
 #-- System      : SenDb
 #--
-#-- Filename    : rollback_1.2.0_1.3.0.sql
+#-- Filename    : rollforward_1.3.0_1.4.0.sql
 #--
 #-- Description : Migration script
 #--
-#--               1.2.0    <--    1.3.0
+#--               1.3.0    -->    1.4.0
 #--
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -20,6 +20,10 @@ migrate:BEGIN
     DECLARE dbName             VARCHAR(64);
     DECLARE versionTableExists INT;
     DECLARE currentVersion     VARCHAR(10) DEFAULT 'none';
+    DECLARE cursorDone         INT DEFAULT FALSE;
+    DECLARE tableName          VARCHAR(64);
+    DECLARE tablesToMigrate    CURSOR FOR SELECT TABLE_NAME FROM temp_tablesToMigrate;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET cursorDone = TRUE;
 
     SELECT
         DATABASE()
@@ -74,23 +78,71 @@ migrate:BEGIN
                                                             #-----------------------------------------------------------
                                                             #-- Version is correct - migrate
                                                             #-----------------------------------------------------------
-    DROP TABLE IF EXISTS users;
+    #-- Remove the invalid default values from the scagroup table (these were set on an old MySQL version).
+    ALTER TABLE scagroup
+    ALTER COLUMN warrantstart DROP DEFAULT,
+    ALTER COLUMN warrantend   DROP DEFAULT,
+    ALTER COLUMN lastreport   DROP DEFAULT;
+
+    #-- Convert all MyISAM tables to InnoDB so that foreign keys are supported.
+    DROP TABLE IF EXISTS temp_tablesToMigrate;
+
+    CREATE TEMPORARY TABLE temp_tablesToMigrate
+    AS SELECT
+        TABLE_NAME
+    FROM
+        information_schema.TABLES
+    WHERE
+        TABLE_SCHEMA = dbName
+    AND ENGINE       = 'MyISAM';
+
+    SELECT
+        TABLE_NAME AS `Migrating these tables to the InnoDB storage engine:`
+    FROM
+        temp_tablesToMigrate;
+
+    OPEN tablesToMigrate;
+
+    alterTableLoop: LOOP
+        FETCH tablesToMigrate INTO tableName;
+        IF cursorDone THEN
+            LEAVE alterTableLoop;
+        END IF;
+
+        SET @alterTableSql = CONCAT('ALTER TABLE ', tableName, ' ENGINE = InnoDB;');
+        PREPARE alterTableStatement FROM @alterTableSql;
+        EXECUTE alterTableStatement;
+        DEALLOCATE PREPARE alterTableStatement;
+    END LOOP;
+
+    CLOSE tablesToMigrate;
+    DROP TABLE IF EXISTS temp_tablesToMigrate;
+
+    #-- Create the event_attachment table.
+    DROP TABLE IF EXISTS event_attachment;
+
+    CREATE TABLE event_attachment (
+        id       INT           NOT NULL AUTO_INCREMENT,
+        event_id INT           NOT NULL,
+        location VARCHAR(255)  NOT NULL,
+        name     NVARCHAR(255) NOT NULL,
+        size     INT           NOT NULL,
+        deleted  TINYINT       NOT NULL DEFAULT 0,
+        PRIMARY KEY (id),
+        INDEX (event_id),
+        FOREIGN KEY (event_id) REFERENCES events (eventid) ON DELETE RESTRICT ON UPDATE CASCADE
+    );
 
                                                             #-----------------------------------------------------------
                                                             #-- Log deployment
                                                             #-----------------------------------------------------------
-    INSERT INTO version (version) VALUES ('1.2.0');
+    INSERT INTO version (version) VALUES ('1.4.0');
 
-    SELECT 'Rollback complete. Now at version 1.2.0.' AS result;
+    SELECT 'Rollforward complete. Now at version 1.4.0.' AS result;
 
 END //
 
 DELIMITER ;
-
-#-- CREATE / DROP TRIGGER statements are not permitted in a stored procedure, so they must be done separately.
-DROP TRIGGER IF EXISTS maintainUsersAfterInsertOnScagroup;
-DROP TRIGGER IF EXISTS maintainUsersAfterUpdateOnScagroup;
-DROP TRIGGER IF EXISTS maintainUsersAfterDeleteOnScagroup;
 
 CALL spMigrate();
 

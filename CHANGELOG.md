@@ -7,6 +7,11 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Added
+
+* Attachments can be added to events by the submitter or a reviewer, and downloaded or deleted by a reviewer.
+* Event attachments are scanned by ClamAV on upload, and downloads are streamlined through mod_xsendfile.
+
 ### Changed
 
 * Navigation menu is now rendered using Zend-Navigation and Zend-Permissions-Acl.
@@ -15,6 +20,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 * Moved all routing to named, literal routes.
 * All BaseController behaviour moved to controller plugins.
 * BaseController renamed to DatabaseController as its only purpose is to have `$this->db` injected by the factory.
+* All database tables have been migrated from the old MyISAM engine to InnoDB.
 
 ## [2.2.2] - 2019-10-08
 

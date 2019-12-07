@@ -3,12 +3,25 @@
 namespace Application\Controller;
 
 use Application\Form;
+use Application\LazyQuahogClient;
+use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Sql\{Insert, Select, Sql, Update};
-use Zend\Uri\Http;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Uri\{Http, Uri};
 
-class EventController extends DatabaseController
+class EventController extends AbstractActionController
 {
+    /** @var AdapterInterface */
+    private $db;
     private $googleMetadata;
+    /** @var LazyQuahogClient */
+    private $lazyQuahogClient;
+
+    public function __construct(AdapterInterface $db, LazyQuahogClient $lazyQuahogClient)
+    {
+        $this->db = $db;
+        $this->lazyQuahogClient = $lazyQuahogClient;
+    }
 
     private function emailSteward($values, $hostGroupName)
     {
@@ -69,6 +82,92 @@ class EventController extends DatabaseController
         return $this->sendEmail($mailTo, $mailSubj, $mailBody, $mailHead);
     }
 
+    /**
+     * Scan uploaded files using ClamAV and delete any threats.
+     */
+    private function scanFilesWithAntiVirus($rawFiles)
+    {
+        $quahogClient = $this->lazyQuahogClient->getClient();
+        $quahogClient->startSession();
+        $cleanFiles = [];
+        foreach ($rawFiles as $file) {
+            $result = $quahogClient->scanFile(realpath($file['tmp_name']));
+            if ($result['status'] !== $quahogClient::RESULT_OK) {
+                if (file_exists($file['tmp_name'])) {
+                    unlink($file['tmp_name']);
+                }
+                $this->alert()->bad("Attachment '{$file['name']}' was blocked by anti-virus scanner.");
+            } else {
+                $cleanFiles[] = $file;
+            }
+        }
+        $quahogClient->endSession();
+        return $cleanFiles;
+    }
+
+    /**
+     * Insert an attachment record based on a newly-uploaded file.
+     */
+    private function insertAttachment($file, $eventId)
+    {
+        $this->db->query(
+            (new Sql($this->db))->buildSqlString(
+                (new Insert('event_attachment'))
+                    ->values([
+                        'event_id' => $eventId,
+                        'location' => $file['tmp_name'],
+                        'name'     => $file['name'],
+                        'size'     => $file['size'],
+                    ])
+            ),
+            $this->db::QUERY_MODE_EXECUTE
+        );
+    }
+
+    /**
+     * Delete an array of files from the filesystem.
+     */
+    private function deleteFiles($files)
+    {
+        foreach ($files as $file) {
+            if (isset($file['tmp_name']) && file_exists($file['tmp_name'])) {
+                unlink($file['tmp_name']);
+            }
+        }
+    }
+
+    /**
+     * Retrieve and prepare the files array from the event form.
+     */
+    private function getFiles(Form\Event\Event $form)
+    {
+        // Ensure data is available by running the validation process - does nothing if already run.
+        $form->isValid();
+        $files = $form->getData()['attachments']['files'];
+        if (isset($files[0]) && $files[0]['error'] === UPLOAD_ERR_NO_FILE) {
+            $files = [];
+        }
+        return $files;
+    }
+
+    /**
+     * Clean up uploaded files and notify the user if the event form cannot be processed.
+     */
+    private function cleanUpAfterValidationFailure(Form\Event\Event $form)
+    {
+        $files = $this->getFiles($form);
+        if (!empty($files)) {
+            $this->deleteFiles($files);
+            $message = 'Attachments were not uploaded due to validation errors on other inputs - ' .
+                'please attach them again after addressing the validation messages.';
+            $filesInput = $form->get('attachments')->get('files');
+            $messages = $filesInput->getMessages();
+            $messages[] = $message;
+            $filesInput->setMessages($messages);
+            $this->alert()->bad($message);
+        }
+    }
+
     public function newAction()
     {
         $this->layout()->title = 'Submit Event Proposal';
@@ -90,22 +189,47 @@ class EventController extends DatabaseController
             return $viewModel;
         }
 
-        $detailsForm->setData($request->getPost());
+        $detailsForm->setData(array_merge_recursive(
+            $request->getPost()->toArray(),
+            $request->getFiles()->toArray()
+        ));
         if (!$detailsForm->isValid()) {
+            $this->cleanUpAfterValidationFailure($detailsForm);
             return $viewModel;
         }
 
         // Form is valid - transform the values into those expected by the database.
         $rawValues = $detailsForm->getData();
         $values = $rawValues['eventGroup'] + $rawValues['stewardGroup'] + $rawValues['bookingGroup'];
+        $files = $this->scanFilesWithAntiVirus($this->getFiles($detailsForm));
 
-        $db->query(
-            (new Sql($db))->buildSqlString(
-                (new Insert('events'))
-                    ->values($values)
-            ),
-            $db::QUERY_MODE_EXECUTE
-        );
+        // Save the event and attachment references to the database.
+        try {
+            $db->getDriver()->getConnection()->beginTransaction();
+
+            $db->query(
+                (new Sql($db))->buildSqlString(
+                    (new Insert('events'))
+                        ->values($values)
+                ),
+                $db::QUERY_MODE_EXECUTE
+            );
+
+            $eventId = $db->getDriver()->getConnection()->getLastGeneratedValue();
+
+            foreach ($files as $file) {
+                $this->insertAttachment($file, $eventId);
+            }
+
+            $db->getDriver()->getConnection()->commit();
+        } catch (\Throwable $ex) {
+            $db->getDriver()->getConnection()->rollback();
+
+            // In case of error, delete the now-orphaned files.
+            $this->deleteFiles($files);
+
+            throw $ex;
+        }
         $this->alert()->good("Successfully added event {$values['name']}.");
 
         if ($this->emailSteward($values, $groupList[$values['groupid']])) {
@@ -411,10 +535,37 @@ class EventController extends DatabaseController
             return $this->notFoundAction();
         }
 
+        // Retrieve the details of any attachments for this event.
+        $rawAttachments = $db->query(
+            (new Sql($db))->buildSqlString(
+                (new Select())
+                    ->from('event_attachment')
+                    ->where([
+                        'event_id' => $eventId,
+                        'deleted'  => 0,
+                    ])
+            ),
+            []
+        )->toArray();
+        $attachments = [];
+        foreach ($rawAttachments as $rawAttachment) {
+            $attachment = (array) $rawAttachment;
+            $attachment['downloadLink'] = $this->url()->fromRoute(
+                'event/attachment/download',
+                ['id' => $attachment['id']]
+            );
+            $attachment['deleteLink'] = $this->url()->fromRoute(
+                'event/attachment/delete',
+                ['id' => $attachment['id']],
+                ['query' => ['redirectUrl' => $this->currentUrl()]]
+            );
+            $attachments[] = $attachment;
+        }
+
                                                             //----------------------------------------------------------
                                                             // Build details form
                                                             //----------------------------------------------------------
-        $detailsForm = new Form\Event\Event($groupList, true);
+        $detailsForm = new Form\Event\Event($groupList, true, $attachments);
         $detailsForm->setData([
             'eventGroup' => array_intersect_key($initialData, array_flip([
                 'name',
@@ -452,24 +603,54 @@ class EventController extends DatabaseController
                                                             //----------------------------------------------------------
                                                             // Process event form
                                                             //----------------------------------------------------------
-        $detailsForm->setData($request->getPost());
+        $detailsForm->setData(array_merge_recursive(
+            $request->getPost()->toArray(),
+            $request->getFiles()->toArray()
+        ));
         if (!$detailsForm->isValid()) {
+            $this->cleanUpAfterValidationFailure($detailsForm);
             return $viewModel;
         }
+
         $rawValues = $detailsForm->getData();
         $values = $rawValues['eventGroup'] + $rawValues['stewardGroup'] + $rawValues['bookingGroup'];
         $values['status'] = $rawValues['submitGroup']['status'];
         $sendTo = $rawValues['submitGroup']['sendto'] ?: [];
+        $files = $this->scanFilesWithAntiVirus($this->getFiles($detailsForm));
 
-        $db->query(
-            (new Sql($db))->buildSqlString(
-                (new Update('events'))
-                    ->set($values)
-                    ->where(['eventid' => $eventId])
-            ),
-            $db::QUERY_MODE_EXECUTE
-        );
+        // Save the event and attachment references to the database.
+        try {
+            $db->getDriver()->getConnection()->beginTransaction();
+
+            $db->query(
+                (new Sql($db))->buildSqlString(
+                    (new Update('events'))
+                        ->set($values)
+                        ->where(['eventid' => $eventId])
+                ),
+                $db::QUERY_MODE_EXECUTE
+            );
+
+            foreach ($files as $file) {
+                $this->insertAttachment($file, $eventId);
+            }
+
+            $db->getDriver()->getConnection()->commit();
+        } catch (\Throwable $ex) {
+            $db->getDriver()->getConnection()->rollback();
+
+            // In case of error, delete the now-orphaned files.
+            $this->deleteFiles($files);
+
+            throw $ex;
+        }
         $this->alert()->good("Successfully updated event {$values['name']} in database.");
+        if (!empty($files)) {
+            $refreshUrl = $this->currentUrl();
+            $this->alert()->good(
+                "New attachments uploaded, but not visible below - <a href='{$refreshUrl}'>click to refresh</a>."
+            );
+        }
 
                                                             //----------------------------------------------------------
                                                             // Email the steward
@@ -567,5 +748,141 @@ class EventController extends DatabaseController
         }
 
         return $viewModel;
+    }
+
+    public function downloadAttachmentAction()
+    {
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
+        if ($authResponse) {
+            return $authResponse;
+        }
+
+                                                            //----------------------------------------------------------
+                                                            // Check that the attachment specified exists and
+                                                            // that the user is allowed to access it.
+                                                            //----------------------------------------------------------
+        $attachmentId = $this->params('id');
+        if (!is_numeric($attachmentId)) {
+            return $this->notFoundAction();
+        }
+        $attachmentQuery = $db->query(
+            (new Sql($db))->buildSqlString(
+                (new Select())
+                    ->columns([
+                        'location',
+                        'name',
+                    ])
+                    ->from('event_attachment')
+                    ->join('events', 'events.eventid = event_attachment.event_id', ['groupid'])
+                    ->where([
+                        'event_attachment.id'      => $attachmentId,
+                        'event_attachment.deleted' => 0,
+                    ])
+            ),
+            []
+        )->toArray();
+        if (count($attachmentQuery) == 0) {
+            return $this->notFoundAction();
+        }
+        $attachment = (array) $attachmentQuery[0];
+        if ($this->auth()->getLevel() != 'admin' && $this->auth()->getId() != $attachment['groupid']) {
+            return $this->notFoundAction();
+        }
+        if (!file_exists($attachment['location'])) {
+            return $this->notFoundAction();
+        }
+
+        // Serve the download.
+        $response = $this->getResponse();
+        $response->getHeaders()->addHeaders([
+            'X-Sendfile'          => realpath($attachment['location']),
+            'Content-Type'        => 'application/octet-stream',
+            'Content-Disposition' => "attachment; filename=\"{$attachment['name']}\"",
+        ]);
+        return $response;
+    }
+
+    public function deleteAttachmentAction()
+    {
+        $this->layout()->title = 'Delete Attachment';
+        $db = $this->db;
+        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
+        if ($authResponse) {
+            return $authResponse;
+        }
+
+                                                            //----------------------------------------------------------
+                                                            // Check that the attachment specified exists and
+                                                            // that the user is allowed to access it.
+                                                            //----------------------------------------------------------
+        $attachmentId = $this->params('id');
+        if (!is_numeric($attachmentId)) {
+            return $this->notFoundAction();
+        }
+        $attachmentQuery = $db->query(
+            (new Sql($db))->buildSqlString(
+                (new Select())
+                    ->columns(['name'])
+                    ->from('event_attachment')
+                    ->join('events', 'events.eventid = event_attachment.event_id', ['groupid', 'event_name' => 'name'])
+                    ->where([
+                        'event_attachment.id'      => $attachmentId,
+                        'event_attachment.deleted' => 0,
+                    ])
+            ),
+            []
+        )->toArray();
+        if (count($attachmentQuery) == 0) {
+            return $this->notFoundAction();
+        }
+        $attachment = (array) $attachmentQuery[0];
+        if ($this->auth()->getLevel() != 'admin' && $this->auth()->getId() != $attachment['groupid']) {
+            return $this->notFoundAction();
+        }
+
+        // User has access - show them a confirmation form.
+        $request = $this->getRequest();
+        $redirectUrl = isset($request->getQuery()['redirectUrl']) ? $request->getQuery()['redirectUrl'] : '';
+        $form = new Form\Event\DeleteAttachment($redirectUrl);
+        $viewModel = [
+            'attachment' => $attachment,
+            'deleteForm' => $form,
+        ];
+
+        if (!$request->isPost()) {
+            return $viewModel;
+        }
+
+        $form->setData($request->getPost());
+        if (!$form->isValid()) {
+            return $viewModel;
+        }
+
+        if ($form->getData()['submit']) {
+            // User has confirmed - mark the attachment as deleted.
+            $db->query(
+                (new Sql($db))->buildSqlString(
+                    (new Update('event_attachment'))
+                        ->set(['deleted' => 1])
+                        ->where(['id' => $attachmentId])
+                ),
+                $db::QUERY_MODE_EXECUTE
+            );
+        }
+
+        // Ensure redirect URL is valid and relative, i.e. not hijacking the user to a different site.
+        $redirectUrl = $form->getData()['redirectUrl'];
+        $uri = new Uri($redirectUrl);
+        if (!$uri->isValid() || $uri->getHost() != null) {
+            $redirectUrl = '';
+        }
+
+        // If the redirect URL is not given or is not valid, redirect to the home page.
+        if (empty($redirectUrl)) {
+            return $this->redirect()->toRoute('home');
+        }
+        // Otherwise, redirect to that URL.
+        return $this->redirect()->toUrl($redirectUrl);
     }
 }

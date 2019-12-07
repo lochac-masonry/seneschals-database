@@ -168,7 +168,10 @@ class PostcodeController extends DatabaseController
                                                             //----------------------------------------------------------
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $form->setData($request->getFiles());
+            $form->setData(array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            ));
             if ($form->isValid()) {
                 $filename = $form->getData()['upload']['userfile']['tmp_name'];
                 $file = fopen($filename, 'r');

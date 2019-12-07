@@ -10,7 +10,8 @@
         "zendframework/zend-mvc-form": "^1.0",
         "zendframework/zend-session": "^2.8",
         "zendframework/zend-navigation": "^2.9",
-        "zendframework/zend-permissions-acl": "^2.7"
+        "zendframework/zend-permissions-acl": "^2.7",
+        "xenolope/quahog": "^2.1"
     },
     "authors": [
         {

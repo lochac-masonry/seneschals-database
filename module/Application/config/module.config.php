@@ -2,7 +2,7 @@
 
 namespace Application;
 
-use Zend\Router\Http\Literal;
+use Zend\Router\Http\{Literal, Segment};
 
 return [
     'router' => [
@@ -27,6 +27,37 @@ return [
                     ],
                 ],
                 'child_routes' => [
+                    'attachment' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'       => '/attachment/:id',
+                            'constraints' => [
+                                'id' => '[0-9]+',
+                            ],
+                        ],
+                        'child_routes' => [
+                            'delete' => [
+                                'type'    => Literal::class,
+                                'options' => [
+                                    'route'    => '/delete',
+                                    'defaults' => [
+                                        'action' => 'deleteAttachment',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                            'download' => [
+                                'type'    => Literal::class,
+                                'options' => [
+                                    'route'    => '/download',
+                                    'defaults' => [
+                                        'action' => 'downloadAttachment',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                        ],
+                    ],
                     'edit' => [
                         'type'    => Literal::class,
                         'options' => [
@@ -211,7 +242,7 @@ return [
                     ],
                 ],
                 'child_routes' => [
-                    'login' => [
+                    'version' => [
                         'type'    => Literal::class,
                         'options' => [
                             'route'    => '/version',
@@ -230,7 +261,7 @@ return [
             Controller\ToolsController::class => Controller\ToolsController::class,
         ],
         'factories' => [
-            Controller\EventController::class    => Controller\DatabaseControllerFactory::class,
+            Controller\EventController::class    => Controller\EventControllerFactory::class,
             Controller\GroupController::class    => Controller\DatabaseControllerFactory::class,
             Controller\IndexController::class    => Controller\DatabaseControllerFactory::class,
             Controller\PostcodeController::class => Controller\DatabaseControllerFactory::class,
@@ -349,6 +380,11 @@ return [
                 'resource'  => 'auth',
                 'privilege' => 'logout',
             ],
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            LazyQuahogClient::class => LazyQuahogClientFactory::class,
         ],
     ],
     'view_manager' => [
