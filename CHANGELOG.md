@@ -7,6 +7,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.3.0] - 2019-12-07
+
 ### Added
 
 * Attachments can be added to events by the submitter or a reviewer, and downloaded or deleted by a reviewer.
@@ -116,7 +118,9 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.2.1
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.3.0
+[2.3.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.3.0..v2.2.2
+[2.2.2]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.2..v2.2.1
 [2.2.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.1..v2.2.0
 [2.2.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.0..v2.1.0
 [2.1.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.1.0..v2.0.0
