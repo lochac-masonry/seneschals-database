@@ -7,6 +7,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Changed
+
+* Updated composer dependencies.
+
 ## [2.3.0] - 2019-12-07
 
 ### Added

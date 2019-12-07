@@ -3,15 +3,15 @@
     "type": "project",
     "require": {
         "google/apiclient": "1.1.4",
+        "xenolope/quahog": "^2.1",
         "zendframework/zend-authentication": "^2.7",
         "zendframework/zend-db": "^2.10",
         "zendframework/zend-math": "^3.2",
         "zendframework/zend-mvc": "^3.1",
         "zendframework/zend-mvc-form": "^1.0",
-        "zendframework/zend-session": "^2.8",
         "zendframework/zend-navigation": "^2.9",
         "zendframework/zend-permissions-acl": "^2.7",
-        "xenolope/quahog": "^2.1"
+        "zendframework/zend-session": "^2.8"
     },
     "authors": [
         {
