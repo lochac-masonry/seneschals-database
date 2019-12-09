@@ -7,6 +7,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Added
+
+* Git pre-commit hook to run PHP_CodeSniffer, managed from the Composer config.
+
 ### Changed
 
 * Updated composer dependencies.

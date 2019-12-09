@@ -5,3 +5,4 @@
 /data/files/*
 !/data/files/.gitkeep
 /google-key.json
+/cghooks.lock

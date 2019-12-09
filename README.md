@@ -6,7 +6,7 @@ Dependencies are managed using [Composer](https://getcomposer.org), which will n
 
 ## Style checking / linting
 
-The [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) is installed by Composer, configured in `phpcs.xml` and can be run though IDE plugins (such as [phpcs](https://marketplace.visualstudio.com/items?itemName=ikappas.phpcs) for VSCode) or from the command line:
+The [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) is installed by Composer, configured in `phpcs.xml`, run automatically before each commit to the Git repository and can be run though IDE plugins (such as [phpcs](https://marketplace.visualstudio.com/items?itemName=ikappas.phpcs) for VSCode) or from the command line:
 
 ```bash
 # Report issues:
