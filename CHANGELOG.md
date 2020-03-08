@@ -7,6 +7,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.4.0] - 2020-03-08
+
 ### Added
 
 * Git pre-commit hook to run PHP_CodeSniffer, managed from the Composer config.
@@ -127,7 +129,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.3.0
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.4.0
+[2.4.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.4.0..v2.3.0
 [2.3.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.3.0..v2.2.2
 [2.2.2]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.2..v2.2.1
 [2.2.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.1..v2.2.0
