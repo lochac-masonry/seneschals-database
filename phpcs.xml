@@ -23,4 +23,8 @@
         <exclude-pattern>public/index.php</exclude-pattern>
     </rule>
 
+    <rule ref="PSR12.Files.FileHeader">
+        <exclude-pattern>*.phtml</exclude-pattern>
+    </rule>
+
 </ruleset>
