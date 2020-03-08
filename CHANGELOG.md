@@ -14,6 +14,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 ### Changed
 
 * Updated composer dependencies.
+* Increased CSRF timeout on Report form from 30 minutes to 60 minutes, as this form can take a long time to complete.
 
 ## [2.3.0] - 2019-12-07
 
