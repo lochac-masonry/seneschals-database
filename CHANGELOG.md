@@ -10,6 +10,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 ### Changed
 
 * Migrated from Zend to Laminas.
+* Enabled the `strict_types` directive in all PHP files, enforced by PHP_CodeSniffer.
 
 ## [2.4.1] - 2020-03-15
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Application\Form\Postcode;
 
 use Laminas\Form\{Fieldset, Form};

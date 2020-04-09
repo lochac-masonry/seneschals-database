@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     // Additional modules to include when in development mode
     'modules' => [

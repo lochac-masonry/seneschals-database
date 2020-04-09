@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Application\Form\Group;
 
 use Laminas\Form\{Element, Fieldset, Form};
