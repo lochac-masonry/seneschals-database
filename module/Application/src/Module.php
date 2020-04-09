@@ -2,10 +2,10 @@
 
 namespace Application;
 
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Mvc\MvcEvent;
-use Zend\Session\Exception\RuntimeException as SessionValidationException;
-use Zend\Session\SessionManager;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Session\Exception\RuntimeException as SessionValidationException;
+use Laminas\Session\SessionManager;
 
 class Module
 {

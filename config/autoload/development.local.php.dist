@@ -17,17 +17,6 @@
  */
 
 return [
-    // Inject a profiling database adapter to show DB information in the Zend Developer Tools bar.
-    'service_manager' => [
-        'factories' => [
-            'Zend\Db\Adapter\AdapterInterface' => function ($sm) {
-                $adapter = new BjyProfiler\Db\Adapter\ProfilingAdapter($sm->get('config')['db']);
-                $adapter->setProfiler(new BjyProfiler\Db\Profiler\Profiler());
-                $adapter->injectProfilingStatementPrototype([]);
-                return $adapter;
-            },
-        ],
-    ],
     'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,

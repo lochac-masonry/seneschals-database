@@ -3,8 +3,8 @@
 namespace User;
 
 use Interop\Container\ContainerInterface;
-use Zend\Permissions\Acl\Acl;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\Permissions\Acl\Acl;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class AclFactory implements FactoryInterface
 {

@@ -2,7 +2,7 @@
 
 namespace Application;
 
-use Zend\Router\Http\{Literal, Segment};
+use Laminas\Router\Http\{Literal, Segment};
 
 return [
     'router' => [

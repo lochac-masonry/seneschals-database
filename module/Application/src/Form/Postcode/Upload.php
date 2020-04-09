@@ -2,8 +2,8 @@
 
 namespace Application\Form\Postcode;
 
-use Zend\Form\{Fieldset, Form};
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\{Fieldset, Form};
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Upload extends Form
 {

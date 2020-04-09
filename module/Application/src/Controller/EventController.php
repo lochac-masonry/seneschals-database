@@ -4,10 +4,10 @@ namespace Application\Controller;
 
 use Application\Form;
 use Application\LazyQuahogClient;
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\Sql\{Insert, Select, Sql, Update};
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Uri\{Http, Uri};
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\Sql\{Insert, Select, Sql, Update};
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Uri\{Http, Uri};
 
 class EventController extends AbstractActionController
 {

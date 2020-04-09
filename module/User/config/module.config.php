@@ -2,9 +2,9 @@
 
 namespace User;
 
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Permissions\Acl\AclInterface;
-use Zend\Router\Http\Literal;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Permissions\Acl\AclInterface;
+use Laminas\Router\Http\Literal;
 
 return [
     'router' => [

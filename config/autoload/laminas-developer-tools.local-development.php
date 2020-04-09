@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This is configuration for the ZendDeveloperTools development toolbar.
+ * This is configuration for the Laminas\DeveloperTools development toolbar.
  *
  * It will be enabled when you enable development mode.
  */
 
 return [
-    'zenddevelopertools' => [
+    'laminas-developer-tools' => [
         /**
          * General Profiler settings
          */
@@ -53,19 +53,19 @@ return [
             /**
              * If a matches is defined, the profiler will be disabled if the request does not match the pattern.
              *
-             * Example: 'matcher' => array('ip' => '127.0.0.1')
+             * Example: 'matcher' => ['ip' => '127.0.0.1']
              * OR
-             * 'matcher' => array('url' => array('path' => '/admin')
+             * 'matcher' => ['url' => ['path' => '/admin']]
              * Note: The matcher is not implemented yet!
              */
             'matcher' => [],
 
             /**
-             * Contains a list with all collector the profiler should run. Zend Developer Tools ships with
-             * 'db' (Zend\Db), 'time', 'event', 'memory', 'exception', 'request' and 'mail' (Zend\Mail). If you wish to
-             * disable a default collector, simply set the value to null or false.
+             * Contains a list with all collector the profiler should run. Laminas\DeveloperTools ships with
+             * 'db' (Laminas\Db), 'time', 'event', 'memory', 'exception', 'request' and 'mail' (Laminas\Mail).
+             * If you wish to disable a default collector, simply set the value to null or false.
              *
-             * Example: 'collectors' => array('db' => null)
+             * Example: 'collectors' => ['db' => null]
              * Expects: array
              */
             'collectors' => [],
@@ -82,20 +82,20 @@ return [
             'enabled' => true,
 
             /**
-             * Contains a list with all event-level collectors that should run. Zend Developer Tools ships with 'time'
+             * Contains a list with all event-level collectors that should run. Laminas\DeveloperTools ships with 'time'
              * and 'memory'. If you wish to disable a default collector, simply set the value to null or false.
              *
-             * Example: 'collectors' => array('memory' => null)
+             * Example: 'collectors' => ['memory' => null]
              * Expects: array
              */
             'collectors' => [],
 
             /**
-             * Contains event identifiers used with the event listener. Zend Developer Tools defaults to listen to all
+             * Contains event identifiers used with the event listener. Laminas\DeveloperTools defaults to listen to all
              * events. If you wish to disable the default all-inclusive identifier, simply set the value to null or
              * false.
              *
-             * Example: 'identifiers' => array('all' => null, 'dispatchable' => 'Zend\Stdlib\DispatchableInterface')
+             * Example: 'identifiers' => ['all' => null, 'dispatchable' => 'Laminas\Stdlib\DispatchableInterface']
              * Expects: array
              */
             'identifiers' => [],
@@ -129,7 +129,7 @@ return [
             'position' => 'bottom',
 
             /**
-             * If enabled, the Toolbar will check if your current Zend Framework version is up-to-date.
+             * If enabled, the Toolbar will check if your current Laminas version is up-to-date.
              * Note: The check will only occur once every hour.
              *
              * Expects: bool
@@ -138,20 +138,20 @@ return [
             'version_check' => false,
 
             /**
-             * Contains a list with all collector toolbar templates. The name  of the array key must be same as the name
+             * Contains a list with all collector toolbar templates. The name of the array key must be same as the name
              * of the collector.
              *
-             * Example: 'profiler' => array(
-             *  'collectors' => array(
-             *      // My_Collector_Example::getName() -> mycollector
-             *      'MyCollector' => 'My_Collector_Example',
-             *  )
-             * ),
-             * 'toolbar' => array(
-             *  'entries' => array(
-             *      'mycollector' => 'example/toolbar/my-collector',
-             *  )
-             * ),
+             * Example: 'profiler' => [
+             *     'collectors' => [
+             *         // My_Collector_Example::getName() -> mycollector
+             *         'MyCollector' => 'My_Collector_Example',
+             *     ],
+             * ],
+             * 'toolbar' => [
+             *     'entries' => [
+             *         'mycollector' => 'example/toolbar/my-collector',
+             *     ],
+             * ],
              * Expects: array
              */
             'entries' => [],

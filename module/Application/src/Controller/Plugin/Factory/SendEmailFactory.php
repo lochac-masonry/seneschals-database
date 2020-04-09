@@ -3,7 +3,7 @@
 namespace Application\Controller\Plugin\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class SendEmailFactory implements FactoryInterface
 {

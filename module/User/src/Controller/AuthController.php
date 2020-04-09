@@ -3,9 +3,9 @@
 namespace User\Controller;
 
 use User\Form;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Uri\Uri;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Uri\Uri;
 
 class AuthController extends AbstractActionController
 {

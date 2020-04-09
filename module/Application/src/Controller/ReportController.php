@@ -3,7 +3,7 @@
 namespace Application\Controller;
 
 use Application\Form;
-use Zend\Db\Sql\{Select, Sql, Update};
+use Laminas\Db\Sql\{Select, Sql, Update};
 
 class ReportController extends DatabaseController
 {

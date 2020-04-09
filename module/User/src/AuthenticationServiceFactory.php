@@ -3,10 +3,10 @@
 namespace User;
 
 use Interop\Container\ContainerInterface;
-use Zend\Authentication;
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\Sql\{Sql, Update};
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\Authentication;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\Sql\{Sql, Update};
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class AuthenticationServiceFactory implements FactoryInterface
 {

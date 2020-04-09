@@ -7,16 +7,16 @@
  */
 
 return [
-    'Zend\Navigation',
-    'Zend\Session',
-    'Zend\Db',
-    'Zend\Form',
-    'Zend\Hydrator',
-    'Zend\InputFilter',
-    'Zend\Filter',
-    'Zend\I18n',
-    'Zend\Router',
-    'Zend\Validator',
+    'Laminas\Navigation',
+    'Laminas\Session',
+    'Laminas\Db',
+    'Laminas\Form',
+    'Laminas\Hydrator',
+    'Laminas\InputFilter',
+    'Laminas\Filter',
+    'Laminas\I18n',
+    'Laminas\Router',
+    'Laminas\Validator',
     'Application',
     'User',
 ];

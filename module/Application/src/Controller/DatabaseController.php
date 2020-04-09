@@ -2,8 +2,8 @@
 
 namespace Application\Controller;
 
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class DatabaseController extends AbstractActionController
 {

@@ -2,10 +2,10 @@
 
 namespace Application;
 
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\Sql\{Insert, Sql};
-use Zend\EventManager\EventManagerInterface;
-use Zend\Mvc\{Application, MvcEvent};
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\Sql\{Insert, Sql};
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\Mvc\{Application, MvcEvent};
 
 class ErrorListener
 {
@@ -26,7 +26,7 @@ class ErrorListener
 
     public function onError(MvcEvent $e)
     {
-        // Some logic copied from Zend\Mvc\View\Http\ExceptionStrategy::prepareExceptionViewModel
+        // Some logic copied from Laminas\Mvc\View\Http\ExceptionStrategy::prepareExceptionViewModel
         // Do nothing if no error in the event
         $error = $e->getError();
         if (empty($error)) {

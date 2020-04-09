@@ -2,7 +2,7 @@
 
 namespace Application\Form\Event;
 
-use Zend\Form\Form;
+use Laminas\Form\Form;
 
 class DeleteAttachment extends Form
 {

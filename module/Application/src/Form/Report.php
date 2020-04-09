@@ -2,8 +2,8 @@
 
 namespace Application\Form;
 
-use Zend\Form\{Element, Fieldset, Form};
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\{Element, Fieldset, Form};
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Report extends Form
 {
@@ -263,19 +263,19 @@ class Report extends Form
                         'scaname' => [
                             'required' => true,
                             'filters'  => [
-                                ['name' => 'Zend\Filter\StringTrim'],
+                                ['name' => 'Laminas\Filter\StringTrim'],
                             ],
                         ],
                         'realname' => [
                             'required' => true,
                             'filters'  => [
-                                ['name' => 'Zend\Filter\StringTrim'],
+                                ['name' => 'Laminas\Filter\StringTrim'],
                             ],
                         ],
                         'address' => [
                             'required' => true,
                             'filters'  => [
-                                ['name' => 'Zend\Filter\StringTrim'],
+                                ['name' => 'Laminas\Filter\StringTrim'],
                             ],
                         ],
                     ];

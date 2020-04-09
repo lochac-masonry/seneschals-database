@@ -2,9 +2,9 @@
 
 namespace Application\Form\Event;
 
-use Zend\Form\{Fieldset, Form};
-use Zend\InputFilter\{InputFilter, InputFilterProviderInterface};
-use Zend\Validator\ValidatorChain;
+use Laminas\Form\{Fieldset, Form};
+use Laminas\InputFilter\{InputFilter, InputFilterProviderInterface};
+use Laminas\Validator\ValidatorChain;
 
 class Event extends Form
 {

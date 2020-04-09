@@ -3,8 +3,8 @@
 namespace Application\Controller;
 
 use Application\Form;
-use Zend\Db\Sql\{Delete, Expression, Select, Sql, Update};
-use Zend\View\Model\ViewModel;
+use Laminas\Db\Sql\{Delete, Expression, Select, Sql, Update};
+use Laminas\View\Model\ViewModel;
 
 class PostcodeController extends DatabaseController
 {

@@ -3,8 +3,8 @@
 namespace Application\Controller;
 
 use Interop\Container\ContainerInterface;
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class DatabaseControllerFactory implements FactoryInterface
 {

@@ -3,8 +3,8 @@
 namespace Application\Controller;
 
 use Application\Form;
-use Zend\Db\Sql\{Delete, Insert, Select, Sql, Update};
-use Zend\View\Model\ViewModel;
+use Laminas\Db\Sql\{Delete, Insert, Select, Sql, Update};
+use Laminas\View\Model\ViewModel;
 
 class GroupController extends DatabaseController
 {

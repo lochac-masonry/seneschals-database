@@ -3,8 +3,8 @@
 namespace User\Controller\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class AuthControllerFactory implements FactoryInterface
 {

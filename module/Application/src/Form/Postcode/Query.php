@@ -2,8 +2,8 @@
 
 namespace Application\Form\Postcode;
 
-use Zend\Form\{Element, Fieldset, Form};
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\{Element, Fieldset, Form};
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Query extends Form
 {

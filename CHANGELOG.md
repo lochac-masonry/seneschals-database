@@ -7,6 +7,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Changed
+
+* Migrated from Zend to Laminas.
+
 ## [2.4.1] - 2020-03-15
 
 ### Added

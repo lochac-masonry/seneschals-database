@@ -2,9 +2,9 @@
 
 namespace Application\Form\Group;
 
-use Zend\Form\Fieldset;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Fieldset;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Close extends Form
 {

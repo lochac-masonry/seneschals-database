@@ -2,11 +2,11 @@
 
 namespace User;
 
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Mvc\MvcEvent;
-use Zend\Permissions\Acl\AclInterface;
-use Zend\View\Helper\Navigation as NavigationHelper;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Permissions\Acl\AclInterface;
+use Laminas\View\Helper\Navigation as NavigationHelper;
 
 class Module
 {

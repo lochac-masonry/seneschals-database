@@ -2,8 +2,8 @@
 
 namespace Application\Form\Group;
 
-use Zend\Form\{Element, Fieldset, Form};
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\{Element, Fieldset, Form};
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Nobility extends Form
 {

@@ -2,7 +2,7 @@
 
 namespace Application\Form\Event;
 
-use Zend\Form\Fieldset;
+use Laminas\Form\Fieldset;
 
 class AttachmentFieldset extends Fieldset
 {
