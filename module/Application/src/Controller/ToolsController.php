@@ -6,6 +6,9 @@ namespace Application\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
 
+/**
+ * @\Application\Annotations\Protecc
+ */
 class ToolsController extends AbstractActionController
 {
     public function versionAction()
