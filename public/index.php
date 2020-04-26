@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Laminas\Mvc\Application;
 use Laminas\Stdlib\ArrayUtils;
 
@@ -22,6 +23,9 @@ if (php_sapi_name() === 'cli-server') {
 
 // Composer autoloading
 include __DIR__ . '/../vendor/autoload.php';
+
+// Configure annotations to use the default autoloading
+AnnotationRegistry::registerLoader('class_exists');
 
 if (!class_exists(Application::class)) {
     throw new RuntimeException(

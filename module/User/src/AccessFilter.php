@@ -6,7 +6,6 @@ namespace User;
 
 use User\Annotations\EnsureRole;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\Mvc\MvcEvent;
@@ -40,8 +39,6 @@ class AccessFilter
         $reflectionClass = new \ReflectionClass($controller);
         $reflectionMethod = $reflectionClass->getMethod($actionMethod);
 
-        // TODO: Move to index.php.
-        AnnotationRegistry::registerLoader('class_exists');
         $reader = new AnnotationReader();
         $ensureRoleAnnotation = $reader->getMethodAnnotation($reflectionMethod, EnsureRole::class)
             ?? $reader->getClassAnnotation($reflectionClass, EnsureRole::class);
