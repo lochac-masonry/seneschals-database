@@ -10,7 +10,7 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Sql\{Insert, Select, Sql, Update};
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Uri\{Http, Uri};
-use User\Annotations\Protecc;
+use User\Annotations\EnsureRole;
 
 class EventController extends AbstractActionController
 {
@@ -262,7 +262,7 @@ class EventController extends AbstractActionController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole
      */
     public function listAction()
     {
@@ -497,7 +497,7 @@ class EventController extends AbstractActionController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole
      */
     public function editAction()
     {
@@ -752,7 +752,7 @@ class EventController extends AbstractActionController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole
      */
     public function downloadAttachmentAction()
     {
@@ -804,7 +804,7 @@ class EventController extends AbstractActionController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole
      */
     public function deleteAttachmentAction()
     {

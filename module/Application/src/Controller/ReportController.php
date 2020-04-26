@@ -6,10 +6,10 @@ namespace Application\Controller;
 
 use Application\Form;
 use Laminas\Db\Sql\{Select, Sql, Update};
-use User\Annotations\Protecc;
+use User\Annotations\EnsureRole;
 
 /**
- * @Protecc
+ * @EnsureRole
  */
 class ReportController extends DatabaseController
 {

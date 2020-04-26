@@ -7,7 +7,7 @@ namespace Application\Controller;
 use Application\Form;
 use Laminas\Db\Sql\{Delete, Insert, Select, Sql, Update};
 use Laminas\View\Model\ViewModel;
-use User\Annotations\Protecc;
+use User\Annotations\EnsureRole;
 
 class GroupController extends DatabaseController
 {
@@ -57,7 +57,7 @@ class GroupController extends DatabaseController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole(['admin'])
      */
     public function editAction()
     {
@@ -184,7 +184,7 @@ class GroupController extends DatabaseController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole(['admin'])
      */
     public function closeAction()
     {
@@ -234,7 +234,7 @@ class GroupController extends DatabaseController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole
      */
     public function aliasesAction()
     {
@@ -438,7 +438,7 @@ class GroupController extends DatabaseController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole(['admin'])
      */
     public function domainsAction()
     {
@@ -637,7 +637,7 @@ class GroupController extends DatabaseController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole
      */
     public function baronBaronessAction()
     {

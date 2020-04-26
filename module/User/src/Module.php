@@ -51,7 +51,7 @@ class Module
         NavigationHelper::setDefaultAcl($serviceManager->get(AclInterface::class));
         NavigationHelper::setDefaultRole($role);
 
-        $accessFilter = new AccessFilter($authService);
+        $accessFilter = new AccessFilter($role);
         $accessFilter->attach($sharedEventManager);
     }
 

@@ -7,7 +7,7 @@ namespace Application\Controller;
 use Application\Form;
 use Laminas\Db\Sql\{Delete, Expression, Select, Sql, Update};
 use Laminas\View\Model\ViewModel;
-use User\Annotations\Protecc;
+use User\Annotations\EnsureRole;
 
 class PostcodeController extends DatabaseController
 {
@@ -106,7 +106,7 @@ class PostcodeController extends DatabaseController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole(['admin'])
      */
     public function assignAction()
     {
@@ -155,7 +155,7 @@ class PostcodeController extends DatabaseController
     }
 
     /**
-     * @Protecc
+     * @EnsureRole(['admin'])
      */
     public function uploadAction()
     {

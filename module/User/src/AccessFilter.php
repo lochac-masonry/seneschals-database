@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace User;
 
-use User\Annotations\Protecc;
+use User\Annotations\EnsureRole;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Laminas\Authentication\AuthenticationServiceInterface;
@@ -14,12 +14,12 @@ use Laminas\Mvc\Controller\AbstractActionController;
 
 class AccessFilter
 {
-    /** @var AuthenticationServiceInterface */
-    private $authService;
+    /** @var string */
+    private $role;
 
-    public function __construct(AuthenticationServiceInterface $authService)
+    public function __construct(string $role)
     {
-        $this->authService = $authService;
+        $this->role = $role;
     }
 
     public function attach(SharedEventManagerInterface $events)
@@ -40,12 +40,23 @@ class AccessFilter
         $reflectionClass = new \ReflectionClass($controller);
         $reflectionMethod = $reflectionClass->getMethod($actionMethod);
 
+        // TODO: Move to index.php.
         AnnotationRegistry::registerLoader('class_exists');
         $reader = new AnnotationReader();
-        $protecc = $reader->getMethodAnnotation($reflectionMethod, Protecc::class)
-            || $reader->getClassAnnotation($reflectionClass, Protecc::class);
+        $ensureRoleAnnotation = $reader->getMethodAnnotation($reflectionMethod, EnsureRole::class)
+            || $reader->getClassAnnotation($reflectionClass, EnsureRole::class);
 
-        if ($protecc && !$this->authService->hasIdentity()) {
+        if (!$ensureRoleAnnotation) {
+            // Auth not required.
+            return;
+        }
+
+        if (in_array($this->role, $ensureRoleAnnotation->permittedRoles)) {
+            // Auth required and user has the correct role.
+            return;
+        }
+
+        if ($this->role === 'guest') {
             // Not logged in - redirect to login page.
             return $controller->redirect()->toRoute(
                 'auth/login',
@@ -53,5 +64,8 @@ class AccessFilter
                 ['query' => ['redirectUrl' => $controller->currentUrl()]],
             );
         }
+
+        // Logged in but insufficient permissions - redirect to home page.
+        return $controller->redirect()->toRoute('home');
     }
 }
