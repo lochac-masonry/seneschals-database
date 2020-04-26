@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Application\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
+use User\Annotations\Protecc;
 
 /**
- * @\Application\Annotations\Protecc
+ * @Protecc
  */
 class ToolsController extends AbstractActionController
 {

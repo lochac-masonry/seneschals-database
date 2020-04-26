@@ -16,6 +16,8 @@ class Module
     {
         $application = $e->getApplication();
         $serviceManager = $application->getServiceManager();
+        $eventManager = $application->getEventManager();
+        $sharedEventManager = $eventManager->getSharedManager();
         $db = $serviceManager->get(AdapterInterface::class);
 
         // Determine the user's identity and role.
@@ -48,6 +50,9 @@ class Module
         // Inject ACL and role into navigation helpers.
         NavigationHelper::setDefaultAcl($serviceManager->get(AclInterface::class));
         NavigationHelper::setDefaultRole($role);
+
+        $accessFilter = new AccessFilter($authService);
+        $accessFilter->attach($sharedEventManager);
     }
 
     public function getConfig()

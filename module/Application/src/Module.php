@@ -17,7 +17,6 @@ class Module
     {
         $application = $e->getApplication();
         $eventManager = $application->getEventManager();
-        $sharedEventManager = $eventManager->getSharedManager();
         $serviceManager = $application->getServiceManager();
         $db = $serviceManager->get(AdapterInterface::class);
 
@@ -26,9 +25,6 @@ class Module
             $db
         );
         $errorListener->attach($eventManager);
-
-        $accessFilter = new AccessFilter();
-        $accessFilter->attach($sharedEventManager);
 
         // Create a SessionManager so that it is ready for use as the default manager for all containers.
         $sessionManager = $serviceManager->get(SessionManager::class);
