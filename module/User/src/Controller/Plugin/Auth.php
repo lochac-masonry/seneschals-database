@@ -25,20 +25,4 @@ class Auth extends AbstractPlugin
     {
         return $this->metadata['level'];
     }
-
-    public function ensureLevel(array $permittedLevels)
-    {
-        if ($this->getLevel() == 'anyone') {
-            // Not logged in - redirect to login page.
-            return $this->getController()->redirect()->toRoute(
-                'auth/login',
-                [],
-                ['query' => ['redirectUrl' => $this->getController()->currentUrl()]],
-            );
-        }
-        if (!in_array($this->getLevel(), $permittedLevels)) {
-            // Logged in but insufficient permissions - redirect to home page.
-            return $this->getController()->redirect()->toRoute('home');
-        }
-    }
 }
