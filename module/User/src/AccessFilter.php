@@ -44,7 +44,7 @@ class AccessFilter
         AnnotationRegistry::registerLoader('class_exists');
         $reader = new AnnotationReader();
         $ensureRoleAnnotation = $reader->getMethodAnnotation($reflectionMethod, EnsureRole::class)
-            || $reader->getClassAnnotation($reflectionClass, EnsureRole::class);
+            ?? $reader->getClassAnnotation($reflectionClass, EnsureRole::class);
 
         if (!$ensureRoleAnnotation) {
             // Auth not required.

@@ -57,7 +57,7 @@ class GroupController extends DatabaseController
     }
 
     /**
-     * @EnsureRole(['admin'])
+     * @EnsureRole({"admin"})
      */
     public function editAction()
     {
@@ -184,7 +184,7 @@ class GroupController extends DatabaseController
     }
 
     /**
-     * @EnsureRole(['admin'])
+     * @EnsureRole({"admin"})
      */
     public function closeAction()
     {
@@ -438,7 +438,7 @@ class GroupController extends DatabaseController
     }
 
     /**
-     * @EnsureRole(['admin'])
+     * @EnsureRole({"admin"})
      */
     public function domainsAction()
     {

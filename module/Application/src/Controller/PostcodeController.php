@@ -106,7 +106,7 @@ class PostcodeController extends DatabaseController
     }
 
     /**
-     * @EnsureRole(['admin'])
+     * @EnsureRole({"admin"})
      */
     public function assignAction()
     {
@@ -155,7 +155,7 @@ class PostcodeController extends DatabaseController
     }
 
     /**
-     * @EnsureRole(['admin'])
+     * @EnsureRole({"admin"})
      */
     public function uploadAction()
     {
