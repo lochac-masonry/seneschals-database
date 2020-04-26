@@ -6,7 +6,11 @@ namespace Application\Controller;
 
 use Application\Form;
 use Laminas\Db\Sql\{Select, Sql, Update};
+use User\Annotations\Protecc;
 
+/**
+ * @Protecc
+ */
 class ReportController extends DatabaseController
 {
     private function sendReportEmails($reportData, $groupData, $parentGroupEmail, $subgroups)
@@ -103,10 +107,6 @@ class ReportController extends DatabaseController
     {
         $this->layout()->title = 'Submit Quarterly Report';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
         $groupList = $this->arrayIndex(
             $db->query('SELECT id, groupname FROM scagroup ORDER BY groupname', []),

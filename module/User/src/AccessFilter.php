@@ -30,12 +30,20 @@ class AccessFilter
     public function onDispatch(MvcEvent $e)
     {
         $controller = $e->getTarget();
+        $routeMatch = $e->getRouteMatch();
+        $action = $routeMatch->getParam('action', 'not-found');
+        $actionMethod = $controller::getMethodFromAction($action);
+        if (!method_exists($controller, $actionMethod)) {
+            $actionMethod = 'notFoundAction';
+        }
 
         $reflectionClass = new \ReflectionClass($controller);
+        $reflectionMethod = $reflectionClass->getMethod($actionMethod);
 
         AnnotationRegistry::registerLoader('class_exists');
         $reader = new AnnotationReader();
-        $protecc = $reader->getClassAnnotation($reflectionClass, Protecc::class);
+        $protecc = $reader->getMethodAnnotation($reflectionMethod, Protecc::class)
+            || $reader->getClassAnnotation($reflectionClass, Protecc::class);
 
         if ($protecc && !$this->authService->hasIdentity()) {
             // Not logged in - redirect to login page.

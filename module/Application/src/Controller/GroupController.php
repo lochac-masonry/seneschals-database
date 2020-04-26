@@ -7,6 +7,7 @@ namespace Application\Controller;
 use Application\Form;
 use Laminas\Db\Sql\{Delete, Insert, Select, Sql, Update};
 use Laminas\View\Model\ViewModel;
+use User\Annotations\Protecc;
 
 class GroupController extends DatabaseController
 {
@@ -55,14 +56,13 @@ class GroupController extends DatabaseController
         ];
     }
 
+    /**
+     * @Protecc
+     */
     public function editAction()
     {
         $this->layout()->title = 'Edit Group Details';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
         $groupList = $this->arrayIndex(
             $db->query('SELECT id, groupname FROM scagroup ORDER BY groupname', []),
@@ -183,14 +183,13 @@ class GroupController extends DatabaseController
         ];
     }
 
+    /**
+     * @Protecc
+     */
     public function closeAction()
     {
         $this->layout()->title = 'Close Group';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
         $groupList = $this->arrayIndex(
             $db->query('SELECT id, groupname FROM scagroup ORDER BY groupname', []),
@@ -234,14 +233,13 @@ class GroupController extends DatabaseController
         return $viewModel;
     }
 
+    /**
+     * @Protecc
+     */
     public function aliasesAction()
     {
         $this->layout()->title = 'Manage Group Email Aliases';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
         $groupList = $this->arrayIndex(
             $db->query('SELECT id, groupname FROM scagroup ORDER BY groupname', []),
@@ -439,14 +437,13 @@ class GroupController extends DatabaseController
         return $viewModel;
     }
 
+    /**
+     * @Protecc
+     */
     public function domainsAction()
     {
         $this->layout()->title = 'Manage Group Domains';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin']);
-        if ($authResponse) {
-            return $authResponse;
-        }
         $refreshUrl = $this->currentUrl();
 
         $groupList = $this->arrayIndex(
@@ -639,14 +636,13 @@ class GroupController extends DatabaseController
         return $viewModel;
     }
 
+    /**
+     * @Protecc
+     */
     public function baronBaronessAction()
     {
         $this->layout()->title = 'Baron and Baroness Details';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
         $groupList = $this->arrayIndex(
             $db->query("SELECT id, groupname FROM scagroup WHERE type='Barony' ORDER BY groupname", []),

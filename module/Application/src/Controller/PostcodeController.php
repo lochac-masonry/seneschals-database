@@ -7,6 +7,7 @@ namespace Application\Controller;
 use Application\Form;
 use Laminas\Db\Sql\{Delete, Expression, Select, Sql, Update};
 use Laminas\View\Model\ViewModel;
+use User\Annotations\Protecc;
 
 class PostcodeController extends DatabaseController
 {
@@ -104,14 +105,13 @@ class PostcodeController extends DatabaseController
         ]))->setTerminal($printable);
     }
 
+    /**
+     * @Protecc
+     */
     public function assignAction()
     {
         $this->layout()->title = 'Assign Postcodes';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
         $groupList = $this->arrayIndex(
             $db->query('SELECT id, groupname FROM scagroup ORDER BY groupname', []),
@@ -154,14 +154,13 @@ class PostcodeController extends DatabaseController
         ];
     }
 
+    /**
+     * @Protecc
+     */
     public function uploadAction()
     {
         $this->layout()->title = 'Upload Postcodes File';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
         $form = new Form\Postcode\Upload();
 

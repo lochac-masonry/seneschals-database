@@ -10,6 +10,7 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Sql\{Insert, Select, Sql, Update};
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Uri\{Http, Uri};
+use User\Annotations\Protecc;
 
 class EventController extends AbstractActionController
 {
@@ -260,14 +261,13 @@ class EventController extends AbstractActionController
         return $viewModel;
     }
 
+    /**
+     * @Protecc
+     */
     public function listAction()
     {
         $this->layout()->title = 'Review Event Proposals';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
         $groupList = $this->arrayIndex(
             $db->query('SELECT id, groupname FROM scagroup ORDER BY groupname', []),
@@ -496,14 +496,13 @@ class EventController extends AbstractActionController
         }
     }
 
+    /**
+     * @Protecc
+     */
     public function editAction()
     {
         $this->layout()->title = 'Edit Event Proposal';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
         $groupList = $this->arrayIndex(
             $db->query("SELECT id, groupname FROM scagroup WHERE status = 'live' ORDER BY groupname", []),
@@ -752,13 +751,12 @@ class EventController extends AbstractActionController
         return $viewModel;
     }
 
+    /**
+     * @Protecc
+     */
     public function downloadAttachmentAction()
     {
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
                                                             //----------------------------------------------------------
                                                             // Check that the attachment specified exists and
@@ -805,14 +803,13 @@ class EventController extends AbstractActionController
         return $response;
     }
 
+    /**
+     * @Protecc
+     */
     public function deleteAttachmentAction()
     {
         $this->layout()->title = 'Delete Attachment';
         $db = $this->db;
-        $authResponse = $this->auth()->ensureLevel(['admin', 'user']);
-        if ($authResponse) {
-            return $authResponse;
-        }
 
                                                             //----------------------------------------------------------
                                                             // Check that the attachment specified exists and
