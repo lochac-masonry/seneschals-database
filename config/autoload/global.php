@@ -44,4 +44,7 @@ return [
         'not_found_template'  => 'error/404',
         'exception_template'  => 'error/index',
     ],
+
+    // All emails are sent From this address.
+    'fromEmail' => '"Lochac Seneschals\' Database" <seneschaldb@lochac.sca.org>',
 ];

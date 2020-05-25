@@ -7,6 +7,12 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.6.0] - 2020-05-25
+
+### Changed
+
+* All emails are now sent with a From address of `seneschaldb@lochac.sca.org`.
+
 ## [2.5.0] - 2020-04-09
 
 ### Changed
@@ -142,8 +148,9 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.5.0
-[2.4.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.5.0..v2.4.1
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.6.0
+[2.6.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.6.0..v2.5.0
+[2.5.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.5.0..v2.4.1
 [2.4.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.4.1..v2.4.0
 [2.4.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.4.0..v2.3.0
 [2.3.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.3.0..v2.2.2

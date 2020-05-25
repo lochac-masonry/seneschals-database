@@ -87,12 +87,10 @@ class ReportController extends DatabaseController
             $mailto[] = $reportData['copies']['othercopy2'];
         }
 
-        $mailheaders = "From: " . $reportData['senDetails']['email'];
-
                                                             //----------------------------------------------------------
                                                             // Send report
                                                             //----------------------------------------------------------
-        if ($this->sendEmail($mailto, $mailsubj, $mailbody, $mailheaders)) {
+        if ($this->sendEmail($mailto, $mailsubj, $mailbody)) {
             $this->alert()->good('Report sent to ' . count($mailto) . ' recipient(s).');
         } else {
             $this->alert()->bad('Failed to send report.');

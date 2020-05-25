@@ -89,7 +89,7 @@ class ErrorListener
             $count++;
         } while ($exception && $count < 10);
 
-        $mailHead = "From: information@lochac.sca.org\r\nContent-Type: text/plain;charset=utf-8";
+        $mailHead = "From: {$this->config['fromEmail']}\r\nContent-Type: text/plain;charset=utf-8";
 
         mail($this->config['exceptionEmail'], $mailSubj, $mailBody, $mailHead);
     }

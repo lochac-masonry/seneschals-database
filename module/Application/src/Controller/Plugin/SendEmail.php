@@ -16,13 +16,10 @@ class SendEmail extends AbstractPlugin
         $this->config = $config;
     }
 
-    public function __invoke($to, $subject, $body, $header = null)
+    public function __invoke($to, $subject, $body)
     {
         if (is_array($to)) {
             $to = implode(', ', $to);
-        }
-        if (is_array($header)) {
-            $header = implode("\r\n", $header);
         }
 
         if (!is_string($to)) {
@@ -38,7 +35,7 @@ class SendEmail extends AbstractPlugin
             throw new InvalidArgumentException('Argument $header must be string or array of strings');
         }
 
-        $header .= "\r\nContent-Type: text/plain;charset=utf-8";
+        $header = "From: {$this->config['fromEmail']}\r\nContent-Type: text/plain;charset=utf-8";
 
                                                             //----------------------------------------------------------
                                                             // Redirect all email to the debug address if it is set

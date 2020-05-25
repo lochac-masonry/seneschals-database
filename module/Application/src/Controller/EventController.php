@@ -57,9 +57,7 @@ class EventController extends AbstractActionController
                     "Best of luck with your event,\n" .
                     "The Lochac Seneschals' Database";
 
-        $mailHead = "From: {$values['stewardemail']}";
-
-        return $this->sendEmail($mailTo, $mailSubj, $mailBody, $mailHead);
+        return $this->sendEmail($mailTo, $mailSubj, $mailBody);
     }
 
     private function emailSeneschal($seneschal)
@@ -79,9 +77,7 @@ class EventController extends AbstractActionController
                     "Kind Regards,\n" .
                     "The Lochac Seneschals' Database";
 
-        $mailHead = "From: {$seneschal['email']}";
-
-        return $this->sendEmail($mailTo, $mailSubj, $mailBody, $mailHead);
+        return $this->sendEmail($mailTo, $mailSubj, $mailBody);
     }
 
     /**
@@ -368,9 +364,7 @@ class EventController extends AbstractActionController
         $mailBody .= "Price:\n" . $values['price'] . "\n\n" .
                      "DESCRIPTION\n===========\n" . $values['description'];
 
-        $mailHead = "From: information@lochac.sca.org";
-
-        return $this->sendEmail($mailTo, $mailSubj, $mailBody, $mailHead);
+        return $this->sendEmail($mailTo, $mailSubj, $mailBody);
     }
 
     private function emailPegasus($values, $hostGroup)
@@ -406,9 +400,7 @@ class EventController extends AbstractActionController
 
         $mailBody .= "Kind regards,\nThe Lochac Seneschals' Database";
 
-        $mailHead = "From: information@lochac.sca.org";
-
-        return $this->sendEmail($mailTo, $mailSubj, $mailBody, $mailHead);
+        return $this->sendEmail($mailTo, $mailSubj, $mailBody);
     }
 
     private function getGoogleMetadata()
