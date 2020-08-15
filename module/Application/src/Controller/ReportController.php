@@ -74,6 +74,7 @@ class ReportController extends DatabaseController
 
         $mailto[] = $parentGroupEmail;
         $mailto[] = $reportData['senDetails']['email'];
+        $mailto[] = "reports@lochac.sca.org";
         if ($reportData['copies']['copyhospit']) {
             $mailto[] = "hospitaller@lochac.sca.org";
         }

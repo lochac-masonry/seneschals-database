@@ -36,6 +36,9 @@ class Module
             } elseif ($identity == 'servers') {
                 $auth = ['id' => 1, 'level' => 'admin'];
                 $role = 'admin';
+            } elseif ($identity == 'reportsdeputy') {
+                $auth = ['id' => 1, 'level' => 'admin'];
+                $role = 'admin';
             } elseif (in_array($identity, $groupList)) {
                 $auth = ['id' => array_search($identity, $groupList), 'level' => 'user'];
                 $role = 'seneschal';
