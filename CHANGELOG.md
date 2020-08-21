@@ -7,6 +7,12 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.7.1] - 2020-08-21
+
+### Changed
+
+* Updated footer contact details to refer to the Kingdom Seneschal.
+
 ## [2.7.0] - 2020-08-14
 
 ### Added
@@ -155,7 +161,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.7.0
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.7.1
+[2.7.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.7.1..v2.7.0
 [2.7.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.7.0..v2.6.0
 [2.6.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.6.0..v2.5.0
 [2.5.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.5.0..v2.4.1
