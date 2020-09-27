@@ -11,6 +11,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 * Extended session timeout and report form CSRF timeout to 90 minutes.
 * Session is regenerated upon login and destroyed upon logout to mitigate session fixation attacks.
+* Make Seneschal email address not editable as part of report submission.
 
 ## [2.7.1] - 2020-08-21
 

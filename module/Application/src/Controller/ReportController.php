@@ -205,7 +205,6 @@ class ReportController extends DatabaseController
                         'postcode',
                         'country',
                         'phone',
-                        'email',
                         'memnum',
                     ]));
                     $fieldsToUpdate['website'] = $values['groupDetails']['website'];

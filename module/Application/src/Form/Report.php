@@ -208,7 +208,7 @@ class Report extends Form
                         ],
                         'attributes' => [
                             'size'     => 40,
-                            'required' => true,
+                            'disabled' => true,
                         ],
                     ]);
                     $this->add([
@@ -261,6 +261,8 @@ class Report extends Form
 
                 public function getInputFilterSpecification()
                 {
+                    $emailSpec = $this->get('email')->getInputSpecification();
+                    $emailSpec['required'] = false;
                     return [
                         'scaname' => [
                             'required' => true,
@@ -280,6 +282,7 @@ class Report extends Form
                                 ['name' => 'Laminas\Filter\StringTrim'],
                             ],
                         ],
+                        'email' => $emailSpec,
                     ];
                 }
             }
