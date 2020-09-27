@@ -13,6 +13,7 @@ class ListFilter extends Form
         parent::__construct();
 
         $this->setAttribute('method', 'get');
+        $this->setAttribute('class', 'form--auto-submit');
 
         $this->add([
             'type'    => 'select',
@@ -55,7 +56,7 @@ class ListFilter extends Form
         ]);
         $this->add([
             'type'       => 'submit',
-            'name'       => 'submit',
+            'name'       => 'filtersubmit',
             'options'    => [],
             'attributes' => [
                 'value' => 'Select',

@@ -7,6 +7,12 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.8.0] - 2020-09-27
+
+### Added
+
+* GroupSelect and ListFilter forms now auto-submit on change, if JavaScript is available.
+
 ### Changed
 
 * Extended session timeout and report form CSRF timeout to 90 minutes.
@@ -167,7 +173,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.7.1
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.8.0
+[2.8.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.8.0..v2.7.1
 [2.7.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.7.1..v2.7.0
 [2.7.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.7.0..v2.6.0
 [2.6.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.6.0..v2.5.0

@@ -13,6 +13,7 @@ class GroupSelect extends Form
         parent::__construct();
 
         $this->setAttribute('method', 'get');
+        $this->setAttribute('class', 'form--auto-submit');
 
         $this->add([
             'type'    => 'select',
@@ -28,7 +29,7 @@ class GroupSelect extends Form
         ]);
         $this->add([
             'type'       => 'submit',
-            'name'       => 'submit',
+            'name'       => 'groupsubmit',
             'options'    => [],
             'attributes' => [
                 'value' => 'Select',

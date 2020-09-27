@@ -126,7 +126,7 @@ class ReportController extends DatabaseController
         } else {
             $groupSelectForm->setData(['groupid' => $this->auth()->getId()]);
             $groupSelectForm->get('groupid')->setAttribute('disabled', true);
-            $groupSelectForm->get('submit')->setAttribute('disabled', true);
+            $groupSelectForm->get('groupsubmit')->setAttribute('disabled', true);
         }
 
         if ($groupSelectForm->isValid()) {
