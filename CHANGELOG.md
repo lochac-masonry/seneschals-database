@@ -7,6 +7,11 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Changed
+
+* Extended session timeout and report form CSRF timeout to 90 minutes.
+* Session is regenerated upon login and destroyed upon logout to mitigate session fixation attacks.
+
 ## [2.7.1] - 2020-08-21
 
 ### Changed

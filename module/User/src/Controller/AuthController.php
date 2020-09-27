@@ -7,15 +7,21 @@ namespace User\Controller;
 use User\Form;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Session\ManagerInterface;
 use Laminas\Uri\Uri;
 
 class AuthController extends AbstractActionController
 {
     private $authService;
+    /**
+     * @var ManagerInterface
+     */
+    private $sessionManager;
 
-    public function __construct(AuthenticationServiceInterface $authService)
+    public function __construct(AuthenticationServiceInterface $authService, ManagerInterface $sessionManager)
     {
         $this->authService = $authService;
+        $this->sessionManager = $sessionManager;
     }
 
     public function loginAction()
@@ -45,6 +51,8 @@ class AuthController extends AbstractActionController
         $viewModel['messages'] = $result->getMessages();
 
         if ($result->isValid()) {
+            $this->sessionManager->regenerateId();
+
             // Ensure redirect URL is valid and relative, i.e. not hijacking the user to a different site.
             $redirectUrl = $values['redirectUrl'];
             $uri = new Uri($redirectUrl);
@@ -66,6 +74,7 @@ class AuthController extends AbstractActionController
     public function logoutAction()
     {
         $this->authService->clearIdentity();
+        $this->sessionManager->destroy();
         return $this->redirect()->toRoute('home');
     }
 }

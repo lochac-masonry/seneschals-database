@@ -22,7 +22,7 @@ return [
     'clamd_socket' => 'unix:///var/run/clamav/clamd.ctl',
     'session_config' => [
         'cookie_httponly' => true,
-        'cookie_lifetime' => 60 * 60 * 1,
+        'cookie_lifetime' => 60 * 90,
         'gc_maxlifetime'  => 60 * 60 * 24 * 30,
     ],
     'session_manager' => [
