@@ -244,6 +244,16 @@ return [
                     ],
                 ],
                 'child_routes' => [
+                    'keep-alive' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/keep-alive',
+                            'defaults' => [
+                                'action' => 'keep-alive',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                     'version' => [
                         'type'    => Literal::class,
                         'options' => [

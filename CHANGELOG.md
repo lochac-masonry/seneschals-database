@@ -7,6 +7,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Added
+
+* Keep-alive functionality for the report form. A background XHR runs on form changes to check if the session is still active and warns the user if not.
+
 ## [2.8.1] - 2020-10-09
 
 ### Fixed

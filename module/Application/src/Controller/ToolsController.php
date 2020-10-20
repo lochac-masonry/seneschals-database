@@ -17,4 +17,15 @@ class ToolsController extends AbstractActionController
             'googleVersion' => \Google_Client::LIBVER,
         ];
     }
+
+    public function keepAliveAction()
+    {
+        if (in_array($this->getRequest()->getMetadata('auth')['level'], ['admin', 'user'])) {
+            // Login session has not timed out.
+            return '';
+        }
+        $response = $this->getResponse();
+        $response->setStatusCode(401);
+        return $response;
+    }
 }

@@ -6,6 +6,9 @@ $this->formRow()->setRenderErrors(false);
 echo $this->form($groupSelectForm);
 $this->formRow()->setRenderErrors(true);
 
+$this->inlineScript()
+    ->appendFile($this->basePath('js/keepalive-on-change.js'));
+
 if (isset($detailsForm)) {
     echo $this->form($detailsForm);
 }
