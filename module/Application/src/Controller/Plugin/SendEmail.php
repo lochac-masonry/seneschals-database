@@ -16,7 +16,7 @@ class SendEmail extends AbstractPlugin
         $this->config = $config;
     }
 
-    public function __invoke($to, $subject, $body)
+    public function __invoke($to, $subject, $body, $onBehalfOf = null)
     {
         if (is_array($to)) {
             $to = implode(', ', $to);
@@ -35,7 +35,13 @@ class SendEmail extends AbstractPlugin
             throw new InvalidArgumentException('Argument $header must be string or array of strings');
         }
 
-        $header = "From: {$this->config['fromEmail']}\r\nContent-Type: text/plain;charset=utf-8";
+        if ($onBehalfOf) {
+            $header = "From: {$onBehalfOf}\r\nSender: {$this->config['fromEmail']}";
+        } else {
+            $header = "From: {$this->config['fromEmail']}";
+        }
+
+        $header .= "\r\nContent-Type: text/plain;charset=utf-8";
 
                                                             //----------------------------------------------------------
                                                             // Redirect all email to the debug address if it is set

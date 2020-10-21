@@ -98,7 +98,7 @@ class ReportController extends DatabaseController
                                                             //----------------------------------------------------------
                                                             // Send report
                                                             //----------------------------------------------------------
-        if ($this->sendEmail($mailto, $mailsubj, $mailbody)) {
+        if ($this->sendEmail($mailto, $mailsubj, $mailbody, 'reports@lochac.sca.org')) {
             $this->alert()->good('Report sent to ' . count($mailto) . ' recipient(s).');
         } else {
             $this->alert()->bad('Failed to send report.');

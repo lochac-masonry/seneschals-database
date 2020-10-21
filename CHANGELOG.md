@@ -7,6 +7,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.9.0] - 2020-10-21
+
 ### Added
 
 * Hint for changing email alias in report form, based on selected country.
@@ -23,6 +25,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 * Make group website not editable as part of report submission.
 * Lists, Youth and Historian report fields combined into "Other officers".
 * Minor changes to wording of report form labels.
+* Report emails are sent From the Reporting Deputy, with Sender set to the normal app From address.
 
 ### Removed
 
@@ -204,7 +207,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.8.1
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.9.0
+[2.9.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.9.0..v2.8.1
 [2.8.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.8.1..v2.8.0
 [2.8.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.8.0..v2.7.1
 [2.7.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.7.1..v2.7.0
