@@ -9,7 +9,7 @@ use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Report extends Form
 {
-    public function __construct($groupOptions = [], $subgroups = [])
+    public function __construct($type, $email, $parentGroup, $groupOptions = [], $subgroups = [])
     {
         parent::__construct();
 
@@ -42,10 +42,11 @@ class Report extends Form
                         'type'    => 'text',
                         'name'    => 'website',
                         'options' => [
-                            'label' => 'Group Website',
+                            'label' => 'Group Website - contact Kingdom Seneschal to change',
                         ],
                         'attributes' => [
-                            'size' => 50,
+                            'size'     => 50,
+                            'disabled' => true,
                         ],
                     ]);
                     $this->add([
@@ -201,17 +202,6 @@ class Report extends Form
                         ],
                     ]);
                     $this->add([
-                        'type'    => 'email',
-                        'name'    => 'email',
-                        'options' => [
-                            'label' => 'Email Address - Published on group listing',
-                        ],
-                        'attributes' => [
-                            'size'     => 40,
-                            'disabled' => true,
-                        ],
-                    ]);
-                    $this->add([
                         'type'    => 'number',
                         'name'    => 'memnum',
                         'options' => [
@@ -225,10 +215,23 @@ class Report extends Form
                         ],
                     ]);
                     $this->add([
+                        'type'    => 'email',
+                        'name'    => 'email',
+                        'options' => [
+                            'label' =>
+                                'Email Address - published on group listing, ' .
+                                'contact Kingdom Seneschal to change',
+                        ],
+                        'attributes' => [
+                            'size'     => 40,
+                            'disabled' => true,
+                        ],
+                    ]);
+                    $this->add([
                         'type'    => 'text',
                         'name'    => 'warrantstart',
                         'options' => [
-                            'label' => 'Warrant Start (YYYY-MM-DD)',
+                            'label' => 'Warrant Start (YYYY-MM-DD) - contact Kingdom Seneschal if incorrect',
                         ],
                         'attributes' => [
                             'size'     => 10,
@@ -261,8 +264,6 @@ class Report extends Form
 
                 public function getInputFilterSpecification()
                 {
-                    $emailSpec = $this->get('email')->getInputSpecification();
-                    $emailSpec['required'] = false;
                     return [
                         'scaname' => [
                             'required' => true,
@@ -282,7 +283,9 @@ class Report extends Form
                                 ['name' => 'Laminas\Filter\StringTrim'],
                             ],
                         ],
-                        'email' => $emailSpec,
+                        'email' => [
+                            'required' => false,
+                        ],
                     ];
                 }
             }
@@ -292,9 +295,9 @@ class Report extends Form
                                                             // Section - CC recipient selection
                                                             //----------------------------------------------------------
         $this->add(
-            new class extends Fieldset implements InputFilterProviderInterface
+            new class ($email, $parentGroup) extends Fieldset implements InputFilterProviderInterface
             {
-                public function __construct()
+                public function __construct($email, $parentGroup)
                 {
                     parent::__construct('copies', []);
 
@@ -302,9 +305,59 @@ class Report extends Form
 
                     $this->add([
                         'type'    => 'checkbox',
+                        'name'    => 'self',
+                        'options' => [
+                            'label'         => "Yourself via {$email}",
+                            'label_options' => [
+                                'label_position' => 'append',
+                            ],
+                        ],
+                        'attributes' => [
+                            'checked'  => true,
+                            'disabled' => true,
+                        ],
+                    ]);
+                    // Exclude Kingdom Seneschal, who receives reports via the reports deputy above.
+                    if ($parentGroup['id'] !== 1) {
+                        $this->add([
+                            'type'    => 'checkbox',
+                            'name'    => 'parent',
+                            'options' => [
+                                'label' =>
+                                    "Seneschal of {$parentGroup['groupname']} " .
+                                    "via {$parentGroup['email']}",
+                                'label_options' => [
+                                    'label_position' => 'append',
+                                ],
+                            ],
+                            'attributes' => [
+                                'checked'  => true,
+                                'disabled' => true,
+                            ],
+                        ]);
+                    }
+                    $this->add([
+                        'type'    => 'checkbox',
+                        'name'    => 'kingdom',
+                        'options' => [
+                            'label'         => 'Kingdom Seneschal via reports@lochac.sca.org',
+                            'label_options' => [
+                                'label_position' => 'append',
+                            ],
+                        ],
+                        'attributes' => [
+                            'checked'  => true,
+                            'disabled' => true,
+                        ],
+                    ]);
+                    $this->add([
+                        'type'    => 'checkbox',
                         'name'    => 'copyhospit',
                         'options' => [
-                            'label' => 'Kingdom Hospitaller',
+                            'label'         => 'Kingdom Hospitaller via hospitaller@lochac.sca.org',
+                            'label_options' => [
+                                'label_position' => 'append',
+                            ],
                         ],
                         'attributes' => [],
                     ]);
@@ -312,7 +365,10 @@ class Report extends Form
                         'type'    => 'checkbox',
                         'name'    => 'copychirurgeon',
                         'options' => [
-                            'label' => 'Kingdom Chirurgeon',
+                            'label'         => 'Kingdom Chirurgeon via chirurgeon@lochac.sca.org',
+                            'label_options' => [
+                                'label_position' => 'append',
+                            ],
                         ],
                         'attributes' => [],
                     ]);
@@ -341,6 +397,15 @@ class Report extends Form
                     $othercopy2Spec = $this->get('othercopy2')->getInputSpecification();
                     $othercopy2Spec['required'] = false;
                     return [
+                        'self' => [
+                            'required' => false,
+                        ],
+                        'parent' => [
+                            'required' => false,
+                        ],
+                        'kingdom' => [
+                            'required' => false,
+                        ],
                         'othercopy1' => $othercopy1Spec,
                         'othercopy2' => $othercopy2Spec,
                     ];
@@ -368,7 +433,19 @@ class Report extends Form
                         ],
                         'attributes' => [
                             'cols' => 50,
-                            'rows' => 2,
+                            'rows' => 4,
+                            'wrap' => 'virtual',
+                        ],
+                    ]);
+                    $this->add([
+                        'type'    => 'textarea',
+                        'name'    => 'deputy',
+                        'options' => [
+                            'label' => '"Drop-dead" Deputy name, email and telephone',
+                        ],
+                        'attributes' => [
+                            'cols' => 50,
+                            'rows' => 1,
                             'wrap' => 'virtual',
                         ],
                     ]);
@@ -412,7 +489,7 @@ class Report extends Form
                         'type'    => 'textarea',
                         'name'    => 'problems',
                         'options' => [
-                            'label' => 'Problems of Note',
+                            'label' => 'Problems of Note (please include names, not just "somebody went and...")',
                         ],
                         'attributes' => [
                             'cols' => 50,
@@ -475,7 +552,7 @@ class Report extends Form
                 {
                     parent::__construct('officers', []);
 
-                    $this->setLabel('Summary of Officer Reports');
+                    $this->setLabel("Brief SUMMARIES of Officer Reports (please don't cut-and-paste entire reports!)");
 
                     $this->add([
                         'type'    => 'textarea',
@@ -575,33 +652,9 @@ class Report extends Form
                     ]);
                     $this->add([
                         'type'    => 'textarea',
-                        'name'    => 'sumlists',
+                        'name'    => 'others',
                         'options' => [
-                            'label' => 'Lists',
-                        ],
-                        'attributes' => [
-                            'cols' => 50,
-                            'rows' => 10,
-                            'wrap' => 'virtual',
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'textarea',
-                        'name'    => 'sumyouth',
-                        'options' => [
-                            'label' => 'Youth Officer',
-                        ],
-                        'attributes' => [
-                            'cols' => 50,
-                            'rows' => 10,
-                            'wrap' => 'virtual',
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'textarea',
-                        'name'    => 'sumhistorian',
-                        'options' => [
-                            'label' => 'Historian',
+                            'label' => 'Other Officers (e.g. Lists, Youth Officer, DEI, Historian, ...)',
                         ],
                         'attributes' => [
                             'cols' => 50,
@@ -621,11 +674,12 @@ class Report extends Form
                                                             //----------------------------------------------------------
                                                             // Section - subgroups, if any
                                                             //----------------------------------------------------------
-        if (!empty($subgroups)) {
+        $showHamlets = !in_array($type, ['Canton', 'College']);
+        if (!empty($subgroups) || $showHamlets) {
             $this->add(
-                new class ($subgroups) extends Fieldset implements InputFilterProviderInterface
+                new class ($subgroups, $showHamlets) extends Fieldset implements InputFilterProviderInterface
                 {
-                    public function __construct($subgroups)
+                    public function __construct($subgroups, $showHamlets)
                     {
                         parent::__construct('subgroups', []);
 
@@ -641,6 +695,21 @@ class Report extends Form
                                 'attributes' => [
                                     'cols' => 50,
                                     'rows' => 12,
+                                    'wrap' => 'virtual',
+                                ],
+                            ]);
+                        }
+
+                        if ($showHamlets) {
+                            $this->add([
+                                'type'    => 'textarea',
+                                'name'    => 'hamlets',
+                                'options' => [
+                                    'label' => 'Hamlets (if any)',
+                                ],
+                                'attributes' => [
+                                    'cols' => 50,
+                                    'rows' => 10,
                                     'wrap' => 'virtual',
                                 ],
                             ]);
@@ -672,12 +741,5 @@ class Report extends Form
                 'value' => 'Submit',
             ],
         ]);
-
-        $reset = new Element('reset');
-        $reset->setAttributes([
-            'type'  => 'reset',
-            'value' => 'Reset',
-        ]);
-        $this->add($reset);
     }
 }

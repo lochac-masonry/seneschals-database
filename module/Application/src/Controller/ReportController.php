@@ -17,10 +17,15 @@ class ReportController extends DatabaseController
                    . "\nDate: " . $reportData['senDetails']['lastreport']
                    . "\nSubmitted by: " . $reportData['senDetails']['scaname']
                    . " (" . $reportData['senDetails']['realname'] . ")"
+                   . "\nWarrant Ends: " . $groupData['warrantend']
                    . "\n"
                    . "\nSTATISTICS"
                    . "\n==========\n"
                    . $reportData['report']['statistics']
+                   . "\n"
+                   . "\nDEPUTY"
+                   . "\n==========\n"
+                   . $reportData['report']['deputy']
                    . "\n"
                    . "\nREGULAR ACTIVITIES"
                    . "\n==================\n"
@@ -60,9 +65,7 @@ class ReportController extends DatabaseController
                    . "\n\n== Chirurgeon\n" . $reportData['officers']['sumchirurgeon']
                    . "\n\n== Chronicler/Webminister\n" . $reportData['officers']['sumchronicler']
                    . "\n\n== Chatelaine/Hospitaller\n" . $reportData['officers']['sumchatelaine']
-                   . "\n\n== Lists\n" . $reportData['officers']['sumlists']
-                   . "\n\n== Youth\n" . $reportData['officers']['sumyouth']
-                   . "\n\n== Historian\n" . $reportData['officers']['sumhistorian']
+                   . "\n\n== Others\n" . $reportData['officers']['others']
                    . "\n"
                    . "\nSUMMARY OF SUB-GROUPS"
                    . "\n======================";
@@ -70,6 +73,10 @@ class ReportController extends DatabaseController
         foreach ($subgroups as $subgroup) {
             $mailbody .= "\nSummary report for " . $subgroup['type'] . " of " . $subgroup['groupname'];
             $mailbody .= "\n" . $reportData['subgroups']['subgroup' . $subgroup['id']] . "\n";
+        }
+
+        if (isset($reportData['subgroups']) && isset($reportData['subgroups']['hamlets'])) {
+            $mailbody .= "\nHamlets:\n" . $reportData['subgroups']['hamlets'] . "\n";
         }
 
         $mailto[] = $parentGroupEmail;
@@ -119,6 +126,8 @@ class ReportController extends DatabaseController
                                                             //----------------------------------------------------------
         $groupSelectForm = new Form\GroupSelect($groupList);
         $detailsForm = null;
+        $aliasesQuery = [];
+        $sampleRoute = null;
 
         $request = $this->getRequest();
         if ($this->auth()->getLevel() == 'admin') {
@@ -131,6 +140,9 @@ class ReportController extends DatabaseController
 
         if ($groupSelectForm->isValid()) {
             $groupId = $groupSelectForm->getData()['groupid'];
+            if ($this->auth()->getLevel() == 'admin') {
+                $aliasesQuery['groupid'] = $groupId;
+            }
                                                             //----------------------------------------------------------
                                                             // Build the report form
                                                             //----------------------------------------------------------
@@ -142,21 +154,38 @@ class ReportController extends DatabaseController
                 ),
                 []
             )->current();
-            $parentGroupEmail = $db->query(
+            $parentGroup = $db->query(
                 (new Sql($db))->buildSqlString(
                     (new Select())
-                        ->columns(['email'])
+                        ->columns(['id', 'groupname', 'email'])
                         ->from('scagroup')
                         ->where(['id' => $initialData['parentid']])
                 ),
                 []
-            )->current()->email;
+            )->current();
             $subgroupSql = "SELECT id, type, groupname FROM scagroup " .
                            "WHERE parentid = ? " .
                            "AND (status = 'live' OR status = 'proposed')";
             $subgroups = $db->query($subgroupSql, [$groupId])->toArray();
 
-            $detailsForm = new Form\Report($groupList, $subgroups);
+            $memberCountSql = 'SELECT SUM(tally) AS memberCount FROM membership_stats WHERE groupname = ?';
+            $memberCount = $db->query(
+                $memberCountSql,
+                [$initialData['groupname']]
+            )->toArray()[0]['memberCount'] ?? '???';
+            $statisticsTemplate =
+                "Members (from Registry): {$memberCount}\n" .
+                "Active members this quarter: ??\n" .
+                "Active non-members this quarter: ??\n" .
+                "Total funds in bank: $???";
+
+            $detailsForm = new Form\Report(
+                $initialData['type'],
+                $initialData['email'],
+                $parentGroup,
+                $groupList,
+                $subgroups
+            );
 
             $detailsForm->setData([
                 'groupDetails' => array_intersect_key($initialData, array_flip([
@@ -180,6 +209,9 @@ class ReportController extends DatabaseController
                     'warrantend',
                     'lastreport',
                 ])),
+                'report' => [
+                    'statistics' => $statisticsTemplate,
+                ],
             ]);
 
                                                             //----------------------------------------------------------
@@ -207,7 +239,6 @@ class ReportController extends DatabaseController
                         'phone',
                         'memnum',
                     ]));
-                    $fieldsToUpdate['website'] = $values['groupDetails']['website'];
 
                     $updateResult = $db->query(
                         (new Sql($db))->buildSqlString(
@@ -220,14 +251,55 @@ class ReportController extends DatabaseController
 
                     $this->alert($updateResult->getAffectedRows() . ' row(s) updated.');
 
-                    $this->sendReportEmails($values, $initialData, $parentGroupEmail, $subgroups);
+                    $this->sendReportEmails($values, $initialData, $parentGroup->email, $subgroups);
                 }
+            }
+
+            switch ($initialData['type']) {
+                case 'Barony':
+                    $sampleRoute = 'report/sample-barony';
+                    break;
+                case 'Canton':
+                    $sampleRoute = 'report/sample-canton';
+                    break;
+                case 'College':
+                    $sampleRoute = 'report/sample-college';
+                    break;
+                case 'Shire':
+                    $sampleRoute = 'report/sample-shire';
+                    break;
             }
         }
 
         return [
             'groupSelectForm' => $groupSelectForm,
             'detailsForm'     => $detailsForm,
+            'aliasesQuery'    => $aliasesQuery,
+            'sampleRoute'     => $sampleRoute,
         ];
+    }
+
+    public function sampleBaronyAction()
+    {
+        $this->layout()->title = 'Quarterly Report Sample - Barony';
+        return [];
+    }
+
+    public function sampleCantonAction()
+    {
+        $this->layout()->title = 'Quarterly Report Sample - Canton';
+        return [];
+    }
+
+    public function sampleCollegeAction()
+    {
+        $this->layout()->title = 'Quarterly Report Sample - College';
+        return [];
+    }
+
+    public function sampleShireAction()
+    {
+        $this->layout()->title = 'Quarterly Report Sample - Shire';
+        return [];
     }
 }

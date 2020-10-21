@@ -9,7 +9,24 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ### Added
 
+* Hint for changing email alias in report form, based on selected country.
+* Comprehensive list of report recipients in the form of disabled checkboxes, excluding Lochac Seneschal as parent group recipient.
+* Pre-populated member count in report from view into registry database.
+* "Drop-dead Deputy" report field.
+* Static "Hamlets" question in subgroups section of report, except for Cantons and Colleges.
+* Sample reports for different group types, with link from report based on type of group.
+* Copyable report template as plain text (including generic JS to make an element copyable).
 * Keep-alive functionality for the report form. A background XHR runs on form changes to check if the session is still active and warns the user if not.
+
+### Changed
+
+* Make group website not editable as part of report submission.
+* Lists, Youth and Historian report fields combined into "Other officers".
+* Minor changes to wording of report form labels.
+
+### Removed
+
+* Reset button removed from report form.
 
 ## [2.8.1] - 2020-10-09
 

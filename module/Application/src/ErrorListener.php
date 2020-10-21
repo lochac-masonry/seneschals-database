@@ -12,6 +12,7 @@ use Laminas\Mvc\{Application, MvcEvent};
 class ErrorListener
 {
     private $config;
+    /** @var AdapterInterface */
     private $db;
 
     public function __construct(array $config, AdapterInterface $db)

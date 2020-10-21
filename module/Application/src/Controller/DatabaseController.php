@@ -9,6 +9,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 
 class DatabaseController extends AbstractActionController
 {
+    /** @var AdapterInterface */
     protected $db;
 
     public function __construct(AdapterInterface $db)

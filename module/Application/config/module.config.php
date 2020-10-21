@@ -234,6 +234,48 @@ return [
                     ],
                 ],
                 'may_terminate' => true,
+                'child_routes' => [
+                    'sample-barony' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/sample-barony',
+                            'defaults' => [
+                                'action' => 'sample-barony',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'sample-canton' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/sample-canton',
+                            'defaults' => [
+                                'action' => 'sample-canton',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'sample-college' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/sample-college',
+                            'defaults' => [
+                                'action' => 'sample-college',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'sample-shire' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/sample-shire',
+                            'defaults' => [
+                                'action' => 'sample-shire',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                ],
             ],
             'tools' => [
                 'type'    => Literal::class,

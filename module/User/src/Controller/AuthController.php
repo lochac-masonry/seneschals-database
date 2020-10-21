@@ -12,10 +12,9 @@ use Laminas\Uri\Uri;
 
 class AuthController extends AbstractActionController
 {
+    /** @var AuthenticationServiceInterface */
     private $authService;
-    /**
-     * @var ManagerInterface
-     */
+    /** @var ManagerInterface */
     private $sessionManager;
 
     public function __construct(AuthenticationServiceInterface $authService, ManagerInterface $sessionManager)

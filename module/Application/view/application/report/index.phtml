@@ -7,8 +7,92 @@ echo $this->form($groupSelectForm);
 $this->formRow()->setRenderErrors(true);
 
 $this->inlineScript()
-    ->appendFile($this->basePath('js/keepalive-on-change.js'));
+    ->appendFile($this->basePath('js/keepalive-on-change.js'))
+    ->appendFile($this->basePath('js/add-report-hints.js'));
 
+if (isset($sampleRoute)) {
+    ?>
+    <p>Here's a <a href="<?= $this->url($sampleRoute) ?>" target="_blank">sample report</a> (opens in new tab).</p>
+    <?php
+}
+?>
+
+<p>Scroll to the bottom or <a href="#reportTemplate">click here</a> for a template you can copy.</p>
+
+<?php
 if (isset($detailsForm)) {
     echo $this->form($detailsForm);
 }
+?>
+
+<hr />
+
+<h2 id="reportTemplate">Report Template</h2>
+
+<p><a href="#top">Back to top</a></p>
+
+<pre data-copyable>
+STATISTICS
+Members: ??
+Active members this quarter: ??
+Active non-members this quarter: ??
+Total funds in bank: $???
+
+"Drop-dead" Deputy name, email and telephone
+
+Summary of Regular Activities
+
+Special Achievements and Ideas That Worked
+
+Summary of Events
+
+Problems of Note (please include names, not just "somebody went and...")
+
+Questions
+
+Plans for the future, ideas etc.
+
+General Comments
+
+Officers - brief *summary* of key points (please don't paste the whole report!)
+
+Marshal
+
+Herald
+
+Arts and Sciences
+
+Reeve
+
+Constable
+
+Chirugeon
+
+Chronicler and/or Webminister
+
+Chatelaine/Hospitaller
+
+Other offices (e.g. Lists, Historian, Youth, DEI etc)
+
+Subgroups (including Hamlets)
+</pre>
+
+<template id="emailHintAU">
+    <ul>
+        <li>
+            Use
+            <a href="<?= $this->url('group/aliases', [], ['query' => $aliasesQuery]) ?>" target="_blank">
+                Manage Group Email Aliases
+            </a>
+            to set it to forward to your personal address
+        </li>
+    </ul>
+</template>
+
+<template id="emailHintNZ">
+    <ul>
+        <li>
+            Contact your Webwright or Masonry to set it to forward to your personal address
+        </li>
+    </ul>
+</template>
