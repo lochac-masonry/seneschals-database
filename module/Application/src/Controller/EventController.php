@@ -62,7 +62,7 @@ class EventController extends AbstractActionController
 
     private function emailSeneschal($seneschal)
     {
-        $url = $this->url()->fromRoute(null, [], ['uri' => (new Http())->setScheme('https')]);
+        $url = $this->url()->fromRoute('home', [], ['force_canonical' => true]);
         $mailTo = $seneschal['email'];
 
         $mailSubj = 'New Event Awaiting Approval';
@@ -325,7 +325,7 @@ class EventController extends AbstractActionController
 
     private function emailAnnounce($values, $hostGroupName)
     {
-        $url = $this->url()->fromRoute(null, [], ['uri' => (new Http())->setScheme('https')]);
+        $url = $this->url()->fromRoute('home', [], ['force_canonical' => true]);
         $mailTo = "announce@lochac.sca.org";
 
         $mailSubj = "Event Notification for {$values['name']} on {$values['startdate']} ({$hostGroupName})";

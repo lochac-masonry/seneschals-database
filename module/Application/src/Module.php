@@ -11,7 +11,7 @@ use Laminas\Session\SessionManager;
 
 class Module
 {
-    public const VERSION = '2.9.0';
+    public const VERSION = '2.9.1';
 
     public function onBootstrap(MvcEvent $e)
     {
