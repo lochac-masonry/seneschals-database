@@ -175,9 +175,9 @@ class ReportController extends DatabaseController
             )->toArray()[0]['memberCount'] ?? '???';
             $statisticsTemplate =
                 "Members (from Registry): {$memberCount}\n" .
-                "Active members this quarter: ??\n" .
-                "Active non-members this quarter: ??\n" .
-                "Total funds in bank: $???";
+                "Active members this quarter (est): ??\n" .
+                "Active non-members this quarter (est): ??\n" .
+                "Total funds in bank (from your latest Reeve report): $???";
 
             $detailsForm = new Form\Report(
                 $initialData['type'],

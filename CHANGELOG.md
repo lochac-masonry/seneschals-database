@@ -7,9 +7,12 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.9.2] - 2021-04-18
+
 ### Changed
 
 * Update all Composer dependencies.
+* Tweaked sample statistics response in report form.
 
 ## [2.9.1] - 2020-12-30
 
@@ -217,7 +220,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.9.1
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/develop..v2.9.2
+[2.9.2]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.9.2..v2.9.1
 [2.9.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.9.1..v2.9.0
 [2.9.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.9.0..v2.8.1
 [2.8.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.8.1..v2.8.0
