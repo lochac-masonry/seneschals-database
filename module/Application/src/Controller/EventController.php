@@ -90,7 +90,7 @@ class EventController extends AbstractActionController
         $cleanFiles = [];
         foreach ($rawFiles as $file) {
             $result = $quahogClient->scanFile(realpath($file['tmp_name']));
-            if ($result['status'] !== $quahogClient::RESULT_OK) {
+            if (!$result->isOk()) {
                 if (file_exists($file['tmp_name'])) {
                     unlink($file['tmp_name']);
                 }

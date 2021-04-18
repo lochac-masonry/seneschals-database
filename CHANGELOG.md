@@ -7,6 +7,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Changed
+
+* Update all Composer dependencies.
+
 ## [2.9.1] - 2020-12-30
 
 ### Fixed
