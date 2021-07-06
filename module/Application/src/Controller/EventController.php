@@ -362,9 +362,11 @@ class EventController extends AbstractActionController
         }
 
         $mailBody .= "Price:\n" . $values['price'] . "\n\n" .
-                     "DESCRIPTION\n===========\n" . $values['description'];
+                     "DESCRIPTION\n===========\n" . $values['description'] . "\n\n" .
+                     "Participants are reminded that if they are unwell or showing cold or " .
+                     "flu-like symptoms, they must not attend.";
 
-        return $this->sendEmail($mailTo, $mailSubj, $mailBody);
+        return $this->sendEmail($mailTo, $mailSubj, $mailBody, '"Lochac Event Notice" <seneschaldb@lochac.sca.org>');
     }
 
     private function emailPegasus($values, $hostGroup)
@@ -398,7 +400,9 @@ class EventController extends AbstractActionController
                          date('l, F jS Y', strtotime($values['bookingsclose'])) . "\n\n";
         }
 
-        $mailBody .= "Kind regards,\nThe Lochac Seneschals' Database";
+        $mailBody .= "Participants are reminded that if they are unwell or showing cold or " .
+                     "flu-like symptoms, they must not attend.\n\n" .
+                     "Kind regards,\nThe Lochac Seneschals' Database";
 
         return $this->sendEmail($mailTo, $mailSubj, $mailBody);
     }
