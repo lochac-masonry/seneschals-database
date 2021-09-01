@@ -11,6 +11,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 * Updated wording of Attachments section in Event form - no longer optional in Australia.
 
+### Removed
+
+* Date input guidance from Event form, as all relevant browsers now display a date picker.
+
 ## [2.9.3] - 2021-07-06
 
 ### Changed
