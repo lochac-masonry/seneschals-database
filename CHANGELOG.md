@@ -7,6 +7,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Changed
+
+* Updated wording of Attachments section in Event form - no longer optional in Australia.
+
 ## [2.9.3] - 2021-07-06
 
 ### Changed

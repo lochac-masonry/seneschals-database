@@ -350,7 +350,7 @@ class Event extends Form
                 {
                     parent::__construct('attachments', []);
 
-                    $this->setLabel('(Optional) Attachments');
+                    $this->setLabel('Attachments - including Risk assessment forms for AU stewards');
 
                     foreach ($attachments as $attachment) {
                         $this->add(new AttachmentFieldset($attachment));
