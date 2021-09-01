@@ -489,7 +489,8 @@ class Report extends Form
                         'type'    => 'textarea',
                         'name'    => 'problems',
                         'options' => [
-                            'label' => 'Problems of Note (please include names, not just "somebody went and...")',
+                            'label' => 'Problems of Note (please include names, not just "somebody went and...") ' .
+                                '[in confidence]',
                         ],
                         'attributes' => [
                             'cols' => 50,
@@ -501,7 +502,7 @@ class Report extends Form
                         'type'    => 'textarea',
                         'name'    => 'questions',
                         'options' => [
-                            'label' => 'Questions',
+                            'label' => 'Questions [in confidence]',
                         ],
                         'attributes' => [
                             'cols' => 50,
