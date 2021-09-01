@@ -15,6 +15,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ### Changed
 
+* Update all Composer dependencies.
 * Updated wording of Attachments section in Event form - no longer optional in Australia.
 * Updated wording of Report form to remind users of potentially sensitive questions.
 
