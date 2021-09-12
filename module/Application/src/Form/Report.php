@@ -433,7 +433,7 @@ class Report extends Form
                         ],
                         'attributes' => [
                             'cols' => 50,
-                            'rows' => 4,
+                            'rows' => 5,
                             'wrap' => 'virtual',
                         ],
                     ]);
