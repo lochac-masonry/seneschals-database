@@ -29,7 +29,7 @@ class AclFactory implements FactoryInterface
         $acl->addRole('seneschal', ['guest']);
         $acl->allow('seneschal', 'auth', 'logout');
         $acl->allow('seneschal', 'event', ['edit', 'list']);
-        $acl->allow('seneschal', 'group', ['manage_aliases', 'update_nobility']);
+        $acl->allow('seneschal', 'group', 'manage_aliases');
         $acl->allow('seneschal', 'report', 'submit');
 
         $acl->addRole('admin');

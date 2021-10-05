@@ -1,7 +1,7 @@
 NAVIGATION-ONLY ACL
 
 Resources|Privileges
-group|edit,close,manage_domains,manage_aliases,update_nobility,list
+group|edit,close,manage_domains,manage_aliases,list
 postcode|assign,upload,list
 report|submit
 event|create,list,edit
@@ -16,7 +16,6 @@ guest
 Rules
 allow(admin)
 allow(seneschal, group, manage_aliases)
-allow(seneschal, group, update_nobility)
 allow(seneschal, report, submit)
 allow(seneschal, event, list)
 allow(seneschal, event, edit)

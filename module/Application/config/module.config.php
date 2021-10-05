@@ -111,16 +111,6 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
-                    'baron-baroness' => [
-                        'type'    => Literal::class,
-                        'options' => [
-                            'route'    => '/baron-baroness',
-                            'defaults' => [
-                                'action' => 'baron-baroness',
-                            ],
-                        ],
-                        'may_terminate' => true,
-                    ],
                     'close' => [
                         'type'    => Literal::class,
                         'options' => [
@@ -402,12 +392,6 @@ return [
                 'route'     => 'event/list',
                 'resource'  => 'event',
                 'privilege' => 'list',
-            ],
-            [
-                'label'     => 'Baron and Baroness Details',
-                'route'     => 'group/baron-baroness',
-                'resource'  => 'group',
-                'privilege' => 'update_nobility',
             ],
             [
                 'label'     => 'Postcode Query',

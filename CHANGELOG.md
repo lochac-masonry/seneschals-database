@@ -7,6 +7,12 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.11.0] - 2021-10-05
+
+### Removed
+
+* Baron/Baroness management, as this has been taken over by the Regnum application.
+
 ## [2.10.1] - 2021-09-12
 
 ### Changed
@@ -250,7 +256,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/master..v2.10.1
+[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/master..v2.11.0
+[2.11.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.11.0..v2.10.1
 [2.10.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.10.1..v2.10.0
 [2.10.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.10.0..v2.9.3
 [2.9.3]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.9.3..v2.9.2
