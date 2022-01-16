@@ -40,6 +40,16 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
+                    'single-sign-on' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/single-sign-on',
+                            'defaults' => [
+                                'action' => 'single-sign-on',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                 ],
             ],
         ],
