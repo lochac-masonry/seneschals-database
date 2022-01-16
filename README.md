@@ -59,7 +59,7 @@ To set up the necessary credentials:
 
 ## Single Sign-On
 
-Users of the Registry/Regnumator application can access the Seneschals' DB application via a single sign-on that is
+Users of the Registry/Regnumator application can access the Seneschals' DB application via single sign-on that is
 based on the [OpenID Connect Implicit flow](https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth),
 starting from the authentication response (similar to IdP-initiated SAML). This does not allow use of the `state`
 parameter and is vulnerable to CSRF and replay attacks. CSRF (e.g. an attacker's token is used in place of the user's)
