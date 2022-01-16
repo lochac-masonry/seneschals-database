@@ -15,6 +15,7 @@ class AuthControllerFactory implements FactoryInterface
     {
         $authService = $container->get(AuthenticationServiceInterface::class);
         $sessionManager = $container->get(SessionManager::class);
-        return new $requestedName($authService, $sessionManager);
+        $ssoConfig = $container->get('config')['sso'];
+        return new $requestedName($authService, $sessionManager, $ssoConfig);
     }
 }

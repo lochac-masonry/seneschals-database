@@ -29,6 +29,14 @@ return [
         'name' => 'placeholder value',
     ],
 
+    // Set configuration for Single Sign-On JWT validation.
+    'sso' => [
+        'key'       => 'placeholder value', // symmetric key for signature validation
+        'algorithm' => 'placeholder value', // signature algorithm, e.g. HS256
+        'issuer'    => 'placeholder value', // expected issuer
+        'audience'  => 'placeholder value', // expected audience
+    ],
+
     // Uncomment the following and provide an email address to redirect all application emails to that address.
     // 'debugEmail' => 'email@address.com',
 
