@@ -23,7 +23,6 @@ class AclFactory implements FactoryInterface
 
         $acl->addRole('guest');
         $acl->allow('guest', 'event', 'create');
-        $acl->allow('guest', 'group', 'list');
         $acl->allow('guest', 'postcode', 'list');
 
         $acl->addRole('seneschal', ['guest']);

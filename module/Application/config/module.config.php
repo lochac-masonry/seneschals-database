@@ -141,26 +141,6 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
-                    'list' => [
-                        'type'    => Literal::class,
-                        'options' => [
-                            'route'    => '/list',
-                            'defaults' => [
-                                'action' => 'list',
-                            ],
-                        ],
-                        'may_terminate' => true,
-                    ],
-                    'roster' => [
-                        'type'    => Literal::class,
-                        'options' => [
-                            'route'    => '/roster',
-                            'defaults' => [
-                                'action' => 'roster',
-                            ],
-                        ],
-                        'may_terminate' => true,
-                    ],
                 ],
             ],
             'postcode' => [
@@ -178,16 +158,6 @@ return [
                             'route'    => '/assign',
                             'defaults' => [
                                 'action' => 'assign',
-                            ],
-                        ],
-                        'may_terminate' => true,
-                    ],
-                    'list' => [
-                        'type'    => Literal::class,
-                        'options' => [
-                            'route'    => '/list',
-                            'defaults' => [
-                                'action' => 'list',
                             ],
                         ],
                         'may_terminate' => true,
@@ -397,12 +367,6 @@ return [
                 'label'     => 'Postcode Query',
                 'route'     => 'postcode/query',
                 'resource'  => 'postcode',
-                'privilege' => 'list',
-            ],
-            [
-                'label'     => 'Group Roster',
-                'route'     => 'group/roster',
-                'resource'  => 'group',
                 'privilege' => 'list',
             ],
             [

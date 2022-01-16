@@ -10,17 +10,6 @@ use Laminas\View\Model\ViewModel;
 
 class PostcodeController extends DatabaseController
 {
-    public function listAction()
-    {
-        $sql = "SELECT DISTINCT a.postcode AS postcode, a.state AS state, " .
-               "b.groupname AS groupname FROM postcode a JOIN scagroup b " .
-               "ON a.groupid=b.id ORDER BY a.postcode, a.state";
-
-        return (new ViewModel([
-            'postcodeResultSet' => $this->db->query($sql, [])->toArray(),
-        ]))->setTerminal(true);
-    }
-
     public function queryAction()
     {
         $this->layout()->title = 'Postcode Query';

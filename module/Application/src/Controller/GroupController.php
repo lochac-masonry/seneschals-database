@@ -10,51 +10,6 @@ use Laminas\View\Model\ViewModel;
 
 class GroupController extends DatabaseController
 {
-    public function listAction()
-    {
-        $sql = "SELECT a.groupname AS parent, b.groupname AS child, " .
-               "b.memnum AS memnum, IF(b.type = 'College', 'College', '') AS isCollege " .
-               "FROM scagroup a, scagroup b " .
-               "WHERE a.id = b.parentid AND b.status <> 'closed' " .
-               "AND b.country <> 'NZ' ORDER BY a.groupname, b.groupname";
-
-        return (new ViewModel([
-            'groupResultSet' => $this->db->query($sql, [])->toArray(),
-        ]))->setTerminal(true);
-    }
-
-    public function rosterAction()
-    {
-        $this->layout()->title = 'Group Roster';
-        $this->layout()->fullWidth = true;
-        $db = $this->db;
-
-        $sql = (new Sql($db))->buildSqlString(
-            (new Select())
-                ->columns([
-                    'groupname',
-                    'type',
-                    'status',
-                    'scaname',
-                    'realname',
-                    'email',
-                    'website',
-                    'area',
-                ])
-                ->from('scagroup')
-                ->where(function ($where) {
-                    $where
-                        ->notEqualTo('status', 'closed')
-                        ->notEqualTo('status', 'dormant');
-                })
-                ->order('groupname')
-        );
-
-        return [
-            'groupResultSet' => $db->query($sql, [])->toArray(),
-        ];
-    }
-
     public function editAction()
     {
         $this->layout()->title = 'Edit Group Details';

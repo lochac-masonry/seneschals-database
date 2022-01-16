@@ -7,6 +7,13 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.12.0] - 2022-01-16
+
+### Removed
+
+* Postcode list and group list (CSV) pages, as these are no longer used by the Registry.
+* Group roster page, as this information is now available on the main Lochac site.
+
 ## [2.11.0] - 2021-10-05
 
 ### Removed
