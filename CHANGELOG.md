@@ -7,6 +7,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.13.0] - 2022-01-16
+
 ### Added
 
 * Single Sign-On support allowing direct access from the Registry/Regnumator application.

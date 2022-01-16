@@ -57,6 +57,31 @@ To set up the necessary credentials:
 
 1. In the settings screen of the Google Calendar you want to you use, add the `client_email` from above to the sharing config with "Make changes to events" access.
 
+## Single Sign-On
+
+Users of the Registry/Regnumator application can access the Seneschals' DB application via a single sign-on that is
+based on the [OpenID Connect Implicit flow](https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth),
+starting from the authentication response (similar to IdP-initiated SAML). This does not allow use of the `state`
+parameter and is vulnerable to CSRF and replay attacks. CSRF (e.g. an attacker's token is used in place of the user's)
+is mitigated by CSRF protection on subsequent operations and the display of the affected group throughout the UI.
+Replay attacks are mitigated through a short expiry time on the ID tokens.
+
+The Registry application should authenticate users and determine if they are the seneschal of a particular group, and
+if so redirect them to the `/auth/single-sign-on` endpoint of the Seneschals' DB with the following query parameters:
+
+* `id_token` REQUIRED - A JWT identifying the Seneschals' DB username to login as (i.e. the group name in lowercase with
+  spaces removed). The JWT must be signed with a symmetric key (algorithm and key configured in
+  `config\autoload\local.php`) and must contain `iat`/`exp` (validated against current time), `iss`/`aud` (validated
+  against values configured in `config\autoload\local.php`) and `sub` (used as the username) claims. Any other claims
+  are ignored.
+* `redirectUrl` OPTIONAL - An absolute-path reference URL (e.g. `/report`) to which the user should be redirected upon
+  successful login. If not provided, the user will be redirected to the app home page.
+
+A useful JWT debugger is available at <https://jwt.io/>.
+
+The JWT validation is implemented using [firebase/php-jwt](https://packagist.org/packages/firebase/php-jwt) which
+should also be suitable for generating the tokens.
+
 ## Deployment
 
 1. Copy the code to the server, for example by using git to check out the master branch.
