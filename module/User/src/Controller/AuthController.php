@@ -73,8 +73,8 @@ class AuthController extends AbstractActionController
     {
         // First, log out of any existing session.
         $this->authService->clearIdentity();
-        $this->sessionManager->destroy();
 
+        // Check the ID token is present and valid.
         $request = $this->getRequest();
         $redirectUrl = isset($request->getQuery()['redirectUrl']) ? $request->getQuery()['redirectUrl'] : '';
         if (!isset($request->getQuery()['id_token'])) {
@@ -96,6 +96,7 @@ class AuthController extends AbstractActionController
             throw new \UnexpectedValueException('Token subject wrong or missing');
         }
 
+        // Use the subject of the ID token as the username.
         $this->authService->getStorage()->write($payload->sub);
         $this->handleSuccess($redirectUrl);
     }
