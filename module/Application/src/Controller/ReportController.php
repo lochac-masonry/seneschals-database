@@ -15,9 +15,9 @@ class ReportController extends DatabaseController
 
         $mailbody  = $mailsubj
                    . "\nDate: " . $reportData['senDetails']['lastreport']
-                   . "\nSubmitted by: " . $reportData['senDetails']['scaname']
-                   . " (" . $reportData['senDetails']['realname'] . ")"
-                   . "\nWarrant Ends: " . $groupData['warrantend']
+                   . "\nSubmitted by: " . $groupData['sca_name']
+                   . " (" . $groupData['mundane_name'] . ")"
+                   . "\nWarrant Ends: " . $groupData['end_date']
                    . "\n"
                    . "\nSTATISTICS"
                    . "\n==========\n"
@@ -149,8 +149,17 @@ class ReportController extends DatabaseController
             $initialData = (array) $db->query(
                 (new Sql($db))->buildSqlString(
                     (new Select())
+                        ->columns(['groupname', 'website', 'type', 'parentid', 'email', 'lastreport'])
                         ->from('scagroup')
-                        ->where(['id' => $groupId])
+                        ->join(
+                            'warrants',
+                            'warrants.scagroup = scagroup.id',
+                            ['sca_name', 'mundane_name', 'member', 'start_date', 'end_date']
+                        )
+                        ->where([
+                            'scagroup.id'     => $groupId,
+                            'warrants.office' => 1, // Seneschal
+                        ])
                 ),
                 []
             )->current();
@@ -195,18 +204,12 @@ class ReportController extends DatabaseController
                     'parentid',
                 ])),
                 'senDetails' => array_intersect_key($initialData, array_flip([
-                    'scaname',
-                    'realname',
-                    'address',
-                    'suburb',
-                    'state',
-                    'postcode',
-                    'country',
-                    'phone',
+                    'sca_name',
+                    'mundane_name',
+                    'member',
                     'email',
-                    'memnum',
-                    'warrantstart',
-                    'warrantend',
+                    'start_date',
+                    'end_date',
                     'lastreport',
                 ])),
                 'report' => [

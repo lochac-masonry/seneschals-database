@@ -105,122 +105,47 @@ class Report extends Form
                 {
                     parent::__construct('senDetails', []);
 
-                    $this->setLabel('Seneschal Details');
+                    $this->setLabel(
+                        'Seneschal Details - use Registry site or contact Kingdom Seneschal to make changes'
+                    );
 
                     $this->add([
                         'type'    => 'text',
-                        'name'    => 'scaname',
+                        'name'    => 'sca_name',
                         'options' => [
                             'label' => 'SCA Name',
                         ],
                         'attributes' => [
                             'size'     => 50,
-                            'required' => true,
+                            'disabled' => true,
                         ],
                     ]);
                     $this->add([
                         'type'    => 'text',
-                        'name'    => 'realname',
+                        'name'    => 'mundane_name',
                         'options' => [
                             'label' => 'Legal Name',
                         ],
                         'attributes' => [
                             'size'     => 50,
-                            'required' => true,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'address',
-                        'options' => [
-                            'label' => 'Street Address',
-                        ],
-                        'attributes' => [
-                            'size'     => 50,
-                            'required' => true,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'suburb',
-                        'options' => [
-                            'label' => 'Suburb / Town',
-                        ],
-                        'attributes' => [
-                            'size' => 20,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'select',
-                        'name'    => 'state',
-                        'options' => [
-                            'label'         => 'State',
-                            'value_options' => [
-                                'ACT' => 'ACT',
-                                'NSW' => 'NSW',
-                                'NT'  => 'NT',
-                                'QLD' => 'QLD',
-                                'SA'  => 'SA',
-                                'TAS' => 'TAS',
-                                'VIC' => 'VIC',
-                                'WA'  => 'WA',
-                                'NZ'  => 'Not Applicable (NZ)',
-                            ],
-                        ],
-                        'attributes' => [],
-                    ]);
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'postcode',
-                        'options' => [
-                            'label' => 'Postcode',
-                        ],
-                        'attributes' => [
-                            'size' => 4,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'select',
-                        'name'    => 'country',
-                        'options' => [
-                            'label'         => 'Country',
-                            'value_options' => [
-                                'AU' => 'Australia',
-                                'NZ' => 'New Zealand',
-                            ],
-                        ],
-                        'attributes' => [],
-                    ]);
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'phone',
-                        'options' => [
-                            'label' => 'Phone',
-                        ],
-                        'attributes' => [
-                            'size' => 15,
+                            'disabled' => true,
                         ],
                     ]);
                     $this->add([
                         'type'    => 'number',
-                        'name'    => 'memnum',
+                        'name'    => 'member',
                         'options' => [
                             'label' => 'Member Number',
                         ],
                         'attributes' => [
-                            'required' => true,
-                            'step'     => 1,
-                            'min'      => 1,
-                            'max'      => 999999,
+                            'disabled' => true,
                         ],
                     ]);
                     $this->add([
                         'type'    => 'email',
                         'name'    => 'email',
                         'options' => [
-                            'label' =>
-                                'Email Address - published on group listing, ' .
-                                'contact Kingdom Seneschal to change',
+                            'label' => 'Email Address',
                         ],
                         'attributes' => [
                             'size'     => 40,
@@ -229,9 +154,9 @@ class Report extends Form
                     ]);
                     $this->add([
                         'type'    => 'text',
-                        'name'    => 'warrantstart',
+                        'name'    => 'start_date',
                         'options' => [
-                            'label' => 'Warrant Start (YYYY-MM-DD) - contact Kingdom Seneschal if incorrect',
+                            'label' => 'Warrant Start (YYYY-MM-DD)',
                         ],
                         'attributes' => [
                             'size'     => 10,
@@ -240,7 +165,7 @@ class Report extends Form
                     ]);
                     $this->add([
                         'type'    => 'text',
-                        'name'    => 'warrantend',
+                        'name'    => 'end_date',
                         'options' => [
                             'label' => 'Warrant End (YYYY-MM-DD)',
                         ],
@@ -260,33 +185,6 @@ class Report extends Form
                             'disabled' => true,
                         ],
                     ]);
-                }
-
-                public function getInputFilterSpecification()
-                {
-                    return [
-                        'scaname' => [
-                            'required' => true,
-                            'filters'  => [
-                                ['name' => 'Laminas\Filter\StringTrim'],
-                            ],
-                        ],
-                        'realname' => [
-                            'required' => true,
-                            'filters'  => [
-                                ['name' => 'Laminas\Filter\StringTrim'],
-                            ],
-                        ],
-                        'address' => [
-                            'required' => true,
-                            'filters'  => [
-                                ['name' => 'Laminas\Filter\StringTrim'],
-                            ],
-                        ],
-                        'email' => [
-                            'required' => false,
-                        ],
-                    ];
                 }
             }
         );
