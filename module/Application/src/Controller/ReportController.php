@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Application\Controller;
 
 use Application\Form;
-use Laminas\Db\Sql\{Select, Sql, Update};
+use Laminas\Db\Sql\{Join, Select, Sql, Update};
 
 class ReportController extends DatabaseController
 {
@@ -154,11 +154,14 @@ class ReportController extends DatabaseController
                         ->join(
                             'warrants',
                             'warrants.scagroup = scagroup.id',
-                            ['sca_name', 'mundane_name', 'member', 'start_date', 'end_date']
+                            ['sca_name', 'mundane_name', 'member', 'start_date', 'end_date'],
+                            Join::JOIN_LEFT_OUTER
                         )
                         ->where([
                             'scagroup.id'     => $groupId,
                             'warrants.office' => 1, // Seneschal
+                            'warrants.start_date <= CURDATE() OR warrants.start_date IS NULL',
+                            'warrants.end_date >= CURDATE() OR warrants.end_date IS NULL',
                         ])
                 ),
                 []
