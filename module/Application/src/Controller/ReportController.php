@@ -160,8 +160,8 @@ class ReportController extends DatabaseController
                         ->where([
                             'scagroup.id'     => $groupId,
                             'warrants.office' => 1, // Seneschal
-                            'warrants.start_date <= CURDATE() OR warrants.start_date IS NULL',
-                            'warrants.end_date >= CURDATE() OR warrants.end_date IS NULL',
+                            '(warrants.start_date <= CURDATE() OR warrants.start_date IS NULL)',
+                            '(warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)',
                         ])
                 ),
                 []
