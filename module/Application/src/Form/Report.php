@@ -186,6 +186,11 @@ class Report extends Form
                         ],
                     ]);
                 }
+
+                public function getInputFilterSpecification()
+                {
+                    return [];
+                }
             }
         );
 
