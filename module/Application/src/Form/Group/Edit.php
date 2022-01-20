@@ -39,6 +39,37 @@ class Edit extends Form
                         ],
                     ]);
                     $this->add([
+                        'type'    => 'select',
+                        'name'    => 'country',
+                        'options' => [
+                            'label'         => 'Country',
+                            'value_options' => [
+                                'AU' => 'Australia',
+                                'NZ' => 'New Zealand',
+                            ],
+                        ],
+                        'attributes' => [],
+                    ]);
+                    $this->add([
+                        'type'    => 'select',
+                        'name'    => 'state',
+                        'options' => [
+                            'label'         => 'State',
+                            'value_options' => [
+                                'ACT' => 'ACT',
+                                'NSW' => 'NSW',
+                                'NT'  => 'NT',
+                                'QLD' => 'QLD',
+                                'SA'  => 'SA',
+                                'TAS' => 'TAS',
+                                'VIC' => 'VIC',
+                                'WA'  => 'WA',
+                                'NZ'  => 'Not Applicable (NZ)',
+                            ],
+                        ],
+                        'attributes' => [],
+                    ]);
+                    $this->add([
                         'type'    => 'text',
                         'name'    => 'area',
                         'options' => [
@@ -121,103 +152,8 @@ class Edit extends Form
                 {
                     parent::__construct('senDetails', []);
 
-                    $this->setLabel('Seneschal Details');
+                    $this->setLabel('Seneschal Details (see Registry for most details)');
 
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'scaname',
-                        'options' => [
-                            'label' => 'SCA Name',
-                        ],
-                        'attributes' => [
-                            'size'     => 50,
-                            'required' => true,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'realname',
-                        'options' => [
-                            'label' => 'Legal Name',
-                        ],
-                        'attributes' => [
-                            'size'     => 50,
-                            'required' => true,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'address',
-                        'options' => [
-                            'label' => 'Street Address',
-                        ],
-                        'attributes' => [
-                            'size'     => 50,
-                            'required' => true,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'suburb',
-                        'options' => [
-                            'label' => 'Suburb / Town',
-                        ],
-                        'attributes' => [
-                            'size' => 20,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'select',
-                        'name'    => 'state',
-                        'options' => [
-                            'label'         => 'State',
-                            'value_options' => [
-                                'ACT' => 'ACT',
-                                'NSW' => 'NSW',
-                                'NT'  => 'NT',
-                                'QLD' => 'QLD',
-                                'SA'  => 'SA',
-                                'TAS' => 'TAS',
-                                'VIC' => 'VIC',
-                                'WA'  => 'WA',
-                                'NZ'  => 'Not Applicable (NZ)',
-                            ],
-                        ],
-                        'attributes' => [],
-                    ]);
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'postcode',
-                        'options' => [
-                            'label' => 'Postcode',
-                        ],
-                        'attributes' => [
-                            'size'     => 4,
-                            'required' => true,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'select',
-                        'name'    => 'country',
-                        'options' => [
-                            'label'         => 'Country',
-                            'value_options' => [
-                                'AU' => 'Australia',
-                                'NZ' => 'New Zealand',
-                            ],
-                        ],
-                        'attributes' => [],
-                    ]);
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'phone',
-                        'options' => [
-                            'label' => 'Phone',
-                        ],
-                        'attributes' => [
-                            'size' => 15,
-                        ],
-                    ]);
                     $this->add([
                         'type'    => 'email',
                         'name'    => 'email',
@@ -226,39 +162,6 @@ class Edit extends Form
                         ],
                         'attributes' => [
                             'size'     => 40,
-                            'required' => true,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'number',
-                        'name'    => 'memnum',
-                        'options' => [
-                            'label' => 'Member Number',
-                        ],
-                        'attributes' => [
-                            'required' => true,
-                            'step'     => 1,
-                            'min'      => 1,
-                            'max'      => 999999,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'date',
-                        'name'    => 'warrantstart',
-                        'options' => [
-                            'label' => 'Warrant Start',
-                        ],
-                        'attributes' => [
-                            'required' => true,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'date',
-                        'name'    => 'warrantend',
-                        'options' => [
-                            'label' => 'Warrant End',
-                        ],
-                        'attributes' => [
                             'required' => true,
                         ],
                     ]);
@@ -276,32 +179,7 @@ class Edit extends Form
 
                 public function getInputFilterSpecification()
                 {
-                    return [
-                        'scaname' => [
-                            'required' => true,
-                            'filters'  => [
-                                ['name' => 'Laminas\Filter\StringTrim'],
-                            ],
-                        ],
-                        'realname' => [
-                            'required' => true,
-                            'filters'  => [
-                                ['name' => 'Laminas\Filter\StringTrim'],
-                            ],
-                        ],
-                        'address' => [
-                            'required' => true,
-                            'filters'  => [
-                                ['name' => 'Laminas\Filter\StringTrim'],
-                            ],
-                        ],
-                        'postcode' => [
-                            'required' => true,
-                            'filters'  => [
-                                ['name' => 'Laminas\Filter\StringTrim'],
-                            ],
-                        ],
-                    ];
+                    return [];
                 }
             }
         );

@@ -159,7 +159,7 @@ class ReportController extends DatabaseController
                         )
                         ->where([
                             'scagroup.id'     => $groupId,
-                            'warrants.office' => 1, // Seneschal
+                            '(warrants.office = 1 OR warrants.office IS NULL)',
                             '(warrants.start_date <= CURDATE() OR warrants.start_date IS NULL)',
                             '(warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)',
                         ])
@@ -235,15 +235,6 @@ class ReportController extends DatabaseController
                     $values['senDetails']['lastreport'] = date('Y-m-d');
                     $fieldsToUpdate = array_intersect_key($values['senDetails'], array_flip([
                         'lastreport',
-                        'scaname',
-                        'realname',
-                        'address',
-                        'suburb',
-                        'state',
-                        'postcode',
-                        'country',
-                        'phone',
-                        'memnum',
                     ]));
 
                     $updateResult = $db->query(
