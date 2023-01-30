@@ -7,7 +7,8 @@
 
     function setVisibility() {
         var country = (groups.find((group) => group.id == Number(groupSelect.value || '0')) || {}).country;
-        notifyInsurerInput.parentElement.hidden = country !== 'NZ';
+        // Set the visibility on the parent - the label contains the checkbox.
+        notifyInsurerInput.parentElement.style.display = country === 'NZ' ? 'inherit' : 'none';
     }
 
     groupSelect.addEventListener('change', setVisibility);
