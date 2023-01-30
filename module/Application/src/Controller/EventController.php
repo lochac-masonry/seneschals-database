@@ -369,6 +369,50 @@ class EventController extends AbstractActionController
         return $this->sendEmail($mailTo, $mailSubj, $mailBody, '"Lochac Event Notice" <seneschaldb@lochac.sca.org>');
     }
 
+    private function emailSecretary($values, $hostGroupName)
+    {
+        $url = $this->url()->fromRoute('home', [], ['force_canonical' => true]);
+        $mailTo = 'secretary@sca.org.nz';
+
+        $mailSubj = 'Event over $5000 requiring insurance notification';
+
+        $mailBody = "The steward has advised that this event will likely have more than $5,000 " .
+                    "in income so please advise the insurance company to ensure coverage.\n\n" .
+                    "EVENT DETAILS\n=============\n" .
+                    "Event Name:\t" . $values['name'] . "\n" .
+                    "Host Group:\t" . $hostGroupName . "\n";
+
+        if ($values['startdate'] == $values['enddate']) {
+            $mailBody .= "Date:\t\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n";
+        } else {
+            $mailBody .= "Start date:\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n" .
+                         "End date:\t" . date('l, F jS Y', strtotime($values['enddate'])) . "\n";
+        }
+        if (!empty($values['setupTime'])) {
+            $mailBody .= "Setup time(s):\n" . $values['setupTime'] . "\n";
+        }
+
+        $mailBody .= "Event type:\t" . $values['type'] . "\n" .
+                     "Location:\n" . $values['location'] . "\n\n" .
+                     "STEWARD DETAILS\n===============\n" .
+                     "Name:\t\t" . $values['stewardname'] . "\n" .
+                     "Email Address:\t" . $values['stewardemail'] . "\n\n" .
+                     "BOOKING DETAILS\n===============\n";
+
+        if (empty($values['bookingcontact']) || empty($values['bookingsclose'])) {
+            $mailBody .= "Bookings not required.\n";
+        } else {
+            $mailBody .= "Bookings Close:\t" . date('l, F jS Y', strtotime($values['bookingsclose'])) . "\n" .
+                         "Booking Contact:\n" . $values['bookingcontact'] . "\n";
+        }
+
+        $mailBody .= "Price:\n" . $values['price'] . "\n\n" .
+                     "DESCRIPTION\n===========\n" . $values['description'] . "\n\n" .
+                     "Kind regards,\nThe Lochac Seneschals' Database";
+
+        return $this->sendEmail($mailTo, $mailSubj, $mailBody);
+    }
+
     private function emailPegasus($values, $hostGroup)
     {
         $mailTo = "pegasus_events@lochac.sca.org";
@@ -575,6 +619,7 @@ class EventController extends AbstractActionController
                 'type',
                 'description',
                 'price',
+                'notifyInsurer',
             ])),
             'stewardGroup' => array_intersect_key($initialData, array_flip([
                 'stewardreal',
@@ -742,6 +787,18 @@ class EventController extends AbstractActionController
                 $this->alert()->good('Notification email sent to Lochac-Announce.');
             } else {
                 $this->alert()->bad('Failed to send notification email to Lochac-Announce.');
+            }
+        }
+
+                                                            //----------------------------------------------------------
+                                                            // If event approved and notifyInsurer selected, send to
+                                                            // the secretary.
+                                                            //----------------------------------------------------------
+        if ($values['notifyInsurer'] && $values['status'] == 'approved') {
+            if ($this->emailSecretary($values, $groupList[$values['groupid']])) {
+                $this->alert()->good('Notification email sent to SCA NZ Secretary.');
+            } else {
+                $this->alert()->bad('Failed to send notification email to SCA NZ Secretary.');
             }
         }
 

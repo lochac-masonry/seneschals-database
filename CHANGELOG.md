@@ -7,6 +7,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Added
+
+* Checkbox on event form for NZ events that triggers insurance notification NZ secretary.
+
 ## [2.12.0] - 2022-01-16
 
 ### Removed
