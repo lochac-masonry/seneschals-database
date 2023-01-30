@@ -12,3 +12,9 @@ declare(strict_types=1);
     Announce mailing list, in the Lochac newsletter 'Pegasus' and on the kingdom calendar.
 </p>
 <?= $this->form($detailsForm) ?>
+
+<?php
+$groupsJson = json_encode($groups);
+$this->inlineScript()
+    ->appendScript("var groups = $groupsJson;")
+    ->appendFile($this->basePath('js/show-event-field-by-country.js'));
