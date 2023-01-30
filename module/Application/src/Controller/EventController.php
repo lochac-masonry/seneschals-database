@@ -171,15 +171,22 @@ class EventController extends AbstractActionController
         $this->layout()->title = 'Submit Event Proposal';
         $db = $this->db;
 
-        $groupList = $this->arrayIndex(
-            $db->query("SELECT id, groupname FROM scagroup WHERE status = 'live' ORDER BY groupname", []),
-            'id',
-            'groupname'
-        );
+        $groups = $db->query(
+            (new Sql($db))->buildSqlString(
+                (new Select())
+                    ->columns(['id', 'groupname', 'country'])
+                    ->from('scagroup')
+                    ->where(['status' => 'live'])
+                    ->order('groupname')
+            ),
+            []
+        )->toArray();
+        $groupList = $this->arrayIndex($groups, 'id', 'groupname');
 
         $detailsForm = new Form\Event\Event($groupList);
         $viewModel = [
             'detailsForm' => $detailsForm,
+            'groups'      => $groups,
         ];
 
         $request = $this->getRequest();
@@ -545,11 +552,17 @@ class EventController extends AbstractActionController
             return $authResponse;
         }
 
-        $groupList = $this->arrayIndex(
-            $db->query("SELECT id, groupname FROM scagroup WHERE status = 'live' ORDER BY groupname", []),
-            'id',
-            'groupname'
-        );
+        $groups = $db->query(
+            (new Sql($db))->buildSqlString(
+                (new Select())
+                    ->columns(['id', 'groupname', 'country'])
+                    ->from('scagroup')
+                    ->where(['status' => 'live'])
+                    ->order('groupname')
+            ),
+            []
+        )->toArray();
+        $groupList = $this->arrayIndex($groups, 'id', 'groupname');
 
                                                             //----------------------------------------------------------
                                                             // Check that the eventid provided exists and
@@ -637,6 +650,7 @@ class EventController extends AbstractActionController
         ]);
         $viewModel = [
             'detailsForm' => $detailsForm,
+            'groups'      => $groups,
         ];
 
         if (!$request->isPost()) {
