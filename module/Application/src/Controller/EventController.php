@@ -173,13 +173,6 @@ class EventController extends AbstractActionController
 
     public function newAction()
     {
-        $view = new ViewModel([
-            'foo' => 'bar',
-        ]);
-        $view->setTemplate('email/announceEventNotification.phtml');
-        $view->setTerminal(true);
-        echo($this->renderer->render($view));
-
         $this->layout()->title = 'Submit Event Proposal';
         $db = $this->db;
 
@@ -344,48 +337,20 @@ class EventController extends AbstractActionController
 
     private function emailAnnounce($values, $hostGroupName)
     {
-        $url = $this->url()->fromRoute('home', [], ['force_canonical' => true]);
-        $mailTo = "announce@lochac.sca.org";
+        $viewModel = new ViewModel([
+            'values' => $values,
+            'hostGroupName' => $hostGroupName,
+        ]);
+        $viewModel->setTemplate('email/announceEventNotification.phtml');
+        $viewModel->setTerminal(true);
 
-        $mailSubj = "Event Notification for {$values['name']} on {$values['startdate']} ({$hostGroupName})";
-
-        $mailBody = "Event notification for {$values['name']} on {$values['startdate']}\n" .
-                    "The following announcement has been generated from {$url}\n" .
-                    "and forwarded to Lochac-Announce at the request of the Event Steward.\n\n" .
-                    "EVENT DETAILS\n=============\n" .
-                    "Event Name:\t" . $values['name'] . "\n" .
-                    "Host Group:\t" . $hostGroupName . "\n";
-
-        if ($values['startdate'] == $values['enddate']) {
-            $mailBody .= "Date:\t\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n";
-        } else {
-            $mailBody .= "Start date:\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n" .
-                         "End date:\t" . date('l, F jS Y', strtotime($values['enddate'])) . "\n";
-        }
-        if (!empty($values['setupTime'])) {
-            $mailBody .= "Setup time(s):\n" . $values['setupTime'] . "\n";
-        }
-
-        $mailBody .= "Event type:\t" . $values['type'] . "\n" .
-                     "Location:\n" . $values['location'] . "\n\n" .
-                     "STEWARD DETAILS\n===============\n" .
-                     "Name:\t\t" . $values['stewardname'] . "\n" .
-                     "Email Address:\t" . $values['stewardemail'] . "\n\n" .
-                     "BOOKING DETAILS\n===============\n";
-
-        if (empty($values['bookingcontact']) || empty($values['bookingsclose'])) {
-            $mailBody .= "Bookings not required.\n";
-        } else {
-            $mailBody .= "Bookings Close:\t" . date('l, F jS Y', strtotime($values['bookingsclose'])) . "\n" .
-                         "Booking Contact:\n" . $values['bookingcontact'] . "\n";
-        }
-
-        $mailBody .= "Price:\n" . $values['price'] . "\n\n" .
-                     "DESCRIPTION\n===========\n" . $values['description'] . "\n\n" .
-                     "Participants are reminded that if they are unwell or showing cold or " .
-                     "flu-like symptoms, they must not attend.";
-
-        return $this->sendEmail($mailTo, $mailSubj, $mailBody, '"Lochac Event Notice" <seneschaldb@lochac.sca.org>');
+        return $this->sendEmail(
+            'announce@lochac.sca.org',
+            "{$hostGroupName}: {$this->view->escapeHtml($values['name'])}, {$values['startdate']}",
+            $this->renderer->render($viewModel),
+            '"Lochac Event Notice" <seneschaldb@lochac.sca.org>',
+            true
+        );
     }
 
     private function emailSecretary($values, $hostGroupName)

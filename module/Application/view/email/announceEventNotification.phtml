@@ -1,4 +1,73 @@
 <?php
 declare(strict_types=1);
 ?>
-<p>Here is some content including <?= $foo ?></p>
+<table width="100%">
+    <tbody>
+        <tr>
+            <td style="text-align: center;" colspan="3">
+                <h3 style="margin-bottom: 0px;"><?= $this->escapeHtml($values['name']) ?></h3>
+                <h4 style="margin-top: 0.25em;">
+                    <?= $this->escapeHtml($hostGroupName) ?>,
+                    <?= date('l, F jS Y', strtotime($values['startdate'])) ?>
+                    to
+                    <?= date('l, F jS Y', strtotime($values['enddate'])) ?>
+                </h4>
+                <p><b><?= $this->escapeHtml($values['type']) ?></b></p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <?= $this->escapeHtml($values['description']) ?>
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;" valign="top">
+                <h5>Location</h5>
+                <p><?= $this->escapeHtml($values['location']) ?></p>
+            </td>
+            <td style="vertical-align: top;" valign="top">
+                <h5>Timetable</h5>
+                <p><?= empty($values['setupTime']) ? 'To follow' : $this->escapeHtml($values['setupTime']) ?></p>
+            </td>
+            <td style="vertical-align: top;" valign="top">
+                <h5>Contact</h5>
+                <p>
+                    Steward:
+                    <a href="mailto:<?= $this->escapeHtmlAttr($values['stewardemail']) ?>">
+                        <?= $this->escapeHtml($values['stewardname']) ?>
+                    </a><br>
+                    <?php if (empty($values['bookingcontact']) || empty($values['bookingsclose'])) { ?>
+                        Bookings not required.
+                    <?php } else { ?>
+                        Bookings: <?= $this->escapeHtml($values['bookingcontact']) ?><br>
+                        Bookings Close: <?= date('l, F jS Y', strtotime($values['bookingsclose'])) ?><br>
+                        A link to the bookings form will be available shortly.
+                    <?php } ?>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;" colspan="3" valign="top">
+                <h5>Price</h5>
+                <div style="column-count: 2; column-gap: 2em;">
+                    <p><?= $this->escapeHtml($values['price']) ?></p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;" colspan="3">
+                <p>
+                    Participants are reminded that if they are unwell or showing
+                    cold or flu-like symptoms, they must not attend.
+                </p>
+                <p>
+                    This announcement has been sent on behalf of the event steward by the
+                    <a href="<?= $this->url('home', [], ['force_canonical' => true]) ?>">
+                        Lochac Seneschals' Database
+                    </a>
+                    as part of the event approval process.
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
