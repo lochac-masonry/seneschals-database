@@ -176,7 +176,7 @@ class EventController extends AbstractActionController
         $view = new ViewModel([
             'foo' => 'bar',
         ]);
-        $view->setTemplate('event/email/announce.phtml');
+        $view->setTemplate('email/announceEventNotification.phtml');
         $view->setTerminal(true);
         echo($this->renderer->render($view));
 
