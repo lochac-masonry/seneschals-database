@@ -1,73 +1,87 @@
 <?php
 declare(strict_types=1);
+
+// Inline styles are the safest option for email clients.
+$bodyStyle = 'width: 100%; background-color: #f9f9f9;';
+$containerStyle = 'max-width: 800px; background-color: #ffffff; border-collapse: collapse; border-spacing: 0;';
+$cellStyle = 'padding: 12px; border: 1px solid #dddddd;';
+$centerStyle = 'text-align: center;';
+$headingMargin = 'margin: 6px 0px;';
 ?>
-<table width="100%">
-    <tbody>
-        <tr>
-            <td style="text-align: center;" colspan="3">
-                <h3 style="margin-bottom: 0px;"><?= $this->escapeHtml($values['name']) ?></h3>
-                <h4 style="margin-top: 0.25em;">
-                    <?= $this->escapeHtml($hostGroupName) ?>,
-                    <?= date('l, F jS Y', strtotime($values['startdate'])) ?>
-                    to
-                    <?= date('l, F jS Y', strtotime($values['enddate'])) ?>
-                </h4>
-                <p><b><?= $this->escapeHtml($values['type']) ?></b></p>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <?= $this->escapeHtml($values['description']) ?>
-            </td>
-        </tr>
-        <tr>
-            <td style="vertical-align: top;" valign="top">
-                <h5>Location</h5>
-                <p><?= $this->escapeHtml($values['location']) ?></p>
-            </td>
-            <td style="vertical-align: top;" valign="top">
-                <h5>Timetable</h5>
-                <p><?= empty($values['setupTime']) ? 'To follow' : $this->escapeHtml($values['setupTime']) ?></p>
-            </td>
-            <td style="vertical-align: top;" valign="top">
-                <h5>Contact</h5>
-                <p>
-                    Steward:
-                    <a href="mailto:<?= $this->escapeHtmlAttr($values['stewardemail']) ?>">
-                        <?= $this->escapeHtml($values['stewardname']) ?>
-                    </a><br>
-                    <?php if (empty($values['bookingcontact']) || empty($values['bookingsclose'])) { ?>
-                        Bookings not required.
-                    <?php } else { ?>
-                        Bookings: <?= $this->escapeHtml($values['bookingcontact']) ?><br>
-                        Bookings Close: <?= date('l, F jS Y', strtotime($values['bookingsclose'])) ?><br>
-                        A link to the bookings form will be available shortly.
-                    <?php } ?>
-                </p>
-            </td>
-        </tr>
-        <tr>
-            <td style="vertical-align: top;" colspan="3" valign="top">
-                <h5>Price</h5>
-                <div style="column-count: 2; column-gap: 2em;">
-                    <p><?= $this->escapeHtml($values['price']) ?></p>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="text-align: center;" colspan="3">
-                <p>
-                    Participants are reminded that if they are unwell or showing
-                    cold or flu-like symptoms, they must not attend.
-                </p>
+<table style="<?= $bodyStyle ?>">
+    <tr>
+        <td style="<?= $centerStyle ?>" align="center" valign="top">
+            <center>
+                <table style="<?= $containerStyle ?>">
+                    <tbody>
+                        <tr>
+                            <td style="<?= $cellStyle . $centerStyle ?>">
+                                <h3 style="<?= $headingMargin ?>"><?= $this->escapeHtml($values['name']) ?></h3>
+                                <h4 style="<?= $headingMargin ?>">
+                                    <?= $this->escapeHtml($hostGroupName) ?>,
+                                    <?= $this->formatDate($values['startdate'], $values['enddate']) ?>
+                                </h4>
+                                <h4 style="<?= $headingMargin ?>"><?= $this->escapeHtml($values['type']) ?></h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="<?= $cellStyle ?>">
+                                <?= $this->insertLinebreaks($this->escapeHtml($values['description'])) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="<?= $cellStyle ?>">
+                                <h4 style="<?= $headingMargin ?>">Location</h4>
+                                <?= $this->insertLinebreaks($this->escapeHtml($values['location'])) ?>
+                            </td>
+                        </tr>
+<?php if (!empty($values['setupTime'])) { ?>
+                        <tr>
+                            <td style="<?= $cellStyle ?>">
+                                <h4 style="<?= $headingMargin ?>">Timetable</h4>
+                                <?= $this->insertLinebreaks($this->escapeHtml($values['setupTime'])) ?>
+                            </td>
+                        </tr>
+<?php } ?>
+                        <tr>
+                            <td style="<?= $cellStyle ?>">
+                                <h4 style="<?= $headingMargin ?>">Price</h4>
+                                <?= $this->insertLinebreaks($this->escapeHtml($values['price'])) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="<?= $cellStyle ?>">
+                                <h4 style="<?= $headingMargin ?>">Contact</h4>
+                                <p>
+                                    Steward:
+                                    <a href="mailto:<?= $this->escapeHtmlAttr($values['stewardemail']) ?>">
+                                        <?= $this->escapeHtml($values['stewardname']) ?>
+                                    </a><br>
+<?php if (empty($values['bookingcontact']) || empty($values['bookingsclose'])) { ?>
+                                    Bookings not required.
+<?php } else { ?>
+                                    Bookings:
+                                    <?= $this->insertLinebreaks($this->escapeHtml($values['bookingcontact'])) ?>
+                                    <br>
+                                    Bookings Close: <?= $this->formatDate($values['bookingsclose']) ?>
+<?php } ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="<?= $cellStyle . $centerStyle ?>">
+                                Participants are reminded that if they are unwell or showing
+                                cold or flu-like symptoms, they must not attend.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
                 <p>
                     This announcement has been sent on behalf of the event steward by the
-                    <a href="<?= $this->url('home', [], ['force_canonical' => true]) ?>">
-                        Lochac Seneschals' Database
-                    </a>
+                    <a href="<?= $this->url('home', [], ['force_canonical' => true]) ?>">Lochac Seneschals' Database</a>
                     as part of the event approval process.
                 </p>
-            </td>
-        </tr>
-    </tbody>
+            </center>
+        </td>
+    </tr>
 </table>
