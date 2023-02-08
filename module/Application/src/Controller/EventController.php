@@ -337,17 +337,23 @@ class EventController extends AbstractActionController
 
     private function emailAnnounce($values, $hostGroupName)
     {
-        $viewModel = new ViewModel([
-            'values' => $values,
+        $variables = [
+            'values'        => $values,
             'hostGroupName' => $hostGroupName,
-        ]);
-        $viewModel->setTemplate('email/announceEventNotification.phtml');
-        $viewModel->setTerminal(true);
-
+        ];
         return $this->sendEmail(
             'announce@lochac.sca.org',
-            "{$hostGroupName}: {$this->view->escapeHtml($values['name'])}, {$values['startdate']}",
-            $this->renderer->render($viewModel),
+            $this->renderer->render(
+                (new ViewModel($variables))
+                    ->setTemplate('email/announceEventNotification/subject.phtml')
+                    ->setTerminal(true)
+            ),
+            $this->renderer->render(
+                (new ViewModel($variables))
+                    ->setTemplate('email/announceEventNotification/body.phtml')
+                    ->setTerminal(true)
+            ),
+            $this->renderer->render($bodyViewModel),
             '"Lochac Event Notice" <seneschaldb@lochac.sca.org>',
             true
         );
