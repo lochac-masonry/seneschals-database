@@ -10,6 +10,8 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Sql\{Insert, Select, Sql, Update};
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Uri\{Http, Uri};
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 
 class EventController extends AbstractActionController
 {
@@ -18,11 +20,14 @@ class EventController extends AbstractActionController
     private $googleMetadata;
     /** @var LazyQuahogClient */
     private $lazyQuahogClient;
+    /** @var PhpRenderer */
+    private $renderer;
 
-    public function __construct(AdapterInterface $db, LazyQuahogClient $lazyQuahogClient)
+    public function __construct(AdapterInterface $db, LazyQuahogClient $lazyQuahogClient, PhpRenderer $renderer)
     {
         $this->db = $db;
         $this->lazyQuahogClient = $lazyQuahogClient;
+        $this->renderer = $renderer;
     }
 
     private function emailSteward($values, $hostGroupName)
@@ -168,6 +173,13 @@ class EventController extends AbstractActionController
 
     public function newAction()
     {
+        $view = new ViewModel([
+            'foo' => 'bar',
+        ]);
+        $view->setTemplate('event/email/announce.phtml');
+        $view->setTerminal(true);
+        echo($this->renderer->render($view));
+
         $this->layout()->title = 'Submit Event Proposal';
         $db = $this->db;
 
