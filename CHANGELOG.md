@@ -7,6 +7,11 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Changed
+
+* Seneschal details on the Edit Group and Report pages now taken from the `warrants`
+  (Regnumator) table.
+
 ## [2.14.0] - 2023-02-09
 
 ### Changed
