@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
-return $this->escapeHtml($hostGroupName) . ': ' .
-       $this->escapeHtml($values['name']) . ', ' .
-       $this->formatDate($values['startdate'], $values['enddate']);
+// Stay in PHP-mode to ensure result is one line.
+print(
+    $this->escapeHtml($hostGroupName) . ': ' .
+    $this->escapeHtml($values['name']) . ', ' .
+    $this->formatDate($values['startdate'], $values['enddate'])
+);
