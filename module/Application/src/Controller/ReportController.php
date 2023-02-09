@@ -158,7 +158,7 @@ class ReportController extends DatabaseController
                             Join::JOIN_LEFT_OUTER
                         )
                         ->where([
-                            'scagroup.id'     => $groupId,
+                            'scagroup.id' => $groupId,
                             '(warrants.office = 1 OR warrants.office IS NULL)',
                             '(warrants.start_date <= CURDATE() OR warrants.start_date IS NULL)',
                             '(warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)',
@@ -230,17 +230,14 @@ class ReportController extends DatabaseController
                     $values = $detailsForm->getData();
 
                                                             //----------------------------------------------------------
-                                                            // Update database with latest group details
+                                                            // Update database with latest report date
                                                             //----------------------------------------------------------
                     $values['senDetails']['lastreport'] = date('Y-m-d');
-                    $fieldsToUpdate = array_intersect_key($values['senDetails'], array_flip([
-                        'lastreport',
-                    ]));
 
                     $updateResult = $db->query(
                         (new Sql($db))->buildSqlString(
                             (new Update('scagroup'))
-                                ->set($fieldsToUpdate)
+                                ->set(['lastreport' => $values['senDetails']['lastreport']])
                                 ->where(['id' => $groupId])
                         ),
                         $db::QUERY_MODE_EXECUTE
