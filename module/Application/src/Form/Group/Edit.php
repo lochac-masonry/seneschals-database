@@ -155,6 +155,38 @@ class Edit extends Form
                     $this->setLabel('Seneschal Details (see Registry for most details)');
 
                     $this->add([
+                        'type'    => 'text',
+                        'name'    => 'sca_name',
+                        'options' => [
+                            'label' => 'SCA Name',
+                        ],
+                        'attributes' => [
+                            'size'     => 50,
+                            'disabled' => true,
+                        ],
+                    ]);
+                    $this->add([
+                        'type'    => 'text',
+                        'name'    => 'mundane_name',
+                        'options' => [
+                            'label' => 'Legal Name',
+                        ],
+                        'attributes' => [
+                            'size'     => 50,
+                            'disabled' => true,
+                        ],
+                    ]);
+                    $this->add([
+                        'type'    => 'number',
+                        'name'    => 'member',
+                        'options' => [
+                            'label' => 'Member Number',
+                        ],
+                        'attributes' => [
+                            'disabled' => true,
+                        ],
+                    ]);
+                    $this->add([
                         'type'    => 'email',
                         'name'    => 'email',
                         'options' => [
@@ -163,6 +195,26 @@ class Edit extends Form
                         'attributes' => [
                             'size'     => 40,
                             'required' => true,
+                        ],
+                    ]);
+                    $this->add([
+                        'type'    => 'text',
+                        'name'    => 'start_date',
+                        'options' => [
+                            'label' => 'Warrant Start',
+                        ],
+                        'attributes' => [
+                            'disabled' => true,
+                        ],
+                    ]);
+                    $this->add([
+                        'type'    => 'text',
+                        'name'    => 'end_date',
+                        'options' => [
+                            'label' => 'Warrant End',
+                        ],
+                        'attributes' => [
+                            'disabled' => true,
                         ],
                     ]);
                     $this->add([
