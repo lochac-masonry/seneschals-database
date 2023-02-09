@@ -7,6 +7,12 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.14.0] - 2023-02-09
+
+### Changed
+
+* The event notification email sent to Announce has been updated and converted to HTML.
+
 ## [2.13.0] - 2023-01-30
 
 ### Added

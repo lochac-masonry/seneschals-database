@@ -353,8 +353,7 @@ class EventController extends AbstractActionController
                     ->setTemplate('email/announceEventNotification/body.phtml')
                     ->setTerminal(true)
             ),
-            $this->renderer->render($bodyViewModel),
-            '"Lochac Event Notice" <seneschaldb@lochac.sca.org>',
+            '"Lochac Events" <seneschaldb@lochac.sca.org>',
             true
         );
     }
