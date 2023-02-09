@@ -16,7 +16,7 @@ class SendEmail extends AbstractPlugin
         $this->config = $config;
     }
 
-    public function __invoke($to, $subject, $body, $onBehalfOf = null)
+    public function __invoke($to, $subject, $body, $onBehalfOf = null, $html = false)
     {
         if (is_array($to)) {
             $to = implode(', ', $to);
@@ -41,7 +41,8 @@ class SendEmail extends AbstractPlugin
             $header = "From: {$this->config['fromEmail']}";
         }
 
-        $header .= "\r\nContent-Type: text/plain;charset=utf-8";
+        $contentType = $html ? 'text/html' : 'text/plain';
+        $header .= "\r\nContent-Type: {$contentType};charset=utf-8";
 
                                                             //----------------------------------------------------------
                                                             // Redirect all email to the debug address if it is set

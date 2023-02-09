@@ -10,6 +10,8 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Sql\{Insert, Select, Sql, Update};
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Uri\{Http, Uri};
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 
 class EventController extends AbstractActionController
 {
@@ -18,11 +20,14 @@ class EventController extends AbstractActionController
     private $googleMetadata;
     /** @var LazyQuahogClient */
     private $lazyQuahogClient;
+    /** @var PhpRenderer */
+    private $renderer;
 
-    public function __construct(AdapterInterface $db, LazyQuahogClient $lazyQuahogClient)
+    public function __construct(AdapterInterface $db, LazyQuahogClient $lazyQuahogClient, PhpRenderer $renderer)
     {
         $this->db = $db;
         $this->lazyQuahogClient = $lazyQuahogClient;
+        $this->renderer = $renderer;
     }
 
     private function emailSteward($values, $hostGroupName)
@@ -171,15 +176,22 @@ class EventController extends AbstractActionController
         $this->layout()->title = 'Submit Event Proposal';
         $db = $this->db;
 
-        $groupList = $this->arrayIndex(
-            $db->query("SELECT id, groupname FROM scagroup WHERE status = 'live' ORDER BY groupname", []),
-            'id',
-            'groupname'
-        );
+        $groups = $db->query(
+            (new Sql($db))->buildSqlString(
+                (new Select())
+                    ->columns(['id', 'groupname', 'country'])
+                    ->from('scagroup')
+                    ->where(['status' => 'live'])
+                    ->order('groupname')
+            ),
+            []
+        )->toArray();
+        $groupList = $this->arrayIndex($groups, 'id', 'groupname');
 
         $detailsForm = new Form\Event\Event($groupList);
         $viewModel = [
             'detailsForm' => $detailsForm,
+            'groups'      => $groups,
         ];
 
         $request = $this->getRequest();
@@ -325,14 +337,36 @@ class EventController extends AbstractActionController
 
     private function emailAnnounce($values, $hostGroupName)
     {
+        $variables = [
+            'values'        => $values,
+            'hostGroupName' => $hostGroupName,
+        ];
+        return $this->sendEmail(
+            'announce@lochac.sca.org',
+            $this->renderer->render(
+                (new ViewModel($variables))
+                    ->setTemplate('email/announceEventNotification/subject.phtml')
+                    ->setTerminal(true)
+            ),
+            $this->renderer->render(
+                (new ViewModel($variables))
+                    ->setTemplate('email/announceEventNotification/body.phtml')
+                    ->setTerminal(true)
+            ),
+            '"Lochac Events" <seneschaldb@lochac.sca.org>',
+            true
+        );
+    }
+
+    private function emailSecretary($values, $hostGroupName)
+    {
         $url = $this->url()->fromRoute('home', [], ['force_canonical' => true]);
-        $mailTo = "announce@lochac.sca.org";
+        $mailTo = 'secretary@sca.org.nz';
 
-        $mailSubj = "Event Notification for {$values['name']} on {$values['startdate']} ({$hostGroupName})";
+        $mailSubj = 'Event over $5000 requiring insurance notification';
 
-        $mailBody = "Event notification for {$values['name']} on {$values['startdate']}\n" .
-                    "The following announcement has been generated from {$url}\n" .
-                    "and forwarded to Lochac-Announce at the request of the Event Steward.\n\n" .
+        $mailBody = "The steward has advised that this event will likely have more than $5,000 " .
+                    "in income so please advise the insurance company to ensure coverage.\n\n" .
                     "EVENT DETAILS\n=============\n" .
                     "Event Name:\t" . $values['name'] . "\n" .
                     "Host Group:\t" . $hostGroupName . "\n";
@@ -363,10 +397,9 @@ class EventController extends AbstractActionController
 
         $mailBody .= "Price:\n" . $values['price'] . "\n\n" .
                      "DESCRIPTION\n===========\n" . $values['description'] . "\n\n" .
-                     "Participants are reminded that if they are unwell or showing cold or " .
-                     "flu-like symptoms, they must not attend.";
+                     "Kind regards,\nThe Lochac Seneschals' Database";
 
-        return $this->sendEmail($mailTo, $mailSubj, $mailBody, '"Lochac Event Notice" <seneschaldb@lochac.sca.org>');
+        return $this->sendEmail($mailTo, $mailSubj, $mailBody);
     }
 
     private function emailPegasus($values, $hostGroup)
@@ -501,11 +534,17 @@ class EventController extends AbstractActionController
             return $authResponse;
         }
 
-        $groupList = $this->arrayIndex(
-            $db->query("SELECT id, groupname FROM scagroup WHERE status = 'live' ORDER BY groupname", []),
-            'id',
-            'groupname'
-        );
+        $groups = $db->query(
+            (new Sql($db))->buildSqlString(
+                (new Select())
+                    ->columns(['id', 'groupname', 'country'])
+                    ->from('scagroup')
+                    ->where(['status' => 'live'])
+                    ->order('groupname')
+            ),
+            []
+        )->toArray();
+        $groupList = $this->arrayIndex($groups, 'id', 'groupname');
 
                                                             //----------------------------------------------------------
                                                             // Check that the eventid provided exists and
@@ -575,6 +614,7 @@ class EventController extends AbstractActionController
                 'type',
                 'description',
                 'price',
+                'notifyInsurer',
             ])),
             'stewardGroup' => array_intersect_key($initialData, array_flip([
                 'stewardreal',
@@ -592,6 +632,7 @@ class EventController extends AbstractActionController
         ]);
         $viewModel = [
             'detailsForm' => $detailsForm,
+            'groups'      => $groups,
         ];
 
         if (!$request->isPost()) {
@@ -742,6 +783,18 @@ class EventController extends AbstractActionController
                 $this->alert()->good('Notification email sent to Lochac-Announce.');
             } else {
                 $this->alert()->bad('Failed to send notification email to Lochac-Announce.');
+            }
+        }
+
+                                                            //----------------------------------------------------------
+                                                            // If event approved and notifyInsurer selected, send to
+                                                            // the secretary.
+                                                            //----------------------------------------------------------
+        if ($values['notifyInsurer'] && $values['status'] == 'approved') {
+            if ($this->emailSecretary($values, $groupList[$values['groupid']])) {
+                $this->alert()->good('Notification email sent to SCA NZ Secretary.');
+            } else {
+                $this->alert()->bad('Failed to send notification email to SCA NZ Secretary.');
             }
         }
 

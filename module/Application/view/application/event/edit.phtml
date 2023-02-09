@@ -18,4 +18,8 @@ $this->formMultiCheckbox()->setSeparator('<br />');
 <?= $this->form($detailsForm) ?>
 
 <?php
-$this->inlineScript()->appendFile($this->basePath('js/activate-link-buttons.js'));
+$groupsJson = json_encode($groups);
+$this->inlineScript()
+    ->appendScript("var groups = $groupsJson;")
+    ->appendFile($this->basePath('js/show-event-field-by-country.js'))
+    ->appendFile($this->basePath('js/activate-link-buttons.js'));
