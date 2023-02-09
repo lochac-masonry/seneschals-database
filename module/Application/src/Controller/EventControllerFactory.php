@@ -8,6 +8,7 @@ use Application\LazyQuahogClient;
 use Interop\Container\ContainerInterface;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\View\Renderer\PhpRenderer;
 
 class EventControllerFactory implements FactoryInterface
 {
@@ -15,7 +16,8 @@ class EventControllerFactory implements FactoryInterface
     {
         return new $requestedName(
             $container->get(AdapterInterface::class),
-            $container->get(LazyQuahogClient::class)
+            $container->get(LazyQuahogClient::class),
+            $container->get(PhpRenderer::class),
         );
     }
 }

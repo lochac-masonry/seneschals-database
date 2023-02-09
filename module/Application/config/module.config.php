@@ -298,6 +298,16 @@ return [
             'sendEmail'  => Controller\Plugin\SendEmail::class,
         ],
     ],
+    'view_helpers' => [
+        'invokables' => [
+            View\Helper\FormatDate::class       => View\Helper\FormatDate::class,
+            View\Helper\InsertLinebreaks::class => View\Helper\InsertLinebreaks::class,
+        ],
+        'aliases' => [
+            'formatDate'       => View\Helper\FormatDate::class,
+            'insertLinebreaks' => View\Helper\InsertLinebreaks::class,
+        ],
+    ],
     'navigation' => [
         'default' => [
             [

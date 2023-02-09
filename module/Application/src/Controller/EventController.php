@@ -10,6 +10,8 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Sql\{Insert, Select, Sql, Update};
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Uri\{Http, Uri};
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 
 class EventController extends AbstractActionController
 {
@@ -18,11 +20,14 @@ class EventController extends AbstractActionController
     private $googleMetadata;
     /** @var LazyQuahogClient */
     private $lazyQuahogClient;
+    /** @var PhpRenderer */
+    private $renderer;
 
-    public function __construct(AdapterInterface $db, LazyQuahogClient $lazyQuahogClient)
+    public function __construct(AdapterInterface $db, LazyQuahogClient $lazyQuahogClient, PhpRenderer $renderer)
     {
         $this->db = $db;
         $this->lazyQuahogClient = $lazyQuahogClient;
+        $this->renderer = $renderer;
     }
 
     private function emailSteward($values, $hostGroupName)
@@ -332,48 +337,25 @@ class EventController extends AbstractActionController
 
     private function emailAnnounce($values, $hostGroupName)
     {
-        $url = $this->url()->fromRoute('home', [], ['force_canonical' => true]);
-        $mailTo = "announce@lochac.sca.org";
-
-        $mailSubj = "Event Notification for {$values['name']} on {$values['startdate']} ({$hostGroupName})";
-
-        $mailBody = "Event notification for {$values['name']} on {$values['startdate']}\n" .
-                    "The following announcement has been generated from {$url}\n" .
-                    "and forwarded to Lochac-Announce at the request of the Event Steward.\n\n" .
-                    "EVENT DETAILS\n=============\n" .
-                    "Event Name:\t" . $values['name'] . "\n" .
-                    "Host Group:\t" . $hostGroupName . "\n";
-
-        if ($values['startdate'] == $values['enddate']) {
-            $mailBody .= "Date:\t\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n";
-        } else {
-            $mailBody .= "Start date:\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n" .
-                         "End date:\t" . date('l, F jS Y', strtotime($values['enddate'])) . "\n";
-        }
-        if (!empty($values['setupTime'])) {
-            $mailBody .= "Setup time(s):\n" . $values['setupTime'] . "\n";
-        }
-
-        $mailBody .= "Event type:\t" . $values['type'] . "\n" .
-                     "Location:\n" . $values['location'] . "\n\n" .
-                     "STEWARD DETAILS\n===============\n" .
-                     "Name:\t\t" . $values['stewardname'] . "\n" .
-                     "Email Address:\t" . $values['stewardemail'] . "\n\n" .
-                     "BOOKING DETAILS\n===============\n";
-
-        if (empty($values['bookingcontact']) || empty($values['bookingsclose'])) {
-            $mailBody .= "Bookings not required.\n";
-        } else {
-            $mailBody .= "Bookings Close:\t" . date('l, F jS Y', strtotime($values['bookingsclose'])) . "\n" .
-                         "Booking Contact:\n" . $values['bookingcontact'] . "\n";
-        }
-
-        $mailBody .= "Price:\n" . $values['price'] . "\n\n" .
-                     "DESCRIPTION\n===========\n" . $values['description'] . "\n\n" .
-                     "Participants are reminded that if they are unwell or showing cold or " .
-                     "flu-like symptoms, they must not attend.";
-
-        return $this->sendEmail($mailTo, $mailSubj, $mailBody, '"Lochac Event Notice" <seneschaldb@lochac.sca.org>');
+        $variables = [
+            'values'        => $values,
+            'hostGroupName' => $hostGroupName,
+        ];
+        return $this->sendEmail(
+            'announce@lochac.sca.org',
+            $this->renderer->render(
+                (new ViewModel($variables))
+                    ->setTemplate('email/announceEventNotification/subject.phtml')
+                    ->setTerminal(true)
+            ),
+            $this->renderer->render(
+                (new ViewModel($variables))
+                    ->setTemplate('email/announceEventNotification/body.phtml')
+                    ->setTerminal(true)
+            ),
+            '"Lochac Events" <seneschaldb@lochac.sca.org>',
+            true
+        );
     }
 
     private function emailSecretary($values, $hostGroupName)
