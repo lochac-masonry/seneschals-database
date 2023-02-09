@@ -193,6 +193,9 @@ class Report extends Form
                         'member' => [
                             'required' => false,
                         ],
+                        'email' => [
+                            'required' => false,
+                        ],
                     ];
                 }
             }
