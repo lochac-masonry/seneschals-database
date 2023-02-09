@@ -189,7 +189,11 @@ class Report extends Form
 
                 public function getInputFilterSpecification()
                 {
-                    return [];
+                    return [
+                        'member' => [
+                            'required' => false,
+                        ],
+                    ];
                 }
             }
         );

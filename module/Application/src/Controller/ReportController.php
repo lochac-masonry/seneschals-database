@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Application\Controller;
 
 use Application\Form;
-use Laminas\Db\Sql\{Join, Select, Sql, Update};
+use Laminas\Db\Sql\{Expression, Join, Select, Sql, Update};
 
 class ReportController extends DatabaseController
 {
@@ -153,16 +153,16 @@ class ReportController extends DatabaseController
                         ->from('scagroup')
                         ->join(
                             'warrants',
-                            'warrants.scagroup = scagroup.id',
+                            new Expression(
+                                'warrants.scagroup = scagroup.id ' .
+                                'AND warrants.office = 1 ' .
+                                'AND (warrants.start_date <= CURDATE() OR warrants.start_date IS NULL) ' .
+                                'AND (warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)'
+                            ),
                             ['sca_name', 'mundane_name', 'member', 'start_date', 'end_date'],
                             Join::JOIN_LEFT_OUTER
                         )
-                        ->where([
-                            'scagroup.id' => $groupId,
-                            '(warrants.office = 1 OR warrants.office IS NULL)',
-                            '(warrants.start_date <= CURDATE() OR warrants.start_date IS NULL)',
-                            '(warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)',
-                        ])
+                        ->where(['scagroup.id' => $groupId])
                 ),
                 []
             )->current();

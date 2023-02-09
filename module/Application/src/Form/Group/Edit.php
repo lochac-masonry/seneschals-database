@@ -204,6 +204,7 @@ class Edit extends Form
                             'label' => 'Warrant Start',
                         ],
                         'attributes' => [
+                            'size'     => 10,
                             'disabled' => true,
                         ],
                     ]);
@@ -214,6 +215,7 @@ class Edit extends Form
                             'label' => 'Warrant End',
                         ],
                         'attributes' => [
+                            'size'     => 10,
                             'disabled' => true,
                         ],
                     ]);
@@ -231,7 +233,11 @@ class Edit extends Form
 
                 public function getInputFilterSpecification()
                 {
-                    return [];
+                    return [
+                        'member' => [
+                            'required' => false,
+                        ],
+                    ];
                 }
             }
         );

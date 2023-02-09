@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Application\Controller;
 
 use Application\Form;
-use Laminas\Db\Sql\{Delete, Insert, Join, Select, Sql, Update};
+use Laminas\Db\Sql\{Delete, Expression, Insert, Join, Select, Sql, Update};
 use Laminas\View\Model\ViewModel;
 
 class GroupController extends DatabaseController
@@ -71,16 +71,16 @@ class GroupController extends DatabaseController
                             ->from('scagroup')
                             ->join(
                                 'warrants',
-                                'warrants.scagroup = scagroup.id',
+                                new Expression(
+                                    'warrants.scagroup = scagroup.id ' .
+                                    'AND warrants.office = 1 ' .
+                                    'AND (warrants.start_date <= CURDATE() OR warrants.start_date IS NULL) ' .
+                                    'AND (warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)'
+                                ),
                                 ['sca_name', 'mundane_name', 'member', 'start_date', 'end_date'],
                                 Join::JOIN_LEFT_OUTER
                             )
-                            ->where([
-                                'scagroup.id' => $groupId,
-                                '(warrants.office = 1 OR warrants.office IS NULL)',
-                                '(warrants.start_date <= CURDATE() OR warrants.start_date IS NULL)',
-                                '(warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)',
-                            ])
+                            ->where(['scagroup.id' => $groupId])
                     ),
                     []
                 )->toArray()[0];
