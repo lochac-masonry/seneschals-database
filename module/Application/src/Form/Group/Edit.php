@@ -90,6 +90,17 @@ class Edit extends Form
                         ],
                     ]);
                     $this->add([
+                        'type'    => 'email',
+                        'name'    => 'email',
+                        'options' => [
+                            'label' => 'Email Address - Published on group listing',
+                        ],
+                        'attributes' => [
+                            'size'     => 40,
+                            'required' => true,
+                        ],
+                    ]);
+                    $this->add([
                         'type'    => 'select',
                         'name'    => 'type',
                         'options' => [
@@ -129,6 +140,16 @@ class Edit extends Form
                         ],
                         'attributes' => [],
                     ]);
+                    $this->add([
+                        'type'    => 'date',
+                        'name'    => 'lastreport',
+                        'options' => [
+                            'label' => 'Last Report',
+                        ],
+                        'attributes' => [
+                            'required' => true,
+                        ],
+                    ]);
                 }
 
                 public function getInputFilterSpecification()
@@ -152,7 +173,9 @@ class Edit extends Form
                 {
                     parent::__construct('senDetails', []);
 
-                    $this->setLabel('Seneschal Details (see Registry for most details)');
+                    $this->setLabel(
+                        'Seneschal Details (taken from the Regnumator, log into the Registry to make changes)'
+                    );
 
                     $this->add([
                         'type'    => 'text',
@@ -187,17 +210,6 @@ class Edit extends Form
                         ],
                     ]);
                     $this->add([
-                        'type'    => 'email',
-                        'name'    => 'email',
-                        'options' => [
-                            'label' => 'Email Address - Published on group listing',
-                        ],
-                        'attributes' => [
-                            'size'     => 40,
-                            'required' => true,
-                        ],
-                    ]);
-                    $this->add([
                         'type'    => 'text',
                         'name'    => 'start_date',
                         'options' => [
@@ -217,16 +229,6 @@ class Edit extends Form
                         'attributes' => [
                             'size'     => 10,
                             'disabled' => true,
-                        ],
-                    ]);
-                    $this->add([
-                        'type'    => 'date',
-                        'name'    => 'lastreport',
-                        'options' => [
-                            'label' => 'Last Report',
-                        ],
-                        'attributes' => [
-                            'required' => true,
                         ],
                     ]);
                 }

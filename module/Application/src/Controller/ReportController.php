@@ -14,7 +14,7 @@ class ReportController extends DatabaseController
         $mailsubj  = 'Report from the ' . $groupData['type'] . ' of ' . $groupData['groupname'];
 
         $mailbody  = $mailsubj
-                   . "\nDate: " . $reportData['senDetails']['lastreport']
+                   . "\nDate: " . $reportData['groupDetails']['lastreport']
                    . "\nSubmitted by: " . $groupData['sca_name']
                    . " (" . $groupData['mundane_name'] . ")"
                    . "\nWarrant Ends: " . $groupData['end_date']
@@ -149,7 +149,7 @@ class ReportController extends DatabaseController
             $initialData = (array) $db->query(
                 (new Sql($db))->buildSqlString(
                     (new Select())
-                        ->columns(['groupname', 'website', 'type', 'parentid', 'email', 'lastreport'])
+                        ->columns(['groupname', 'website', 'email', 'type', 'parentid', 'lastreport'])
                         ->from('scagroup')
                         ->join(
                             'warrants',
@@ -203,17 +203,17 @@ class ReportController extends DatabaseController
                 'groupDetails' => array_intersect_key($initialData, array_flip([
                     'groupname',
                     'website',
+                    'email',
                     'type',
                     'parentid',
+                    'lastreport',
                 ])),
                 'senDetails' => array_intersect_key($initialData, array_flip([
                     'sca_name',
                     'mundane_name',
                     'member',
-                    'email',
                     'start_date',
                     'end_date',
-                    'lastreport',
                 ])),
                 'report' => [
                     'statistics' => $statisticsTemplate,
@@ -232,12 +232,12 @@ class ReportController extends DatabaseController
                                                             //----------------------------------------------------------
                                                             // Update database with latest report date
                                                             //----------------------------------------------------------
-                    $values['senDetails']['lastreport'] = date('Y-m-d');
+                    $values['groupDetails']['lastreport'] = date('Y-m-d');
 
                     $updateResult = $db->query(
                         (new Sql($db))->buildSqlString(
                             (new Update('scagroup'))
-                                ->set(['lastreport' => $values['senDetails']['lastreport']])
+                                ->set(['lastreport' => $values['groupDetails']['lastreport']])
                                 ->where(['id' => $groupId])
                         ),
                         $db::QUERY_MODE_EXECUTE

@@ -50,6 +50,17 @@ class Report extends Form
                         ],
                     ]);
                     $this->add([
+                        'type'    => 'email',
+                        'name'    => 'email',
+                        'options' => [
+                            'label' => 'Email Address',
+                        ],
+                        'attributes' => [
+                            'size'     => 40,
+                            'disabled' => true,
+                        ],
+                    ]);
+                    $this->add([
                         'type'    => 'select',
                         'name'    => 'type',
                         'options' => [
@@ -78,12 +89,26 @@ class Report extends Form
                             'disabled' => true,
                         ],
                     ]);
+                    $this->add([
+                        'type'    => 'text',
+                        'name'    => 'lastreport',
+                        'options' => [
+                            'label' => 'Last Report (YYYY-MM-DD)',
+                        ],
+                        'attributes' => [
+                            'size'     => 10,
+                            'disabled' => true,
+                        ],
+                    ]);
                 }
 
                 public function getInputFilterSpecification()
                 {
                     // Disable validation for the disabled dropdowns.
                     return [
+                        'email' => [
+                            'required' => false,
+                        ],
                         'type' => [
                             'required' => false,
                         ],
@@ -106,7 +131,7 @@ class Report extends Form
                     parent::__construct('senDetails', []);
 
                     $this->setLabel(
-                        'Seneschal Details - use Registry site or contact Kingdom Seneschal to make changes'
+                        'Seneschal Details (taken from the Regnumator, log into the Registry to make changes)'
                     );
 
                     $this->add([
@@ -142,17 +167,6 @@ class Report extends Form
                         ],
                     ]);
                     $this->add([
-                        'type'    => 'email',
-                        'name'    => 'email',
-                        'options' => [
-                            'label' => 'Email Address',
-                        ],
-                        'attributes' => [
-                            'size'     => 40,
-                            'disabled' => true,
-                        ],
-                    ]);
-                    $this->add([
                         'type'    => 'text',
                         'name'    => 'start_date',
                         'options' => [
@@ -174,26 +188,12 @@ class Report extends Form
                             'disabled' => true,
                         ],
                     ]);
-                    $this->add([
-                        'type'    => 'text',
-                        'name'    => 'lastreport',
-                        'options' => [
-                            'label' => 'Last Report (YYYY-MM-DD)',
-                        ],
-                        'attributes' => [
-                            'size'     => 10,
-                            'disabled' => true,
-                        ],
-                    ]);
                 }
 
                 public function getInputFilterSpecification()
                 {
                     return [
                         'member' => [
-                            'required' => false,
-                        ],
-                        'email' => [
                             'required' => false,
                         ],
                     ];
