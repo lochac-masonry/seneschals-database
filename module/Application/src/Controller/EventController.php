@@ -211,59 +211,75 @@ class EventController extends AbstractActionController
         // Form is valid - transform the values into those expected by the database.
         $rawValues = $detailsForm->getData();
         $values = $rawValues['eventGroup'] + $rawValues['stewardGroup'] + $rawValues['bookingGroup'];
-        $files = $this->scanFilesWithAntiVirus($this->getFiles($detailsForm));
+        // $files = $this->scanFilesWithAntiVirus($this->getFiles($detailsForm));
 
-        // Save the event and attachment references to the database.
-        try {
-            $db->getDriver()->getConnection()->beginTransaction();
+        // // Save the event and attachment references to the database.
+        // try {
+        //     $db->getDriver()->getConnection()->beginTransaction();
 
-            $db->query(
-                (new Sql($db))->buildSqlString(
-                    (new Insert('events'))
-                        ->values($values)
-                ),
-                $db::QUERY_MODE_EXECUTE
-            );
+        //     $db->query(
+        //         (new Sql($db))->buildSqlString(
+        //             (new Insert('events'))
+        //                 ->values($values)
+        //         ),
+        //         $db::QUERY_MODE_EXECUTE
+        //     );
 
-            $eventId = $db->getDriver()->getConnection()->getLastGeneratedValue();
+        //     $eventId = $db->getDriver()->getConnection()->getLastGeneratedValue();
 
-            foreach ($files as $file) {
-                $this->insertAttachment($file, $eventId);
-            }
+        //     foreach ($files as $file) {
+        //         $this->insertAttachment($file, $eventId);
+        //     }
 
-            $db->getDriver()->getConnection()->commit();
-        } catch (\Throwable $ex) {
-            $db->getDriver()->getConnection()->rollback();
+        //     $db->getDriver()->getConnection()->commit();
+        // } catch (\Throwable $ex) {
+        //     $db->getDriver()->getConnection()->rollback();
 
-            // In case of error, delete the now-orphaned files.
-            $this->deleteFiles($files);
+        //     // In case of error, delete the now-orphaned files.
+        //     $this->deleteFiles($files);
 
-            throw $ex;
-        }
-        $this->alert()->good("Successfully added event {$values['name']}.");
+        //     throw $ex;
+        // }
+        // $this->alert()->good("Successfully added event {$values['name']}.");
 
-        if ($this->emailSteward($values, $groupList[$values['groupid']])) {
-            $this->alert()->good('Notification email sent to steward.');
-        } else {
-            $this->alert()->bad('Failed to send notification email to steward.');
-        }
+        // if ($this->emailSteward($values, $groupList[$values['groupid']])) {
+        //     $this->alert()->good('Notification email sent to steward.');
+        // } else {
+        //     $this->alert()->bad('Failed to send notification email to steward.');
+        // }
 
-        $seneschal = (array) $db->query(
-            (new Sql($db))->buildSqlString(
-                (new Select())
-                    ->columns(['scaname', 'email'])
-                    ->from('scagroup')
-                    ->where(['id' => $values['groupid']])
-            ),
-            []
-        )->toArray()[0];
-        if ($this->emailSeneschal($seneschal)) {
-            $this->alert()->good('Notification email sent to group seneschal.');
-        } else {
-            $this->alert()->bad(
-                'Failed to send email to group seneschal. Please contact them manually.'
-            );
-        }
+        $sql = (new Sql($db))->buildSqlString(
+            (new Select())
+                ->columns(['sca_name'])
+                ->from('warrants')
+                ->join(
+                    'offices',
+                    'offices.ID = warrants.office',
+                    []
+                )
+                ->join(
+                    'scagroup',
+                    'scagroup.id = warrants.scagroup',
+                    []
+                )
+                ->where([
+                    'scagroup.id' => $values['groupid'],
+                    'offices.ID IN (1, 18)',
+                    '(warrants.start_date <= CURDATE() OR warrants.start_date IS NULL)',
+                    '(warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)',
+                ])
+        );
+        print_r($sql);
+        $result = $db->query($sql, [])->toArray();
+        print_r($result);
+
+        // if ($this->emailSeneschal($seneschal)) {
+        //     $this->alert()->good('Notification email sent to group seneschal.');
+        // } else {
+        //     $this->alert()->bad(
+        //         'Failed to send email to group seneschal. Please contact them manually.'
+        //     );
+        // }
 
         return $viewModel;
     }
