@@ -8,13 +8,13 @@ Add emailDomain column.
 
 Remove columns:
 
-* scaname (used in EventController)
-* realname (unused)
-* address (unused)
-* postcode (unused)
-* phone (unused)
-* email (used in EventController, GroupController, ReportController)
-* warrantstart (unused)
-* warrantend (unused)
-* memnum (unused)
-* usevirtuser (unused)
+* scaname
+* realname
+* address
+* postcode
+* phone
+* email (used in GroupController, ReportController)
+* warrantstart
+* warrantend
+* memnum
+* usevirtuser
