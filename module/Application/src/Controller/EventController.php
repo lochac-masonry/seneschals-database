@@ -7,7 +7,7 @@ namespace Application\Controller;
 use Application\Form;
 use Application\LazyQuahogClient;
 use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Sql\{Insert, Select, Sql, Update};
+use Laminas\Db\Sql\{Expression, Insert, Select, Sql, Update};
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Uri\{Http, Uri};
 use Laminas\View\Model\ViewModel;
@@ -72,7 +72,7 @@ class EventController extends AbstractActionController
 
         $mailSubj = 'New Event Awaiting Approval';
 
-        $mailBody = "Greetings {$seneschal['scaname']}!\n\n" .
+        $mailBody = "Greetings {$seneschal['sca_name']}!\n\n" .
                     "A new event proposal has been submitted on the Lochac Seneschals' Database.\n" .
                     "At your convenience, log in using your group's username and password, " .
                     "review the proposal and edit, approve or reject as appropriate. " .
@@ -248,16 +248,38 @@ class EventController extends AbstractActionController
             $this->alert()->bad('Failed to send notification email to steward.');
         }
 
-        $seneschal = (array) $db->query(
+        $seneschalResults = $db->query(
             (new Sql($db))->buildSqlString(
                 (new Select())
-                    ->columns(['scaname', 'email'])
-                    ->from('scagroup')
-                    ->where(['id' => $values['groupid']])
+                    ->columns([
+                        'sca_name',
+                        'email' => new Expression("CONCAT(offices.email, '@', scagroup.emailDomain)")
+                    ])
+                    ->from('warrants')
+                    ->join(
+                        'offices',
+                        'offices.ID = warrants.office',
+                        []
+                    )
+                    ->join(
+                        'scagroup',
+                        'scagroup.id = warrants.scagroup',
+                        []
+                    )
+                    ->where([
+                        'scagroup.id' => $values['groupid'],
+                        'offices.ID IN (1, 18)',
+                        '(warrants.start_date <= CURDATE() OR warrants.start_date IS NULL)',
+                        '(warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)',
+                    ])
             ),
             []
-        )->toArray()[0];
-        if ($this->emailSeneschal($seneschal)) {
+        )->toArray();
+        if (count($seneschalResults) !== 1) {
+            $this->alert()->bad(
+                'Unable to determine current group seneschal from Registry. Please contact them manually.'
+            );
+        } elseif ($this->emailSeneschal($seneschalResults[0])) {
             $this->alert()->good('Notification email sent to group seneschal.');
         } else {
             $this->alert()->bad(

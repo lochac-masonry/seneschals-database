@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Application\Controller;
 
 use Application\Form;
-use Laminas\Db\Sql\{Select, Sql, Update};
+use Laminas\Db\Sql\{Expression, Join, Select, Sql, Update};
 
 class ReportController extends DatabaseController
 {
@@ -14,10 +14,10 @@ class ReportController extends DatabaseController
         $mailsubj  = 'Report from the ' . $groupData['type'] . ' of ' . $groupData['groupname'];
 
         $mailbody  = $mailsubj
-                   . "\nDate: " . $reportData['senDetails']['lastreport']
-                   . "\nSubmitted by: " . $reportData['senDetails']['scaname']
-                   . " (" . $reportData['senDetails']['realname'] . ")"
-                   . "\nWarrant Ends: " . $groupData['warrantend']
+                   . "\nDate: " . $reportData['groupDetails']['lastreport']
+                   . "\nSubmitted by: " . $groupData['sca_name']
+                   . " (" . $groupData['mundane_name'] . ")"
+                   . "\nWarrant Ends: " . $groupData['end_date']
                    . "\n"
                    . "\nSTATISTICS"
                    . "\n==========\n"
@@ -149,20 +149,75 @@ class ReportController extends DatabaseController
             $initialData = (array) $db->query(
                 (new Sql($db))->buildSqlString(
                     (new Select())
+                        ->columns([
+                            'groupname',
+                            'website',
+                            'email' => new Expression("CONCAT(offices.email, '@', scagroup.emailDomain)"),
+                            'type',
+                            'parentid',
+                            'lastreport'
+                        ])
                         ->from('scagroup')
-                        ->where(['id' => $groupId])
+                        ->join(
+                            'warrants',
+                            new Expression(
+                                'warrants.scagroup = scagroup.id ' .
+                                'AND warrants.office IN (1, 18) ' .
+                                'AND (warrants.start_date <= CURDATE() OR warrants.start_date IS NULL) ' .
+                                'AND (warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)'
+                            ),
+                            ['sca_name', 'mundane_name', 'member', 'start_date', 'end_date'],
+                            Join::JOIN_LEFT_OUTER
+                        )
+                        ->join(
+                            'offices',
+                            'offices.ID = warrants.office',
+                            [],
+                            Join::JOIN_LEFT_OUTER
+                        )
+                        ->where(['scagroup.id' => $groupId])
                 ),
                 []
             )->current();
             $parentGroup = $db->query(
                 (new Sql($db))->buildSqlString(
                     (new Select())
-                        ->columns(['id', 'groupname', 'email'])
+                        ->columns([
+                            'id',
+                            'groupname',
+                            'email' => new Expression("CONCAT(offices.email, '@', scagroup.emailDomain)"),
+                        ])
                         ->from('scagroup')
-                        ->where(['id' => $initialData['parentid']])
+                        ->join(
+                            'warrants',
+                            new Expression(
+                                'warrants.scagroup = scagroup.id ' .
+                                'AND warrants.office IN (1, 18) ' .
+                                'AND (warrants.start_date <= CURDATE() OR warrants.start_date IS NULL) ' .
+                                'AND (warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)'
+                            ),
+                            [],
+                            Join::JOIN_LEFT_OUTER
+                        )
+                        ->join(
+                            'offices',
+                            'offices.ID = warrants.office',
+                            [],
+                            Join::JOIN_LEFT_OUTER
+                        )
+                        ->where(['scagroup.id' => $initialData['parentid']])
                 ),
                 []
             )->current();
+
+            // Check if the selected and parent group both have a seneschal.
+            if (empty($initialData['email']) || empty($parentGroup->email)) {
+                return [
+                    'groupSelectForm' => $groupSelectForm,
+                    'missingWarrant'  => true,
+                ];
+            }
+
             $subgroupSql = "SELECT id, type, groupname FROM scagroup " .
                            "WHERE parentid = ? " .
                            "AND (status = 'live' OR status = 'proposed')";
@@ -191,23 +246,17 @@ class ReportController extends DatabaseController
                 'groupDetails' => array_intersect_key($initialData, array_flip([
                     'groupname',
                     'website',
+                    'email',
                     'type',
                     'parentid',
+                    'lastreport',
                 ])),
                 'senDetails' => array_intersect_key($initialData, array_flip([
-                    'scaname',
-                    'realname',
-                    'address',
-                    'suburb',
-                    'state',
-                    'postcode',
-                    'country',
-                    'phone',
-                    'email',
-                    'memnum',
-                    'warrantstart',
-                    'warrantend',
-                    'lastreport',
+                    'sca_name',
+                    'mundane_name',
+                    'member',
+                    'start_date',
+                    'end_date',
                 ])),
                 'report' => [
                     'statistics' => $statisticsTemplate,
@@ -224,26 +273,14 @@ class ReportController extends DatabaseController
                     $values = $detailsForm->getData();
 
                                                             //----------------------------------------------------------
-                                                            // Update database with latest group details
+                                                            // Update database with latest report date
                                                             //----------------------------------------------------------
-                    $values['senDetails']['lastreport'] = date('Y-m-d');
-                    $fieldsToUpdate = array_intersect_key($values['senDetails'], array_flip([
-                        'lastreport',
-                        'scaname',
-                        'realname',
-                        'address',
-                        'suburb',
-                        'state',
-                        'postcode',
-                        'country',
-                        'phone',
-                        'memnum',
-                    ]));
+                    $values['groupDetails']['lastreport'] = date('Y-m-d');
 
                     $updateResult = $db->query(
                         (new Sql($db))->buildSqlString(
                             (new Update('scagroup'))
-                                ->set($fieldsToUpdate)
+                                ->set(['lastreport' => $values['groupDetails']['lastreport']])
                                 ->where(['id' => $groupId])
                         ),
                         $db::QUERY_MODE_EXECUTE

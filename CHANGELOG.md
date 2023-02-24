@@ -7,6 +7,22 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.15.0] - 2023-02-25
+
+### Added
+
+* `scagroup.emailDomain` column for use in constructing officer email addresses.
+
+### Changed
+
+* Seneschal details on all pages now taken from the `warrants` (Regnumator) table.
+* Tweaked format of Announce event notice subject - date before event name.
+
+### Removed
+
+* Several columns from the `scagroup` table have been removed as they have been superseded by Regnumator/Registry data:
+  `scaname`, `realname`, `address`, `postcode`, `phone`, `email`, `warrantstart`, `warrantend`, `memnum`, `usevirtuser`.
+
 ## [2.14.0] - 2023-02-09
 
 ### Changed
@@ -275,7 +291,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.14.0...main
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.15.0...main
+[2.15.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.14.0...v2.15.0
 [2.14.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.13.0...v2.14.0
 [2.13.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.12.0...v2.13.0
 [2.12.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.11.0...v2.12.0

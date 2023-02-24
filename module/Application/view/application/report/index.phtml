@@ -6,9 +6,7 @@ $this->formRow()->setRenderErrors(false);
 echo $this->form($groupSelectForm);
 $this->formRow()->setRenderErrors(true);
 
-$this->inlineScript()
-    ->appendFile($this->basePath('js/keepalive-on-change.js'))
-    ->appendFile($this->basePath('js/add-report-hints.js'));
+$this->inlineScript()->appendFile($this->basePath('js/keepalive-on-change.js'));
 
 if (isset($sampleRoute)) {
     ?>
@@ -20,6 +18,18 @@ if (isset($sampleRoute)) {
 <p>Scroll to the bottom or <a href="#reportTemplate">click here</a> for a template you can copy.</p>
 
 <?php
+if (isset($missingWarrant)) {
+    ?>
+    <h2>No active seneschal warrant</h2>
+    <p>
+        It's not possible to send a report right now because your group and/or your parent group have
+        no active seneschal warrant. This needs to be fixed in the Registry (Regnumator).
+        <br />
+        Contact the Kingdom Seneschal for assistance.
+    </p>
+    <?php
+}
+
 if (isset($detailsForm)) {
     echo $this->form($detailsForm);
 }
@@ -76,23 +86,3 @@ Other offices (e.g. Lists, Historian, Youth, DEI etc)
 
 Subgroups (including Hamlets)
 </pre>
-
-<template id="emailHintAU">
-    <ul>
-        <li>
-            Use
-            <a href="<?= $this->url('group/aliases', [], ['query' => $aliasesQuery]) ?>" target="_blank">
-                Manage Group Email Aliases
-            </a>
-            to set it to forward to your personal address
-        </li>
-    </ul>
-</template>
-
-<template id="emailHintNZ">
-    <ul>
-        <li>
-            Contact your Webwright or Masonry to set it to forward to your personal address
-        </li>
-    </ul>
-</template>

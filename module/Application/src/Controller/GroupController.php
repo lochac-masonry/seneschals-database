@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Application\Controller;
 
 use Application\Form;
-use Laminas\Db\Sql\{Delete, Insert, Select, Sql, Update};
+use Laminas\Db\Sql\{Delete, Expression, Insert, Join, Select, Sql, Update};
 use Laminas\View\Model\ViewModel;
 
 class GroupController extends DatabaseController
@@ -56,34 +56,53 @@ class GroupController extends DatabaseController
                 $initialData = (array) $db->query(
                     (new Sql($db))->buildSqlString(
                         (new Select())
+                            ->columns([
+                                'groupname',
+                                'area',
+                                'website',
+                                'emailDomain',
+                                'type',
+                                'status',
+                                'parentid',
+                                'country',
+                                'state',
+                                'lastreport',
+                            ])
                             ->from('scagroup')
-                            ->where(['id' => $groupId])
+                            ->join(
+                                'warrants',
+                                new Expression(
+                                    'warrants.scagroup = scagroup.id ' .
+                                    'AND warrants.office IN (1, 18) ' .
+                                    'AND (warrants.start_date <= CURDATE() OR warrants.start_date IS NULL) ' .
+                                    'AND (warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)'
+                                ),
+                                ['sca_name', 'mundane_name', 'member', 'start_date', 'end_date'],
+                                Join::JOIN_LEFT_OUTER
+                            )
+                            ->where(['scagroup.id' => $groupId])
                     ),
                     []
                 )->toArray()[0];
                 $detailsForm->setData([
                     'groupDetails' => array_intersect_key($initialData, array_flip([
                         'groupname',
+                        'country',
+                        'state',
                         'area',
                         'website',
+                        'emailDomain',
                         'type',
                         'status',
                         'parentid',
+                        'lastreport',
                     ])),
                     'senDetails' => array_intersect_key($initialData, array_flip([
-                        'scaname',
-                        'realname',
-                        'address',
-                        'suburb',
-                        'state',
-                        'postcode',
-                        'country',
-                        'phone',
-                        'email',
-                        'memnum',
-                        'warrantstart',
-                        'warrantend',
-                        'lastreport',
+                        'sca_name',
+                        'mundane_name',
+                        'member',
+                        'start_date',
+                        'end_date',
                     ])),
                 ]);
             }
@@ -97,13 +116,11 @@ class GroupController extends DatabaseController
                 if ($detailsForm->isValid()) {
                     $values = $detailsForm->getData();
 
-                    $fieldsToUpdate = $values['senDetails'] + $values['groupDetails'];
-
                     if ($groupId == 'new') {
                         $result = $db->query(
                             (new Sql($db))->buildSqlString(
                                 (new Insert('scagroup'))
-                                    ->values($fieldsToUpdate)
+                                    ->values($values['groupDetails'])
                             ),
                             $db::QUERY_MODE_EXECUTE
                         );
@@ -112,7 +129,7 @@ class GroupController extends DatabaseController
                         $result = $db->query(
                             (new Sql($db))->buildSqlString(
                                 (new Update('scagroup'))
-                                    ->set($fieldsToUpdate)
+                                    ->set($values['groupDetails'])
                                     ->where(['id' => $groupId])
                             ),
                             $db::QUERY_MODE_EXECUTE

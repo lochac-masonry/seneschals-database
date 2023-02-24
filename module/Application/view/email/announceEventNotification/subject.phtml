@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 // Stay in PHP-mode to ensure result is one line.
 print(
-    $this->escapeHtml($hostGroupName) . ': ' .
-    $this->escapeHtml($values['name']) . ', ' .
-    $this->formatDate($values['startdate'], $values['enddate'])
+    $this->escapeHtml($hostGroupName) . ', ' .
+    $this->formatDate($values['startdate'], $values['enddate']) . ': ' .
+    $this->escapeHtml($values['name'])
 );
