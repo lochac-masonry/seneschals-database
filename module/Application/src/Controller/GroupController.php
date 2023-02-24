@@ -60,12 +60,12 @@ class GroupController extends DatabaseController
                                 'groupname',
                                 'area',
                                 'website',
+                                'emailDomain',
                                 'type',
                                 'status',
                                 'parentid',
                                 'country',
                                 'state',
-                                'email',
                                 'lastreport',
                             ])
                             ->from('scagroup')
@@ -91,7 +91,7 @@ class GroupController extends DatabaseController
                         'state',
                         'area',
                         'website',
-                        'email',
+                        'emailDomain',
                         'type',
                         'status',
                         'parentid',

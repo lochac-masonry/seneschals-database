@@ -42,7 +42,7 @@ class Report extends Form
                         'type'    => 'text',
                         'name'    => 'website',
                         'options' => [
-                            'label' => 'Group Website - contact Kingdom Seneschal to change',
+                            'label' => 'Group Website (contact Kingdom Seneschal to change)',
                         ],
                         'attributes' => [
                             'size'     => 50,
@@ -53,7 +53,8 @@ class Report extends Form
                         'type'    => 'email',
                         'name'    => 'email',
                         'options' => [
-                            'label' => 'Email Address',
+                            'label' =>
+                                'Email Address (taken from the Regnumator, log into the Registry to make changes)',
                         ],
                         'attributes' => [
                             'size'     => 40,

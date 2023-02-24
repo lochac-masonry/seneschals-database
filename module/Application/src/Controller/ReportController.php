@@ -149,17 +149,30 @@ class ReportController extends DatabaseController
             $initialData = (array) $db->query(
                 (new Sql($db))->buildSqlString(
                     (new Select())
-                        ->columns(['groupname', 'website', 'email', 'type', 'parentid', 'lastreport'])
+                        ->columns([
+                            'groupname',
+                            'website',
+                            'email' => new Expression("CONCAT(offices.email, '@', scagroup.emailDomain)"),
+                            'type',
+                            'parentid',
+                            'lastreport'
+                        ])
                         ->from('scagroup')
                         ->join(
                             'warrants',
                             new Expression(
                                 'warrants.scagroup = scagroup.id ' .
-                                'AND warrants.office = 1 ' .
+                                'AND warrants.office IN (1, 18) ' .
                                 'AND (warrants.start_date <= CURDATE() OR warrants.start_date IS NULL) ' .
                                 'AND (warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)'
                             ),
                             ['sca_name', 'mundane_name', 'member', 'start_date', 'end_date'],
+                            Join::JOIN_LEFT_OUTER
+                        )
+                        ->join(
+                            'offices',
+                            'offices.ID = warrants.office',
+                            [],
                             Join::JOIN_LEFT_OUTER
                         )
                         ->where(['scagroup.id' => $groupId])
@@ -169,12 +182,42 @@ class ReportController extends DatabaseController
             $parentGroup = $db->query(
                 (new Sql($db))->buildSqlString(
                     (new Select())
-                        ->columns(['id', 'groupname', 'email'])
+                        ->columns([
+                            'id',
+                            'groupname',
+                            'email' => new Expression("CONCAT(offices.email, '@', scagroup.emailDomain)"),
+                        ])
                         ->from('scagroup')
-                        ->where(['id' => $initialData['parentid']])
+                        ->join(
+                            'warrants',
+                            new Expression(
+                                'warrants.scagroup = scagroup.id ' .
+                                'AND warrants.office IN (1, 18) ' .
+                                'AND (warrants.start_date <= CURDATE() OR warrants.start_date IS NULL) ' .
+                                'AND (warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)'
+                            ),
+                            [],
+                            Join::JOIN_LEFT_OUTER
+                        )
+                        ->join(
+                            'offices',
+                            'offices.ID = warrants.office',
+                            [],
+                            Join::JOIN_LEFT_OUTER
+                        )
+                        ->where(['scagroup.id' => $initialData['parentid']])
                 ),
                 []
             )->current();
+
+            // Check if the selected and parent group both have a seneschal.
+            if (empty($initialData['email']) || empty($parentGroup->email)) {
+                return [
+                    'groupSelectForm' => $groupSelectForm,
+                    'missingWarrant'  => true,
+                ];
+            }
+
             $subgroupSql = "SELECT id, type, groupname FROM scagroup " .
                            "WHERE parentid = ? " .
                            "AND (status = 'live' OR status = 'proposed')";

@@ -7,11 +7,19 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+### Added
+
+* `scagroup.emailDomain` column for use in constructing officer email addresses.
+
 ### Changed
 
-* Seneschal details on the Edit Group and Report pages now taken from the `warrants`
-  (Regnumator) table.
+* Seneschal details on all pages now taken from the `warrants` (Regnumator) table.
 * Tweaked format of Announce event notice subject - date before event name.
+
+### Removed
+
+* Several columns from the `scagroup` table have been removed as they have been superseded by Regnumator/Registry data:
+  `scaname`, `realname`, `address`, `postcode`, `phone`, `email`, `warrantstart`, `warrantend`, `memnum`, `usevirtuser`.
 
 ## [2.14.0] - 2023-02-09
 

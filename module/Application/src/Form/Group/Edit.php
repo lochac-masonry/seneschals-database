@@ -90,14 +90,13 @@ class Edit extends Form
                         ],
                     ]);
                     $this->add([
-                        'type'    => 'email',
-                        'name'    => 'email',
+                        'type'    => 'text',
+                        'name'    => 'emailDomain',
                         'options' => [
-                            'label' => 'Email Address - Published on group listing',
+                            'label' => 'Domain name for officer email addresses',
                         ],
                         'attributes' => [
-                            'size'     => 40,
-                            'required' => true,
+                            'size' => 50,
                         ],
                     ]);
                     $this->add([
