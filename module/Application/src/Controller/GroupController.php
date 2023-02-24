@@ -73,7 +73,7 @@ class GroupController extends DatabaseController
                                 'warrants',
                                 new Expression(
                                     'warrants.scagroup = scagroup.id ' .
-                                    'AND warrants.office = 1 ' .
+                                    'AND warrants.office IN (1, 18) ' .
                                     'AND (warrants.start_date <= CURDATE() OR warrants.start_date IS NULL) ' .
                                     'AND (warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)'
                                 ),
