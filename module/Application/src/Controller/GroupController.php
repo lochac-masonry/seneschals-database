@@ -283,7 +283,24 @@ class GroupController extends DatabaseController
         $existingAliases = $db->query(
             (new Sql($db))->buildSqlString(
                 (new Select())
-                    ->columns(['row_id', 'alias', 'address'])
+                    ->columns([
+                        'row_id',
+                        'alias',
+                        'address',
+                        'locked' => new Expression("
+                            alias IN (
+                                SELECT
+                                    CONCAT(offices.email, '@', scagroup.emailDomain)
+                                FROM scagroup
+                                INNER JOIN offices
+                                ON (offices.kingdom AND scagroup.type = 'Kingdom')
+                                OR (offices.branch AND scagroup.type <> 'Kingdom')
+                                WHERE
+                                    scagroup.emailDomain IS NOT NULL
+                                AND offices.email <> ''
+                            )
+                        ")
+                    ])
                     ->from('virtusers')
                     ->where(['groupid' => $groupId])
             ),
@@ -291,7 +308,7 @@ class GroupController extends DatabaseController
         )->toArray();
         foreach ($existingAliases as $alias) {
             $aliasId = $alias['row_id'];
-            $aliasForm = new Form\Group\Alias($aliasId, $aliasRegex, true);
+            $aliasForm = new Form\Group\Alias($aliasId, $aliasRegex, true, $alias['locked']);
             $aliasForm->setData([
                 'alias' . $aliasId   => $alias['alias'],
                 'address' . $aliasId => $alias['address'],
@@ -299,7 +316,7 @@ class GroupController extends DatabaseController
             $viewModel['aliasForms'][$aliasId] = $aliasForm;
         }
         // Plus one to allow creating a new alias.
-        $viewModel['aliasForms']['new'] = new Form\Group\Alias('new', $aliasRegex, false);
+        $viewModel['aliasForms']['new'] = new Form\Group\Alias('new', $aliasRegex, false, false);
 
         if (!$request->isPost()) {
             return $viewModel;
@@ -376,6 +393,26 @@ class GroupController extends DatabaseController
             if (count($conflictingAliases) > 0) {
                 $this->alert()->bad(
                     "{$values['alias']} is already in use, and cannot be duplicated."
+                );
+                continue;
+            }
+
+            // Check if the alias should be managed through the Regnumator.
+            $standardOfficerAliases = $db->query(
+                "SELECT
+                    1
+                FROM scagroup
+                INNER JOIN offices
+                ON (offices.kingdom AND scagroup.type = 'Kingdom')
+                OR (offices.branch AND scagroup.type <> 'Kingdom')
+                WHERE
+                CONCAT(offices.email, '@', scagroup.emailDomain) = ?",
+                [$values['alias']]
+            )->toArray();
+            if (count($standardOfficerAliases) > 0) {
+                $this->alert()->bad(
+                    "{$values['alias']} is a standard officer email address and " .
+                    'must be managed through the Registry / Regnumator.'
                 );
                 continue;
             }

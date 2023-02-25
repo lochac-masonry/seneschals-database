@@ -9,7 +9,7 @@ use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Alias extends Form implements InputFilterProviderInterface
 {
-    public function __construct($id, $aliasRegex, $existing)
+    public function __construct($id, $aliasRegex, $existing, $disabled)
     {
         parent::__construct();
 
@@ -25,6 +25,7 @@ class Alias extends Form implements InputFilterProviderInterface
                 'title'    => 'Enter an email address ending in one of your configured domains.',
                 'pattern'  => $aliasRegex,
                 'required' => true,
+                'disabled' => $disabled,
             ],
         ]);
         $this->add([
@@ -34,6 +35,7 @@ class Alias extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'size'     => 25,
                 'required' => true,
+                'disabled' => $disabled,
             ],
         ]);
 
@@ -54,6 +56,7 @@ class Alias extends Form implements InputFilterProviderInterface
                 'options'    => [],
                 'attributes' => [
                     'value' => 'Save',
+                    'disabled' => $disabled,
                 ],
             ]);
             $this->add([
@@ -62,6 +65,7 @@ class Alias extends Form implements InputFilterProviderInterface
                 'options'    => [],
                 'attributes' => [
                     'value' => 'Delete',
+                    'disabled' => $disabled,
                 ],
             ]);
         } else {
@@ -71,6 +75,7 @@ class Alias extends Form implements InputFilterProviderInterface
                 'options'    => [],
                 'attributes' => [
                     'value' => 'Add New',
+                    'disabled' => $disabled,
                 ],
             ]);
         }
