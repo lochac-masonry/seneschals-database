@@ -7,6 +7,13 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.15.1] - 2023-02-26
+
+### Changed
+
+* Database migrated to UTF-8 (collation `utf8mb4_0900_ai_ci`) using PHPMyAdmin.
+* Email subject and body are quoted-printable encoded to allow the use of UTF-8.
+
 ## [2.15.0] - 2023-02-25
 
 ### Added
