@@ -285,7 +285,26 @@ class GroupController extends DatabaseController
                 (new Select())
                     ->columns(['row_id', 'alias', 'address'])
                     ->from('virtusers')
-                    ->where(['groupid' => $groupId])
+                    ->join(
+                        'scagroup',
+                        'scagroup.id = virtusers.groupid',
+                        [],
+                        Join::JOIN_LEFT_OUTER
+                    )
+                    ->join(
+                        'offices',
+                        new Expression(
+                            "CONCAT(offices.email, '@', scagroup.emailDomain) = virtusers.alias " .
+                            "AND (offices.kingdom AND scagroup.type = 'Kingdom') " .
+                            "OR (offices.branch AND scagroup.type <> 'Kingdom')"
+                        ),
+                        [],
+                        Join::JOIN_LEFT_OUTER
+                    )
+                    ->where([
+                        'virtusers.groupid' => $groupId,
+                        'offices.ID IS NULL',
+                    ])
             ),
             []
         )->toArray();
