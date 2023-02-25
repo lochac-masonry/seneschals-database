@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Application\Controller;
 
 use Application\Form;
-use Laminas\Db\Sql\{Delete, Insert, Select, Sql, Update};
+use Laminas\Db\Sql\{Delete, Expression, Insert, Join, Select, Sql, Update};
 use Laminas\View\Model\ViewModel;
 
 class GroupController extends DatabaseController
@@ -56,34 +56,53 @@ class GroupController extends DatabaseController
                 $initialData = (array) $db->query(
                     (new Sql($db))->buildSqlString(
                         (new Select())
+                            ->columns([
+                                'groupname',
+                                'area',
+                                'website',
+                                'emailDomain',
+                                'type',
+                                'status',
+                                'parentid',
+                                'country',
+                                'state',
+                                'lastreport',
+                            ])
                             ->from('scagroup')
-                            ->where(['id' => $groupId])
+                            ->join(
+                                'warrants',
+                                new Expression(
+                                    'warrants.scagroup = scagroup.id ' .
+                                    'AND warrants.office IN (1, 18) ' .
+                                    'AND (warrants.start_date <= CURDATE() OR warrants.start_date IS NULL) ' .
+                                    'AND (warrants.end_date >= CURDATE() OR warrants.end_date IS NULL)'
+                                ),
+                                ['sca_name', 'mundane_name', 'member', 'start_date', 'end_date'],
+                                Join::JOIN_LEFT_OUTER
+                            )
+                            ->where(['scagroup.id' => $groupId])
                     ),
                     []
                 )->toArray()[0];
                 $detailsForm->setData([
                     'groupDetails' => array_intersect_key($initialData, array_flip([
                         'groupname',
+                        'country',
+                        'state',
                         'area',
                         'website',
+                        'emailDomain',
                         'type',
                         'status',
                         'parentid',
+                        'lastreport',
                     ])),
                     'senDetails' => array_intersect_key($initialData, array_flip([
-                        'scaname',
-                        'realname',
-                        'address',
-                        'suburb',
-                        'state',
-                        'postcode',
-                        'country',
-                        'phone',
-                        'email',
-                        'memnum',
-                        'warrantstart',
-                        'warrantend',
-                        'lastreport',
+                        'sca_name',
+                        'mundane_name',
+                        'member',
+                        'start_date',
+                        'end_date',
                     ])),
                 ]);
             }
@@ -97,13 +116,11 @@ class GroupController extends DatabaseController
                 if ($detailsForm->isValid()) {
                     $values = $detailsForm->getData();
 
-                    $fieldsToUpdate = $values['senDetails'] + $values['groupDetails'];
-
                     if ($groupId == 'new') {
                         $result = $db->query(
                             (new Sql($db))->buildSqlString(
                                 (new Insert('scagroup'))
-                                    ->values($fieldsToUpdate)
+                                    ->values($values['groupDetails'])
                             ),
                             $db::QUERY_MODE_EXECUTE
                         );
@@ -112,7 +129,7 @@ class GroupController extends DatabaseController
                         $result = $db->query(
                             (new Sql($db))->buildSqlString(
                                 (new Update('scagroup'))
-                                    ->set($fieldsToUpdate)
+                                    ->set($values['groupDetails'])
                                     ->where(['id' => $groupId])
                             ),
                             $db::QUERY_MODE_EXECUTE
@@ -266,7 +283,24 @@ class GroupController extends DatabaseController
         $existingAliases = $db->query(
             (new Sql($db))->buildSqlString(
                 (new Select())
-                    ->columns(['row_id', 'alias', 'address'])
+                    ->columns([
+                        'row_id',
+                        'alias',
+                        'address',
+                        'locked' => new Expression("
+                            alias IN (
+                                SELECT
+                                    CONCAT(offices.email, '@', scagroup.emailDomain)
+                                FROM scagroup
+                                INNER JOIN offices
+                                ON (offices.kingdom AND scagroup.type = 'Kingdom')
+                                OR (offices.branch AND scagroup.type <> 'Kingdom')
+                                WHERE
+                                    scagroup.emailDomain IS NOT NULL
+                                AND offices.email <> ''
+                            )
+                        ")
+                    ])
                     ->from('virtusers')
                     ->where(['groupid' => $groupId])
             ),
@@ -274,7 +308,7 @@ class GroupController extends DatabaseController
         )->toArray();
         foreach ($existingAliases as $alias) {
             $aliasId = $alias['row_id'];
-            $aliasForm = new Form\Group\Alias($aliasId, $aliasRegex, true);
+            $aliasForm = new Form\Group\Alias($aliasId, $aliasRegex, true, $alias['locked']);
             $aliasForm->setData([
                 'alias' . $aliasId   => $alias['alias'],
                 'address' . $aliasId => $alias['address'],
@@ -282,7 +316,7 @@ class GroupController extends DatabaseController
             $viewModel['aliasForms'][$aliasId] = $aliasForm;
         }
         // Plus one to allow creating a new alias.
-        $viewModel['aliasForms']['new'] = new Form\Group\Alias('new', $aliasRegex, false);
+        $viewModel['aliasForms']['new'] = new Form\Group\Alias('new', $aliasRegex, false, false);
 
         if (!$request->isPost()) {
             return $viewModel;
@@ -359,6 +393,26 @@ class GroupController extends DatabaseController
             if (count($conflictingAliases) > 0) {
                 $this->alert()->bad(
                     "{$values['alias']} is already in use, and cannot be duplicated."
+                );
+                continue;
+            }
+
+            // Check if the alias should be managed through the Regnumator.
+            $standardOfficerAliases = $db->query(
+                "SELECT
+                    1
+                FROM scagroup
+                INNER JOIN offices
+                ON (offices.kingdom AND scagroup.type = 'Kingdom')
+                OR (offices.branch AND scagroup.type <> 'Kingdom')
+                WHERE
+                CONCAT(offices.email, '@', scagroup.emailDomain) = ?",
+                [$values['alias']]
+            )->toArray();
+            if (count($standardOfficerAliases) > 0) {
+                $this->alert()->bad(
+                    "{$values['alias']} is a standard officer email address and " .
+                    'must be managed through the Registry / Regnumator.'
                 );
                 continue;
             }

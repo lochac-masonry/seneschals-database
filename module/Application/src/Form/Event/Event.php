@@ -146,6 +146,19 @@ class Event extends Form
                             'wrap'     => 'virtual',
                         ],
                     ]);
+                    $this->add([
+                        'type'    => 'checkbox',
+                        'name'    => 'notifyInsurer',
+                        'options' => [
+                            'label' =>
+                                "This event's total income (before costs) is likely to be " .
+                                'over $5,000 so please notify the SCA NZ insurer to ensure coverage',
+                            'label_options' => [
+                                'label_position' => 'append',
+                            ],
+                        ],
+                        'attributes' => [],
+                    ]);
                 }
 
                 public function getInputFilterSpecification()
@@ -184,6 +197,9 @@ class Event extends Form
                             'filters'  => [
                                 ['name' => 'stringTrim'],
                             ],
+                        ],
+                        'notifyInsurer' => [
+                            'required' => false,
                         ],
                     ];
                 }

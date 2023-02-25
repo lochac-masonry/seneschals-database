@@ -59,5 +59,10 @@
         "hooks": {
             "pre-commit": "composer cs-check"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "laminas/laminas-component-installer": true
+        }
     }
 }

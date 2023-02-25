@@ -7,11 +7,46 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
-## [2.13.0] - 2022-01-16
-
 ### Added
 
 * Single Sign-On support allowing direct access from the Registry/Regnumator application.
+
+## [2.15.1] - 2023-02-26
+
+### Changed
+
+* Database migrated to UTF-8 (collation `utf8mb4_0900_ai_ci`) using PHPMyAdmin.
+* Existing database records with latin1 / UTF-8 encoding errors have been fixed.
+* Email subject and body are quoted-printable encoded to allow the use of UTF-8.
+
+## [2.15.0] - 2023-02-25
+
+### Added
+
+* `scagroup.emailDomain` column for use in constructing officer email addresses.
+
+### Changed
+
+* Seneschal details on all pages now taken from the `warrants` (Regnumator) table.
+* Tweaked format of Announce event notice subject - date before event name.
+* Email aliases that match the standard officer email addresses must be edited through the Registry / Regnumator.
+
+### Removed
+
+* Several columns from the `scagroup` table have been removed as they have been superseded by Regnumator/Registry data:
+  `scaname`, `realname`, `address`, `postcode`, `phone`, `email`, `warrantstart`, `warrantend`, `memnum`, `usevirtuser`.
+
+## [2.14.0] - 2023-02-09
+
+### Changed
+
+* The event notification email sent to Announce has been updated and converted to HTML.
+
+## [2.13.0] - 2023-01-30
+
+### Added
+
+* Checkbox on event form for NZ events that triggers insurance notification NZ secretary.
 
 ## [2.12.0] - 2022-01-16
 
@@ -269,36 +304,39 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/master..v2.13.0
-[2.13.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.13.0..v2.12.0
-[2.12.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.12.0..v2.11.0
-[2.11.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.11.0..v2.10.1
-[2.10.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.10.1..v2.10.0
-[2.10.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.10.0..v2.9.3
-[2.9.3]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.9.3..v2.9.2
-[2.9.2]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.9.2..v2.9.1
-[2.9.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.9.1..v2.9.0
-[2.9.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.9.0..v2.8.1
-[2.8.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.8.1..v2.8.0
-[2.8.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.8.0..v2.7.1
-[2.7.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.7.1..v2.7.0
-[2.7.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.7.0..v2.6.0
-[2.6.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.6.0..v2.5.0
-[2.5.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.5.0..v2.4.1
-[2.4.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.4.1..v2.4.0
-[2.4.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.4.0..v2.3.0
-[2.3.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.3.0..v2.2.2
-[2.2.2]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.2..v2.2.1
-[2.2.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.1..v2.2.0
-[2.2.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.2.0..v2.1.0
-[2.1.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.1.0..v2.0.0
-[2.0.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v2.0.0..v1.6.0
-[1.6.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.6.0..v1.5.0
-[1.5.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.5.0..v1.4.0
-[1.4.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.4.0..v1.3.0
-[1.3.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.3.0..v1.2.0
-[1.2.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.2.0..v1.1.1
-[1.1.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.1.1..v1.1.0
-[1.1.0]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.1.0..v1.0.1
-[1.0.1]: https://bitbucket.org/dtkerr/lochac-sendb/branches/compare/v1.0.1..v1.0.0
-[1.0.0]: https://bitbucket.org/dtkerr/lochac-sendb/src/v1.0.0/
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.15.1...main
+[2.15.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.15.0...v2.15.1
+[2.15.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.14.0...v2.15.0
+[2.14.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.13.0...v2.14.0
+[2.13.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.12.0...v2.13.0
+[2.12.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.11.0...v2.12.0
+[2.11.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.10.1...v2.11.0
+[2.10.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.10.0...v2.10.1
+[2.10.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.9.3...v2.10.0
+[2.9.3]: https://github.com/lochac-masonry/seneschals-database/compare/v2.9.2...v2.9.3
+[2.9.2]: https://github.com/lochac-masonry/seneschals-database/compare/v2.9.1...v2.9.2
+[2.9.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.9.0...v2.9.1
+[2.9.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.8.1...v2.9.0
+[2.8.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.8.0...v2.8.1
+[2.8.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.7.1...v2.8.0
+[2.7.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.7.0...v2.7.1
+[2.7.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.6.0...v2.7.0
+[2.6.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.5.0...v2.6.0
+[2.5.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.4.1...v2.5.0
+[2.4.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.4.0...v2.4.1
+[2.4.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.3.0...v2.4.0
+[2.3.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.2.2...v2.3.0
+[2.2.2]: https://github.com/lochac-masonry/seneschals-database/compare/v2.2.1...v2.2.2
+[2.2.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.2.0...v2.2.1
+[2.2.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.0.0...v2.1.0
+[2.0.0]: https://github.com/lochac-masonry/seneschals-database/compare/v1.6.0...v2.0.0
+[1.6.0]: https://github.com/lochac-masonry/seneschals-database/compare/v1.5.0...v1.6.0
+[1.5.0]: https://github.com/lochac-masonry/seneschals-database/compare/v1.4.0...v1.5.0
+[1.4.0]: https://github.com/lochac-masonry/seneschals-database/compare/v1.3.0...v1.4.0
+[1.3.0]: https://github.com/lochac-masonry/seneschals-database/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/lochac-masonry/seneschals-database/compare/v1.1.1...v1.2.0
+[1.1.1]: https://github.com/lochac-masonry/seneschals-database/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/lochac-masonry/seneschals-database/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/lochac-masonry/seneschals-database/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/lochac-masonry/seneschals-database/tree/v1.0.0
