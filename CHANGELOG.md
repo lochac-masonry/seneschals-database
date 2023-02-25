@@ -17,8 +17,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 * Seneschal details on all pages now taken from the `warrants` (Regnumator) table.
 * Tweaked format of Announce event notice subject - date before event name.
-* Email aliases that match the standard officer email addresses are no longer shown and
-  must be edited through the Registry / Regnumator.
+* Email aliases that match the standard officer email addresses must be edited through the Registry / Regnumator.
 
 ### Removed
 
