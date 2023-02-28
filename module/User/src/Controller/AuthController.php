@@ -98,7 +98,7 @@ class AuthController extends AbstractActionController
 
         // Use the subject of the ID token as the username.
         $this->authService->getStorage()->write($payload->sub);
-        $this->handleSuccess($redirectUrl);
+        return $this->handleSuccess($redirectUrl);
     }
 
     private function handleSuccess(string $redirectUrl)
