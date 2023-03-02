@@ -9,7 +9,7 @@ use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Session\ManagerInterface;
 use Laminas\Uri\Uri;
-use User\Form;
+use User\{Form, SsoConfig};
 
 class AuthController extends AbstractActionController
 {
@@ -17,12 +17,13 @@ class AuthController extends AbstractActionController
     private $authService;
     /** @var ManagerInterface */
     private $sessionManager;
+    /** @var SsoConfig */
     private $ssoConfig;
 
     public function __construct(
         AuthenticationServiceInterface $authService,
         ManagerInterface $sessionManager,
-        $ssoConfig
+        SsoConfig $ssoConfig
     ) {
         $this->authService = $authService;
         $this->sessionManager = $sessionManager;
@@ -82,14 +83,14 @@ class AuthController extends AbstractActionController
         }
         $idToken = $request->getQuery()['id_token'];
 
-        $payload = JWT::decode($idToken, new Key($this->ssoConfig['key'], $this->ssoConfig['algorithm']));
+        $payload = JWT::decode($idToken, new Key($this->ssoConfig->key, $this->ssoConfig->algorithm));
         if (!isset($payload->iat) || !isset($payload->exp)) {
             throw new \UnexpectedValueException('Token issue or expiry time not set');
         }
-        if (!isset($payload->iss) || $payload->iss !== $this->ssoConfig['issuer']) {
+        if (!isset($payload->iss) || $payload->iss !== $this->ssoConfig->issuer) {
             throw new \UnexpectedValueException('Token issuer wrong or missing');
         }
-        if (!isset($payload->aud) || $payload->aud !== $this->ssoConfig['audience']) {
+        if (!isset($payload->aud) || $payload->aud !== $this->ssoConfig->audience) {
             throw new \UnexpectedValueException('Token audience wrong or missing');
         }
         if (!isset($payload->sub) || in_array($identity, ['seneschal', 'servers', 'reportsdeputy'])) {
