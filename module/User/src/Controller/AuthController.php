@@ -92,9 +92,13 @@ class AuthController extends AbstractActionController
         if (!isset($payload->aud) || $payload->aud !== $this->ssoConfig['audience']) {
             throw new \UnexpectedValueException('Token audience wrong or missing');
         }
-        if (!isset($payload->sub)) {
+        if (!isset($payload->sub) || in_array($identity, ['seneschal', 'servers', 'reportsdeputy'])) {
             throw new \UnexpectedValueException('Token subject wrong or missing');
         }
+
+        // For SSO by redirect, the request will not be same-site so the session
+        // cookie will not take effect with the default strict policy.
+        $this->sessionManager->getConfig()->setStorageOption('cookie_samesite', 'Lax');
 
         // Use the subject of the ID token as the username.
         $this->authService->getStorage()->write($payload->sub);
