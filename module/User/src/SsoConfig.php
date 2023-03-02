@@ -20,31 +20,31 @@ class SsoConfig
     /** @var String */
     public $audience;
 
-    public function __construct(Config $config)
+    public function __construct(array $config)
     {
-        if (!isset($config->sso) || !($config->sso instanceof Config)) {
+        if (!isset($config['sso']) || !is_array($config['sso'])) {
             throw new \InvalidArgumentException('Config section [sso] must be set');
         }
-        $ssoConfig = $config->sso;
+        $ssoConfig = $config['sso'];
 
-        if (!isset($ssoConfig->key) || !is_string($ssoConfig->key)) {
+        if (!isset($ssoConfig['key']) || !is_string($ssoConfig['key'])) {
             throw new \InvalidArgumentException('Config value [sso.key] must be set to a string');
         }
-        $this->key = $ssoConfig->key;
+        $this->key = $ssoConfig['key'];
 
-        if (!isset($ssoConfig->algorithm) || !is_string($ssoConfig->algorithm)) {
+        if (!isset($ssoConfig['algorithm']) || !is_string($ssoConfig['algorithm'])) {
             throw new \InvalidArgumentException('Config value [sso.algorithm] must be set to a string');
         }
-        $this->algorithm = $ssoConfig->algorithm;
+        $this->algorithm = $ssoConfig['algorithm'];
 
-        if (!isset($ssoConfig->issuer) || !is_string($ssoConfig->issuer)) {
+        if (!isset($ssoConfig['issuer']) || !is_string($ssoConfig['issuer'])) {
             throw new \InvalidArgumentException('Config value [sso.issuer] must be set to a string');
         }
-        $this->issuer = $ssoConfig->issuer;
+        $this->issuer = $ssoConfig['issuer'];
 
-        if (!isset($ssoConfig->audience) || !is_string($ssoConfig->audience)) {
+        if (!isset($ssoConfig['audience']) || !is_string($ssoConfig['audience'])) {
             throw new \InvalidArgumentException('Config value [sso.audience] must be set to a string');
         }
-        $this->audience = $ssoConfig->audience;
+        $this->audience = $ssoConfig['audience'];
     }
 }
