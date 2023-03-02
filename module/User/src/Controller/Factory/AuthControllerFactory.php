@@ -8,6 +8,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Session\SessionManager;
+use User\SsoConfig;
 
 class AuthControllerFactory implements FactoryInterface
 {
@@ -15,6 +16,7 @@ class AuthControllerFactory implements FactoryInterface
     {
         $authService = $container->get(AuthenticationServiceInterface::class);
         $sessionManager = $container->get(SessionManager::class);
-        return new $requestedName($authService, $sessionManager);
+        $ssoConfig = new SsoConfig($container->get('config'));
+        return new $requestedName($authService, $sessionManager, $ssoConfig);
     }
 }
