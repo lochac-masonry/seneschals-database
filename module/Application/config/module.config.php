@@ -368,7 +368,7 @@ return [
                 'privilege' => 'submit',
             ],
             [
-                'label'     => 'Event List',
+                'label'     => 'Review Event Proposals',
                 'route'     => 'event/list',
                 'resource'  => 'event',
                 'privilege' => 'list',
