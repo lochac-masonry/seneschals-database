@@ -12,6 +12,11 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 * The navigation link for the Review Event Proposals (previously Event List) page has been updated to align with the
   title and function of the page, and the page has been added to the functionality summary on the homepage.
 
+### Fixed
+
+* HTML entity encoding was being incorrectly applied to parts of the subject line of the Announce event notification,
+  and has been removed.
+
 ## [2.16.0] - 2023-03-03
 
 ### Added
