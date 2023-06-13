@@ -7,6 +7,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.16.1] - 2023-06-13
+
 ### Changed
 
 * The navigation link for the Review Event Proposals (previously Event List) page has been updated to align with the
@@ -317,7 +319,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.0...main
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.1...main
+[2.16.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.0...v2.16.1
 [2.16.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.15.1...v2.16.0
 [2.15.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.15.0...v2.15.1
 [2.15.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.14.0...v2.15.0
