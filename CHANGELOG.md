@@ -11,6 +11,7 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 * The navigation link for the Review Event Proposals (previously Event List) page has been updated to align with the
   title and function of the page, and the page has been added to the functionality summary on the homepage.
+* Composer dependencies have been updated.
 
 ### Fixed
 
