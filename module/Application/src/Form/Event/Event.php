@@ -554,7 +554,7 @@ class Event extends Form
             'type'    => 'csrf',
             'name'    => 'csrf',
             'options' => [
-                'csrf_options' => ['timeout' => 60 * 30],
+                'csrf_options' => ['timeout' => 60 * 90],
             ],
             'attributes' => [],
         ]);

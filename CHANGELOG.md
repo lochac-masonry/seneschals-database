@@ -7,6 +7,16 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.16.2] - 2023-07-23
+
+### Added
+
+* PHP config file has been added to repo (was already present on server).
+
+### Changed
+
+* CSRF timeout for all forms has been raised to 90 minutes.
+
 ## [2.16.1] - 2023-06-13
 
 ### Changed
@@ -319,7 +329,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.1...main
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.2...main
+[2.16.2]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.1...v2.16.2
 [2.16.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.0...v2.16.1
 [2.16.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.15.1...v2.16.0
 [2.15.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.15.0...v2.15.1
