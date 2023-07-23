@@ -9,6 +9,10 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [2.16.2] - 2023-07-23
 
+### Added
+
+* PHP config file has been added to repo (was already present on server).
+
 ### Changed
 
 * CSRF timeout for all forms has been raised to 90 minutes.
