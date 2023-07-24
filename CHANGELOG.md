@@ -7,6 +7,12 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+## [2.16.3] - 2023-07-24
+
+### Changed
+
+* Run the session keepalive request on a timer instead of on change to keep the session active even for an absent user.
+
 ## [2.16.2] - 2023-07-23
 
 ### Added
@@ -329,7 +335,8 @@ Version numbers are roughly based on [Semantic Versioning](https://semver.org/sp
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.2...main
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.3...main
+[2.16.3]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.2...v2.16.3
 [2.16.2]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.1...v2.16.2
 [2.16.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.0...v2.16.1
 [2.16.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.15.1...v2.16.0

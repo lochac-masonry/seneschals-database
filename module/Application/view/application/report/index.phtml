@@ -6,7 +6,7 @@ $this->formRow()->setRenderErrors(false);
 echo $this->form($groupSelectForm);
 $this->formRow()->setRenderErrors(true);
 
-$this->inlineScript()->appendFile($this->basePath('js/keepalive-on-change.js'));
+$this->inlineScript()->appendFile($this->basePath('js/keepalive.js'));
 
 if (isset($sampleRoute)) {
     ?>
