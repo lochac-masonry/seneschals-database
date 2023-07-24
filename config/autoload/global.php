@@ -23,7 +23,8 @@ return [
     'session_config' => [
         'cookie_httponly' => true,
         'cookie_lifetime' => 60 * 90,
-        'gc_maxlifetime'  => 60 * 60 * 24 * 30,
+        // This has no effect as garbage collection is performed by a cronjob based on the global config.
+        // 'gc_maxlifetime'  => 60 * 60 * 24 * 30,
     ],
     'session_manager' => [
         'validators' => [
