@@ -35,11 +35,11 @@ $headingMargin = 'margin: 6px 0px;';
                                 <?= $this->insertLinebreaks($this->escapeHtml($values['location'])) ?>
                             </td>
                         </tr>
-<?php if (!empty($values['setupTime'])) { ?>
+<?php if (!empty($values['timetable'])) { ?>
                         <tr>
                             <td style="<?= $cellStyle ?>">
                                 <h4 style="<?= $headingMargin ?>">Timetable</h4>
-                                <?= $this->insertLinebreaks($this->escapeHtml($values['setupTime'])) ?>
+                                <?= $this->insertLinebreaks($this->escapeHtml($values['timetable'])) ?>
                             </td>
                         </tr>
 <?php } ?>

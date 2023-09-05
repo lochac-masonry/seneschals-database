@@ -75,13 +75,13 @@ class Event extends Form
                     ]);
                     $this->add([
                         'type'    => 'textarea',
-                        'name'    => 'setupTime',
+                        'name'    => 'timetable',
                         'options' => [
-                            'label' => 'Setup time(s), if applicable',
+                            'label' => 'Timetable, if available - including setup time',
                         ],
                         'attributes' => [
                             'cols' => 50,
-                            'rows' => 3,
+                            'rows' => 5,
                             'wrap' => 'virtual',
                         ],
                     ]);
@@ -173,7 +173,7 @@ class Event extends Form
                                 ['name' => 'stringLength', 'options' => ['max' => 64]],
                             ],
                         ],
-                        'setupTime' => [
+                        'timetable' => [
                             'required' => false,
                             'filters'  => [
                                 ['name' => 'stringTrim'],

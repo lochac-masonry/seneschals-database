@@ -45,7 +45,7 @@ class EventController extends AbstractActionController
                     "Host Group:\t" . $hostGroupName . "\n" .
                     "Start date:\t" . $values['startdate'] . "\n" .
                     "End date:\t" . $values['enddate'] . "\n" .
-                    "Setup time(s):\n" . $values['setupTime'] . "\n" .
+                    "Timetable:\n" . $values['timetable'] . "\n" .
                     "Location:\n" . $values['location'] . "\n" .
                     "Event type:\t" . $values['type'] . "\n" .
                     "Description:\n" . $values['description'] . "\n" .
@@ -399,8 +399,8 @@ class EventController extends AbstractActionController
             $mailBody .= "Start date:\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n" .
                          "End date:\t" . date('l, F jS Y', strtotime($values['enddate'])) . "\n";
         }
-        if (!empty($values['setupTime'])) {
-            $mailBody .= "Setup time(s):\n" . $values['setupTime'] . "\n";
+        if (!empty($values['timetable'])) {
+            $mailBody .= "Timetable:\n" . $values['timetable'] . "\n";
         }
 
         $mailBody .= "Event type:\t" . $values['type'] . "\n" .
@@ -442,8 +442,8 @@ class EventController extends AbstractActionController
         $mailBody .= $values['name'] . ". {$hostGroup['type']} of {$hostGroup['groupname']}, {$hostGroup['state']}\n" .
                      "Site: {$values['location']}. Cost: {$values['price']}. ";
 
-        if (!empty($values['setupTime'])) {
-            $mailBody .= "Setup time(s): {$values['setupTime']}. ";
+        if (!empty($values['timetable'])) {
+            $mailBody .= "Timetable: {$values['timetable']}. ";
         }
 
         $mailBody .= "{$values['description']} Steward: {$values['stewardname']}, {$values['stewardemail']}. ";
@@ -631,7 +631,7 @@ class EventController extends AbstractActionController
                 'groupid',
                 'startdate',
                 'enddate',
-                'setupTime',
+                'timetable',
                 'location',
                 'type',
                 'description',
