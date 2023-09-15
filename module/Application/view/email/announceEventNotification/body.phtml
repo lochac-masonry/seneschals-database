@@ -16,7 +16,20 @@ $headingMargin = 'margin: 6px 0px;';
                     <tbody>
                         <tr>
                             <td style="<?= $cellStyle . $centerStyle ?>">
+<?php if (empty($values['website'])) { ?>
                                 <h3 style="<?= $headingMargin ?>"><?= $this->escapeHtml($values['name']) ?></h3>
+<?php } else { ?>
+                                <h3 style="<?= $headingMargin ?>">
+                                    <a href="<?= $this->escapeHtmlAttr($values['website']) ?>">
+                                        <?= $this->escapeHtml($values['name']) ?>
+                                    </a>
+                                </h3>
+                                <h4 style="<?= $headingMargin ?>">
+                                    <a href="<?= $this->escapeHtmlAttr($values['website']) ?>">
+                                        <?= $this->escapeHtml($values['website']) ?>
+                                    </a>
+                                </h4>
+<?php } ?>
                                 <h4 style="<?= $headingMargin ?>">
                                     <?= $this->escapeHtml($hostGroupName) ?>,
                                     <?= $this->formatDate($values['startdate'], $values['enddate']) ?>
@@ -35,11 +48,11 @@ $headingMargin = 'margin: 6px 0px;';
                                 <?= $this->insertLinebreaks($this->escapeHtml($values['location'])) ?>
                             </td>
                         </tr>
-<?php if (!empty($values['setupTime'])) { ?>
+<?php if (!empty($values['timetable'])) { ?>
                         <tr>
                             <td style="<?= $cellStyle ?>">
                                 <h4 style="<?= $headingMargin ?>">Timetable</h4>
-                                <?= $this->insertLinebreaks($this->escapeHtml($values['setupTime'])) ?>
+                                <?= $this->insertLinebreaks($this->escapeHtml($values['timetable'])) ?>
                             </td>
                         </tr>
 <?php } ?>

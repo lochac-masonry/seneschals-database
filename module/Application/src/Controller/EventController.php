@@ -45,11 +45,12 @@ class EventController extends AbstractActionController
                     "Host Group:\t" . $hostGroupName . "\n" .
                     "Start date:\t" . $values['startdate'] . "\n" .
                     "End date:\t" . $values['enddate'] . "\n" .
-                    "Setup time(s):\n" . $values['setupTime'] . "\n" .
+                    "Timetable:\n" . $values['timetable'] . "\n" .
                     "Location:\n" . $values['location'] . "\n" .
                     "Event type:\t" . $values['type'] . "\n" .
                     "Description:\n" . $values['description'] . "\n" .
-                    "Price:\n" . $values['price'] . "\n\n" .
+                    "Price:\n" . $values['price'] . "\n" .
+                    "Website:\t" . (isset($values['website']) ? $values['website'] : '') . "\n\n" .
                     "*Steward Details*\n" .
                     "Real Name:\t" . $values['stewardreal'] . "\n" .
                     "SCA Name:\t" . $values['stewardname'] . "\n" .
@@ -399,8 +400,11 @@ class EventController extends AbstractActionController
             $mailBody .= "Start date:\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n" .
                          "End date:\t" . date('l, F jS Y', strtotime($values['enddate'])) . "\n";
         }
-        if (!empty($values['setupTime'])) {
-            $mailBody .= "Setup time(s):\n" . $values['setupTime'] . "\n";
+        if (!empty($values['timetable'])) {
+            $mailBody .= "Timetable:\n" . $values['timetable'] . "\n";
+        }
+        if (!empty($values['website'])) {
+            $mailBody .= "Website:\t" . $values['website'] . "\n";
         }
 
         $mailBody .= "Event type:\t" . $values['type'] . "\n" .
@@ -442,8 +446,11 @@ class EventController extends AbstractActionController
         $mailBody .= $values['name'] . ". {$hostGroup['type']} of {$hostGroup['groupname']}, {$hostGroup['state']}\n" .
                      "Site: {$values['location']}. Cost: {$values['price']}. ";
 
-        if (!empty($values['setupTime'])) {
-            $mailBody .= "Setup time(s): {$values['setupTime']}. ";
+        if (!empty($values['timetable'])) {
+            $mailBody .= "Timetable: {$values['timetable']}. ";
+        }
+        if (!empty($values['website'])) {
+            $mailBody .= "Website: {$values['website']}. ";
         }
 
         $mailBody .= "{$values['description']} Steward: {$values['stewardname']}, {$values['stewardemail']}. ";
@@ -507,8 +514,12 @@ class EventController extends AbstractActionController
             $event->summary = $values['name'] . " (" . $hostGroupName . ")";
             $event->location = $values['location'];
             $event->description = "Steward:\t" . $values['stewardname'] . "\n"
-                                . "Email:\t" . $values['stewardemail'] . "\n\n"
-                                . $values['description'];
+                                . "Email:\t\t" . $values['stewardemail'] . "\n";
+            if (!empty($values['website'])) {
+                $event->description .= "Website:\t{$values['website']}\n";
+            }
+            $event->description .= "\n" . $values['description'];
+
             $event->start = ['date' => $values['startdate']];
             // Google uses exclusive end dates, so we add a day to the end date
             $event->end = ['date' => date('Y-m-d', strtotime($values['enddate']) + 60 * 60 * 24)];
@@ -631,11 +642,12 @@ class EventController extends AbstractActionController
                 'groupid',
                 'startdate',
                 'enddate',
-                'setupTime',
+                'timetable',
                 'location',
                 'type',
                 'description',
                 'price',
+                'website',
                 'notifyInsurer',
             ])),
             'stewardGroup' => array_intersect_key($initialData, array_flip([

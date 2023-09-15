@@ -1,6 +1,5 @@
 {
     "files.associations": {
         "*.php.dist": "php"
-    },
-    "files.eol": "\n"
+    }
 }

@@ -75,13 +75,13 @@ class Event extends Form
                     ]);
                     $this->add([
                         'type'    => 'textarea',
-                        'name'    => 'setupTime',
+                        'name'    => 'timetable',
                         'options' => [
-                            'label' => 'Setup time(s), if applicable',
+                            'label' => 'Timetable, if available - including setup time',
                         ],
                         'attributes' => [
                             'cols' => 50,
-                            'rows' => 3,
+                            'rows' => 5,
                             'wrap' => 'virtual',
                         ],
                     ]);
@@ -147,6 +147,16 @@ class Event extends Form
                         ],
                     ]);
                     $this->add([
+                        'type'    => 'url',
+                        'name'    => 'website',
+                        'options' => [
+                            'label' => 'Event Website (optional)',
+                        ],
+                        'attributes' => [
+                            'size' => 50,
+                        ],
+                    ]);
+                    $this->add([
                         'type'    => 'checkbox',
                         'name'    => 'notifyInsurer',
                         'options' => [
@@ -163,6 +173,10 @@ class Event extends Form
 
                 public function getInputFilterSpecification()
                 {
+                    $websiteSpec = $this->get('website')->getInputSpecification();
+                    $websiteSpec['required'] = false;
+                    $websiteSpec['filters'][] = ['name' => 'toNull'];
+
                     return [
                         'name' => [
                             'required' => true,
@@ -173,7 +187,7 @@ class Event extends Form
                                 ['name' => 'stringLength', 'options' => ['max' => 64]],
                             ],
                         ],
-                        'setupTime' => [
+                        'timetable' => [
                             'required' => false,
                             'filters'  => [
                                 ['name' => 'stringTrim'],
@@ -198,6 +212,7 @@ class Event extends Form
                                 ['name' => 'stringTrim'],
                             ],
                         ],
+                        'website' => $websiteSpec,
                         'notifyInsurer' => [
                             'required' => false,
                         ],
