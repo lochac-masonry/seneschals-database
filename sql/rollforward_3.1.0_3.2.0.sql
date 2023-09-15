@@ -80,7 +80,7 @@ migrate:BEGIN
                                                             #-----------------------------------------------------------
 
     ALTER TABLE events
-    RENAME COLUMN setupTime TO timetable
+    RENAME COLUMN setupTime TO timetable,
     ADD COLUMN website TEXT NULL AFTER description;
 
                                                             #-----------------------------------------------------------

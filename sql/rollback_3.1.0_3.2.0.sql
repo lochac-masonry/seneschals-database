@@ -76,7 +76,7 @@ migrate:BEGIN
                                                             #-----------------------------------------------------------
 
     ALTER TABLE events
-    RENAME COLUMN timetable TO setupTime
+    RENAME COLUMN timetable TO setupTime,
     DROP COLUMN website;
 
                                                             #-----------------------------------------------------------

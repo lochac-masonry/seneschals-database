@@ -49,8 +49,8 @@ class EventController extends AbstractActionController
                     "Location:\n" . $values['location'] . "\n" .
                     "Event type:\t" . $values['type'] . "\n" .
                     "Description:\n" . $values['description'] . "\n" .
-                    "Price:\n" . $values['price'] . "\n\n" .
-                    "Website:\n" . (isset($values['website']) ? $values['website'] : '') . "\n\n" .
+                    "Price:\n" . $values['price'] . "\n" .
+                    "Website:\t" . (isset($values['website']) ? $values['website'] : '') . "\n\n" .
                     "*Steward Details*\n" .
                     "Real Name:\t" . $values['stewardreal'] . "\n" .
                     "SCA Name:\t" . $values['stewardname'] . "\n" .
@@ -514,17 +514,15 @@ class EventController extends AbstractActionController
             $event->summary = $values['name'] . " (" . $hostGroupName . ")";
             $event->location = $values['location'];
             $event->description = "Steward:\t" . $values['stewardname'] . "\n"
-                                . "Email:\t" . $values['stewardemail'] . "\n\n"
-                                . $values['description'];
+                                . "Email:\t" . $values['stewardemail'] . "\n";
+            if (!empty($values['website'])) {
+                $event->description .= "Website:\t{$values['website']}\n";
+            }
+            $event->description .= "\n" . $values['description'];
+
             $event->start = ['date' => $values['startdate']];
             // Google uses exclusive end dates, so we add a day to the end date
             $event->end = ['date' => date('Y-m-d', strtotime($values['enddate']) + 60 * 60 * 24)];
-
-            if (!empty($values['website'])) {
-                $event->htmlLink = $values['website'];
-            } else {
-                unset($event->htmlLink);
-            }
 
             if (empty($eventId)) {
                 $event = $service->events->insert($calendarId, $event);
