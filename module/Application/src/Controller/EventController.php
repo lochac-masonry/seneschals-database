@@ -514,7 +514,7 @@ class EventController extends AbstractActionController
             $event->summary = $values['name'] . " (" . $hostGroupName . ")";
             $event->location = $values['location'];
             $event->description = "Steward:\t" . $values['stewardname'] . "\n"
-                                . "Email:\t" . $values['stewardemail'] . "\n";
+                                . "Email:\t\t" . $values['stewardemail'] . "\n";
             if (!empty($values['website'])) {
                 $event->description .= "Website:\t{$values['website']}\n";
             }
