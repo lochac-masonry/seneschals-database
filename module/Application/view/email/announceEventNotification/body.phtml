@@ -16,7 +16,20 @@ $headingMargin = 'margin: 6px 0px;';
                     <tbody>
                         <tr>
                             <td style="<?= $cellStyle . $centerStyle ?>">
+<?php if (empty($values['website'])) { ?>
                                 <h3 style="<?= $headingMargin ?>"><?= $this->escapeHtml($values['name']) ?></h3>
+<?php } else { ?>
+                                <h3 style="<?= $headingMargin ?>">
+                                    <a href="<?= $this->escapeHtmlAttr($values['website']) ?>">
+                                        <?= $this->escapeHtml($values['name']) ?>
+                                    </a>
+                                </h3>
+                                <h4 style="<?= $headingMargin ?>">
+                                    <a href="<?= $this->escapeHtmlAttr($values['website']) ?>">
+                                        <?= $this->escapeHtml($values['website']) ?>
+                                    </a>
+                                </h4>
+<?php } ?>
                                 <h4 style="<?= $headingMargin ?>">
                                     <?= $this->escapeHtml($hostGroupName) ?>,
                                     <?= $this->formatDate($values['startdate'], $values['enddate']) ?>

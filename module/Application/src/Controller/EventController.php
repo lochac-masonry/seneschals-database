@@ -50,6 +50,7 @@ class EventController extends AbstractActionController
                     "Event type:\t" . $values['type'] . "\n" .
                     "Description:\n" . $values['description'] . "\n" .
                     "Price:\n" . $values['price'] . "\n\n" .
+                    "Website:\n" . (isset($values['website']) ? $values['website'] : '') . "\n\n" .
                     "*Steward Details*\n" .
                     "Real Name:\t" . $values['stewardreal'] . "\n" .
                     "SCA Name:\t" . $values['stewardname'] . "\n" .
@@ -402,6 +403,9 @@ class EventController extends AbstractActionController
         if (!empty($values['timetable'])) {
             $mailBody .= "Timetable:\n" . $values['timetable'] . "\n";
         }
+        if (!empty($values['website'])) {
+            $mailBody .= "Website:\t" . $values['website'] . "\n";
+        }
 
         $mailBody .= "Event type:\t" . $values['type'] . "\n" .
                      "Location:\n" . $values['location'] . "\n\n" .
@@ -444,6 +448,9 @@ class EventController extends AbstractActionController
 
         if (!empty($values['timetable'])) {
             $mailBody .= "Timetable: {$values['timetable']}. ";
+        }
+        if (!empty($values['website'])) {
+            $mailBody .= "Website: {$values['website']}. ";
         }
 
         $mailBody .= "{$values['description']} Steward: {$values['stewardname']}, {$values['stewardemail']}. ";
@@ -512,6 +519,12 @@ class EventController extends AbstractActionController
             $event->start = ['date' => $values['startdate']];
             // Google uses exclusive end dates, so we add a day to the end date
             $event->end = ['date' => date('Y-m-d', strtotime($values['enddate']) + 60 * 60 * 24)];
+
+            if (!empty($values['website'])) {
+                $event->htmlLink = $values['website'];
+            } else {
+                unset($event->htmlLink);
+            }
 
             if (empty($eventId)) {
                 $event = $service->events->insert($calendarId, $event);
@@ -636,6 +649,7 @@ class EventController extends AbstractActionController
                 'type',
                 'description',
                 'price',
+                'website',
                 'notifyInsurer',
             ])),
             'stewardGroup' => array_intersect_key($initialData, array_flip([

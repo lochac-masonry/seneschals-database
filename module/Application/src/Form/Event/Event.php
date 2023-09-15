@@ -147,6 +147,16 @@ class Event extends Form
                         ],
                     ]);
                     $this->add([
+                        'type'    => 'url',
+                        'name'    => 'website',
+                        'options' => [
+                            'label' => 'Event Website (optional)',
+                        ],
+                        'attributes' => [
+                            'size' => 50,
+                        ],
+                    ]);
+                    $this->add([
                         'type'    => 'checkbox',
                         'name'    => 'notifyInsurer',
                         'options' => [
@@ -163,6 +173,10 @@ class Event extends Form
 
                 public function getInputFilterSpecification()
                 {
+                    $websiteSpec = $this->get('website')->getInputSpecification();
+                    $websiteSpec['required'] = false;
+                    $websiteSpec['filters'][] = ['name' => 'toNull'];
+
                     return [
                         'name' => [
                             'required' => true,
@@ -198,6 +212,7 @@ class Event extends Form
                                 ['name' => 'stringTrim'],
                             ],
                         ],
+                        'website' => $websiteSpec,
                         'notifyInsurer' => [
                             'required' => false,
                         ],
