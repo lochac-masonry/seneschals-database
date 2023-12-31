@@ -358,11 +358,11 @@ class EventController extends AbstractActionController
         return $viewModel;
     }
 
-    private function emailAnnounce($values, $hostGroupName)
+    private function emailAnnounce($values, $hostGroup)
     {
         $variables = [
-            'values'        => $values,
-            'hostGroupName' => $hostGroupName,
+            'values'    => $values,
+            'hostGroup' => $hostGroup,
         ];
         return $this->sendEmail(
             'announce@lochac.sca.org',
@@ -463,8 +463,17 @@ class EventController extends AbstractActionController
         }
 
         $mailBody .= "Participants are reminded that if they are unwell or showing cold or " .
-                     "flu-like symptoms, they must not attend.\n\n" .
-                     "Kind regards,\nThe Lochac Seneschals' Database";
+                     "flu-like symptoms, they must not attend.\n\n";
+
+        if ($hostGroup['state'] === 'VIC') {
+            $mailBody .= "As this event is in the state of Victoria, please remember that anyone " .
+                         "carrying or using any kind of sword in the state - including visitors - " .
+                         "must carry proof that they completed the Victorian weapons exemption " .
+                         "application process with the SCA Ltd Registrar - see " .
+                         "https://sca.org.au/victorian-weapons-legislation/ for detailed information.\n\n";
+        }
+
+        $mailBody .= "Kind regards,\nThe Lochac Seneschals' Database";
 
         return $this->sendEmail($mailTo, $mailSubj, $mailBody);
     }
@@ -497,7 +506,7 @@ class EventController extends AbstractActionController
         return new \Google_Service_Calendar($client);
     }
 
-    private function updateCalendar($values, $hostGroupName, $eventId)
+    private function updateCalendar($values, $hostGroup, $eventId)
     {
         $googleMetadata = $this->getGoogleMetadata();
         $calendarId = $googleMetadata->calendar_id;
@@ -511,7 +520,7 @@ class EventController extends AbstractActionController
                 $event = $service->events->get($calendarId, $eventId);
             }
 
-            $event->summary = $values['name'] . " (" . $hostGroupName . ")";
+            $event->summary = $values['name'] . " (" . $hostGroup['groupname'] . ")";
             $event->location = $values['location'];
             $event->description = "Steward:\t" . $values['stewardname'] . "\n"
                                 . "Email:\t\t" . $values['stewardemail'] . "\n";
@@ -519,6 +528,15 @@ class EventController extends AbstractActionController
                 $event->description .= "Website:\t{$values['website']}\n";
             }
             $event->description .= "\n" . $values['description'];
+
+            if ($hostGroup['state'] === 'VIC') {
+                $event->description .= "\n\nAs this event is in the state of Victoria, please remember that anyone " .
+                                       "carrying or using any kind of sword in the state - including visitors - " .
+                                       "must carry proof that they completed the Victorian weapons exemption " .
+                                       "application process with the SCA Ltd Registrar - see " .
+                                       "https://sca.org.au/victorian-weapons-legislation/ for detailed " .
+                                       "information.";
+            }
 
             $event->start = ['date' => $values['startdate']];
             // Google uses exclusive end dates, so we add a day to the end date
@@ -725,6 +743,16 @@ class EventController extends AbstractActionController
             );
         }
 
+        $hostGroup = (array) $db->query(
+            (new Sql($db))->buildSqlString(
+                (new Select())
+                    ->columns(['groupname', 'type', 'state'])
+                    ->from('scagroup')
+                    ->where(['id' => $values['groupid']])
+            ),
+            []
+        )->toArray()[0];
+
                                                             //----------------------------------------------------------
                                                             // Email the steward
                                                             //----------------------------------------------------------
@@ -738,16 +766,6 @@ class EventController extends AbstractActionController
                                                             // If event approved and Pegasus selected, send to Pegasus
                                                             //----------------------------------------------------------
         if (in_array('pegasus', $sendTo) && $values['status'] == 'approved') {
-            $hostGroup = (array) $db->query(
-                (new Sql($db))->buildSqlString(
-                    (new Select())
-                        ->columns(['groupname', 'type', 'state'])
-                        ->from('scagroup')
-                        ->where(['id' => $values['groupid']])
-                ),
-                []
-            )->toArray()[0];
-
             if ($this->emailPegasus($values, $hostGroup)) {
                 $this->alert()->good('Event submitted to Pegasus.');
             } else {
@@ -786,7 +804,7 @@ class EventController extends AbstractActionController
             if (in_array('calendar', $sendTo)) {
                 $result = $this->updateCalendar(
                     $values,
-                    $groupList[$values['groupid']],
+                    $hostGroup,
                     isset($initialData['googleid']) ? $initialData['googleid'] : null
                 );
 
@@ -813,7 +831,7 @@ class EventController extends AbstractActionController
                                                             // If event approved and Announce selected, send to Announce
                                                             //----------------------------------------------------------
         if (in_array('announce', $sendTo) && $values['status'] == 'approved') {
-            if ($this->emailAnnounce($values, $groupList[$values['groupid']])) {
+            if ($this->emailAnnounce($values, $hostGroup)) {
                 $this->alert()->good('Notification email sent to Lochac-Announce.');
             } else {
                 $this->alert()->bad('Failed to send notification email to Lochac-Announce.');
