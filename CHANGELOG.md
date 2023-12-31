@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [2.18.0] - 2023-12-31
+
+### Added
+
+- Victoria weapons legislation note to event notifications.
+
 ## [2.17.0] - 2023-09-15
 
 ### Added
@@ -349,7 +355,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.17.0...main
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.18.0...main
+[2.18.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.17.0...v2.18.0
 [2.17.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.3...v2.17.0
 [2.16.3]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.2...v2.16.3
 [2.16.2]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.1...v2.16.2

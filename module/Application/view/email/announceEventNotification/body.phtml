@@ -31,7 +31,7 @@ $headingMargin = 'margin: 6px 0px;';
                                 </h4>
 <?php } ?>
                                 <h4 style="<?= $headingMargin ?>">
-                                    <?= $this->escapeHtml($hostGroupName) ?>,
+                                    <?= $this->escapeHtml($hostGroup['groupname']) ?>,
                                     <?= $this->formatDate($values['startdate'], $values['enddate']) ?>
                                 </h4>
                                 <h4 style="<?= $headingMargin ?>"><?= $this->escapeHtml($values['type']) ?></h4>
@@ -87,6 +87,20 @@ $headingMargin = 'margin: 6px 0px;';
                                 cold or flu-like symptoms, they must not attend.
                             </td>
                         </tr>
+<?php if ($hostGroup['state'] === 'VIC') { ?>
+                        <tr>
+                            <td style="<?= $cellStyle . $centerStyle ?>">
+                                As this event is in the state of Victoria, please remember that anyone carrying or
+                                using any kind of sword in the state - including visitors - <i><b>must</b></i> carry
+                                proof that they completed the Victorian weapons exemption application process with the
+                                SCA Ltd Registrar - see
+                                <a href="https://sca.org.au/victorian-weapons-legislation/">
+                                    https://sca.org.au/victorian-weapons-legislation/
+                                </a>
+                                for detailed information.
+                            </td>
+                        </tr>
+<?php } ?>
                     </tbody>
                 </table>
                 <p>
