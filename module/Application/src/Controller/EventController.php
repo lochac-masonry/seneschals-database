@@ -606,7 +606,7 @@ class EventController extends AbstractActionController
         if (!is_numeric($eventId)) {
             return $this->notFoundAction();
         }
-        $eventId = floor($eventId); // Convert to int.
+        $eventId = (int) $eventId;
         $initialData = $db->query(
             (new Sql($db))->buildSqlString(
                 (new Select())
