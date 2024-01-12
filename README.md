@@ -154,6 +154,10 @@ Run the [Composer installer](https://getcomposer.org/doc/00-intro.md#installatio
 
 ### Xdebug
 
-To be confirmed.
+Follow the instructions given by the [installation wizard](https://xdebug.org/wizard).
 
-`php.ini` changes might include `zend_extension = xdebug` and `xdebug.mode = debug,develop`.
+This should include downloading `php_xdebug.dll` to the `ext` folder inside the PHP installation and making the
+following changes to `php.ini`:
+
+- Add `zend_extension = xdebug`
+- Add `xdebug.mode = debug,develop`
