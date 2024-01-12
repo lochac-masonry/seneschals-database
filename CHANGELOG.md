@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [2.19.0] - 2024-01-13
+
+### Added
+
+- Dev environment setup instructions (Windows only) have been added to the README.
+
+### Changed
+
+- Composer dependencies have been updated for compatibility with PHP 8.
+- Use of `floor` on a string to convert to an integer has been replaced with `(int)` casting to resolve a PHP 8 error.
+
 ## [2.18.0] - 2023-12-31
 
 ### Added
@@ -355,7 +366,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.18.0...main
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.19.0...main
+[2.19.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.18.0...v2.19.0
 [2.18.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.17.0...v2.18.0
 [2.17.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.3...v2.17.0
 [2.16.3]: https://github.com/lochac-masonry/seneschals-database/compare/v2.16.2...v2.16.3
