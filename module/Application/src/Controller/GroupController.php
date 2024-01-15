@@ -293,8 +293,12 @@ class GroupController extends DatabaseController
                                     CONCAT(offices.email, '@', scagroup.emailDomain)
                                 FROM scagroup
                                 INNER JOIN offices
-                                ON (offices.kingdom AND scagroup.type = 'Kingdom')
-                                OR (offices.branch AND scagroup.type <> 'Kingdom')
+                                ON CASE scagroup.type
+                                    WHEN 'Kingdom'   THEN offices.kingdom
+                                    WHEN 'Hamlet'    THEN offices.hamlet
+                                    WHEN 'Corporate' THEN offices.corporate
+                                    ELSE                  offices.branch
+                                END
                                 WHERE
                                     scagroup.emailDomain IS NOT NULL
                                 AND offices.email <> ''
@@ -403,8 +407,12 @@ class GroupController extends DatabaseController
                     1
                 FROM scagroup
                 INNER JOIN offices
-                ON (offices.kingdom AND scagroup.type = 'Kingdom')
-                OR (offices.branch AND scagroup.type <> 'Kingdom')
+                ON CASE scagroup.type
+                    WHEN 'Kingdom'   THEN offices.kingdom
+                    WHEN 'Hamlet'    THEN offices.hamlet
+                    WHEN 'Corporate' THEN offices.corporate
+                    ELSE                  offices.branch
+                END
                 WHERE
                 CONCAT(offices.email, '@', scagroup.emailDomain) = ?",
                 [$values['alias']]

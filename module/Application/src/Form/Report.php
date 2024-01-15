@@ -73,6 +73,8 @@ class Report extends Form
                                 'Shire'        => 'Shire',
                                 'Canton'       => 'Canton',
                                 'College'      => 'College',
+                                'Hamlet'       => 'Hamlet',
+                                'Corporate'    => 'Corporate',
                             ],
                         ],
                         'attributes' => [
@@ -586,7 +588,7 @@ class Report extends Form
                                                             //----------------------------------------------------------
                                                             // Section - subgroups, if any
                                                             //----------------------------------------------------------
-        $showHamlets = !in_array($type, ['Canton', 'College']);
+        $showHamlets = !in_array($type, ['Canton', 'College', 'Corporate', 'Hamlet']);
         if (!empty($subgroups) || $showHamlets) {
             $this->add(
                 new class ($subgroups, $showHamlets) extends Fieldset implements InputFilterProviderInterface
@@ -617,7 +619,7 @@ class Report extends Form
                                 'type'    => 'textarea',
                                 'name'    => 'hamlets',
                                 'options' => [
-                                    'label' => 'Hamlets (if any)',
+                                    'label' => 'Other Hamlets (if any not listed above)',
                                 ],
                                 'attributes' => [
                                     'cols' => 50,
