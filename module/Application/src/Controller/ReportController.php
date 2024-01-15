@@ -220,7 +220,7 @@ class ReportController extends DatabaseController
 
             $subgroupSql = "SELECT id, type, groupname FROM scagroup " .
                            "WHERE parentid = ? " .
-                           "AND (status = 'live' OR status = 'proposed')";
+                           "AND status IN ('live', 'other', 'proposed')";
             $subgroups = $db->query($subgroupSql, [$groupId])->toArray();
 
             $memberCountSql = 'SELECT SUM(tally) AS memberCount FROM membership_stats WHERE groupname = ?';
