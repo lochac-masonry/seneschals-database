@@ -13,6 +13,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Added support for viewing and editing groups with a type of "Hamlet" or "Corporate", or a status of "other".
 
+### Changed
+
+- Updated Composer dependencies other than the Google API Client - that appears to require a different credential
+  format, and I don't currently have access to the Google account that owns the relevant developer console project.
+
 ## [2.19.0] - 2024-01-13
 
 ### Added
