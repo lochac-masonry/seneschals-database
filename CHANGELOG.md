@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Google Calendar integration re-enabled with new version of Google API Client.
 
+### Changed
+
+- QuahogClient mode changed to PHP_NORMAL_READ to address deprecation warning.
+
 ## [2.20.1] - 2024-01-18
 
 ### Changed
