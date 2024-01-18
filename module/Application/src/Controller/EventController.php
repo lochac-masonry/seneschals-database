@@ -679,7 +679,7 @@ class EventController extends AbstractActionController
             ])),
             'submitGroup' => [
                 'status' => $initialData['status'],
-                'sendto' => ['pegasus', 'calendar', 'announce'], // Enable all publicity by default.
+                'sendto' => ['pegasus', 'announce'], // Enable all publicity by default. TODO: Re-enable calendar.
             ],
         ]);
         $viewModel = [
@@ -776,56 +776,56 @@ class EventController extends AbstractActionController
                                                             //----------------------------------------------------------
                                                             // If event not approved, make sure it isn't on the calendar
                                                             //----------------------------------------------------------
-        if ($values['status'] != 'approved') {
-            if (!empty($initialData['googleid'])) {
-                $result = $this->deleteCalendar($initialData['googleid']);
+        // if ($values['status'] != 'approved') {
+        //     if (!empty($initialData['googleid'])) {
+        //         $result = $this->deleteCalendar($initialData['googleid']);
 
-                if ($result === false) {
-                    $this->alert()->bad('Failed to remove event from Kingdom Calendar.');
-                } else {
-                    $this->alert()->good('Removed event from Kingdom Calendar.');
+        //         if ($result === false) {
+        //             $this->alert()->bad('Failed to remove event from Kingdom Calendar.');
+        //         } else {
+        //             $this->alert()->good('Removed event from Kingdom Calendar.');
 
-                    // store updated googleId
-                    $db->query(
-                        (new Sql($db))->buildSqlString(
-                            (new Update('events'))
-                                ->set(['googleid' => null])
-                                ->where(['eventid' => $eventId])
-                        ),
-                        $db::QUERY_MODE_EXECUTE
-                    );
-                    $this->alert()->good('Removed GCal event ID from database.');
-                }
-            }
+        //             // store updated googleId
+        //             $db->query(
+        //                 (new Sql($db))->buildSqlString(
+        //                     (new Update('events'))
+        //                         ->set(['googleid' => null])
+        //                         ->where(['eventid' => $eventId])
+        //                 ),
+        //                 $db::QUERY_MODE_EXECUTE
+        //             );
+        //             $this->alert()->good('Removed GCal event ID from database.');
+        //         }
+        //     }
                                                             //----------------------------------------------------------
                                                             // If event approved and calendar selected, add to calendar
                                                             //----------------------------------------------------------
-        } else {
-            if (in_array('calendar', $sendTo)) {
-                $result = $this->updateCalendar(
-                    $values,
-                    $hostGroup,
-                    isset($initialData['googleid']) ? $initialData['googleid'] : null
-                );
+        // } else {
+        //     if (in_array('calendar', $sendTo)) {
+        //         $result = $this->updateCalendar(
+        //             $values,
+        //             $hostGroup,
+        //             isset($initialData['googleid']) ? $initialData['googleid'] : null
+        //         );
 
-                if ($result === false) {
-                    $this->alert()->bad('Failed to update Kingdom Calendar.');
-                } else {
-                    $this->alert()->good('Updated Kingdom Calendar.');
+        //         if ($result === false) {
+        //             $this->alert()->bad('Failed to update Kingdom Calendar.');
+        //         } else {
+        //             $this->alert()->good('Updated Kingdom Calendar.');
 
-                    // store updated googleId
-                    $db->query(
-                        (new Sql($db))->buildSqlString(
-                            (new Update('events'))
-                                ->set(['googleid' => $result])
-                                ->where(['eventid' => $eventId])
-                        ),
-                        $db::QUERY_MODE_EXECUTE
-                    );
-                    $this->alert()->good('Stored GCal event ID in database.');
-                }
-            }
-        }
+        //             // store updated googleId
+        //             $db->query(
+        //                 (new Sql($db))->buildSqlString(
+        //                     (new Update('events'))
+        //                         ->set(['googleid' => $result])
+        //                         ->where(['eventid' => $eventId])
+        //                 ),
+        //                 $db::QUERY_MODE_EXECUTE
+        //             );
+        //             $this->alert()->good('Stored GCal event ID in database.');
+        //         }
+        //     }
+        // }
 
                                                             //----------------------------------------------------------
                                                             // If event approved and Announce selected, send to Announce
