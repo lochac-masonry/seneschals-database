@@ -93,7 +93,7 @@ class AuthController extends AbstractActionController
         if (!isset($payload->aud) || $payload->aud !== $this->ssoConfig->audience) {
             throw new \UnexpectedValueException('Token audience wrong or missing');
         }
-        if (!isset($payload->sub) || in_array($identity, ['seneschal', 'servers', 'reportsdeputy'])) {
+        if (!isset($payload->sub) || in_array($payload->sub, ['seneschal', 'servers', 'reportsdeputy'])) {
             throw new \UnexpectedValueException('Token subject wrong or missing');
         }
 

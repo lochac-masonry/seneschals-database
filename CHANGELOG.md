@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - Google Calendar integration re-enabled with new version of Google API Client.
+- Undefined variable reference in single sign-on logic (correctly) no longer allows admin logic via SSO.
 
 ### Changed
 
