@@ -6,28 +6,23 @@ namespace Application\Controller;
 
 use Application\Form;
 use Application\LazyQuahogClient;
+use Google;
+use Google\Service\Calendar;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Sql\{Expression, Insert, Select, Sql, Update};
 use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\Uri\{Http, Uri};
+use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
 
 class EventController extends AbstractActionController
 {
-    /** @var AdapterInterface */
-    private $db;
-    private $googleMetadata;
-    /** @var LazyQuahogClient */
-    private $lazyQuahogClient;
-    /** @var PhpRenderer */
-    private $renderer;
-
-    public function __construct(AdapterInterface $db, LazyQuahogClient $lazyQuahogClient, PhpRenderer $renderer)
-    {
-        $this->db = $db;
-        $this->lazyQuahogClient = $lazyQuahogClient;
-        $this->renderer = $renderer;
+    public function __construct(
+        private AdapterInterface $db,
+        private LazyQuahogClient $lazyQuahogClient,
+        private PhpRenderer $renderer,
+        private string $googleCalendarId
+    ) {
     }
 
     private function emailSteward($values, $hostGroupName)
@@ -383,7 +378,6 @@ class EventController extends AbstractActionController
 
     private function emailSecretary($values, $hostGroupName)
     {
-        $url = $this->url()->fromRoute('home', [], ['force_canonical' => true]);
         $mailTo = 'secretary@sca.org.nz';
 
         $mailSubj = 'Event over $5000 requiring insurance notification';
@@ -478,46 +472,29 @@ class EventController extends AbstractActionController
         return $this->sendEmail($mailTo, $mailSubj, $mailBody);
     }
 
-    private function getGoogleMetadata()
+    private function getGoogleCalendarService(): Calendar
     {
-        if (!$this->googleMetadata) {
-            $this->googleMetadata = json_decode(file_get_contents('google-key.json'));
-        }
-        return $this->googleMetadata;
-    }
+        $client = new Google\Client();
+        $client->setAuthConfig('google-key.json');
+        $client->setScopes([Calendar::CALENDAR]);
 
-    private function getGoogleCalendarService()
-    {
-        $googleMetadata = $this->getGoogleMetadata();
+        // Is this needed?
+        // if ($client->isAccessTokenExpired()) {
+        //     $client->fetchAccessTokenWithAssertion();
+        // }
 
-        $credentials = new \Google_Auth_AssertionCredentials(
-            $googleMetadata->client_email,
-            \Google_Service_Calendar::CALENDAR,
-            $googleMetadata->private_key
-        );
-
-        $client = new \Google_Client();
-        $client->setAssertionCredentials($credentials);
-
-        if ($client->getAuth()->isAccessTokenExpired()) {
-            $client->getAuth()->refreshTokenWithAssertion();
-        }
-
-        return new \Google_Service_Calendar($client);
+        return new Calendar($client);
     }
 
     private function updateCalendar($values, $hostGroup, $eventId)
     {
-        $googleMetadata = $this->getGoogleMetadata();
-        $calendarId = $googleMetadata->calendar_id;
-
         try {
             $service = $this->getGoogleCalendarService();
 
             if (empty($eventId)) {
-                $event = new \Google_Service_Calendar_Event();
+                $event = new Calendar\Event();
             } else {
-                $event = $service->events->get($calendarId, $eventId);
+                $event = $service->events->get($this->googleCalendarId, $eventId);
             }
 
             $event->summary = $values['name'] . " (" . $hostGroup['groupname'] . ")";
@@ -543,13 +520,13 @@ class EventController extends AbstractActionController
             $event->end = ['date' => date('Y-m-d', strtotime($values['enddate']) + 60 * 60 * 24)];
 
             if (empty($eventId)) {
-                $event = $service->events->insert($calendarId, $event);
+                $event = $service->events->insert($this->googleCalendarId, $event);
             } else {
-                $event = $service->events->update($calendarId, $eventId, $event);
+                $event = $service->events->update($this->googleCalendarId, $eventId, $event);
             }
 
             return $event->id;
-        } catch (\Google_Service_Exception $e) {
+        } catch (Google\Service\Exception $e) {
             $this->alert()->bad('GCal error: ' . $e->getMessage());
             return false;
         }
@@ -557,9 +534,6 @@ class EventController extends AbstractActionController
 
     private function deleteCalendar($eventId)
     {
-        $googleMetadata = $this->getGoogleMetadata();
-        $calendarId = $googleMetadata->calendar_id;
-
         if (empty($eventId)) {
             return false;
         }
@@ -567,10 +541,10 @@ class EventController extends AbstractActionController
         try {
             $service = $this->getGoogleCalendarService();
 
-            $service->events->delete($calendarId, $eventId);
+            $service->events->delete($this->googleCalendarId, $eventId);
 
             return true;
-        } catch (\Google_Service_Exception $e) {
+        } catch (Google\Service\Exception $e) {
             $this->alert()->bad('GCal error: ' . $e->getMessage());
             return false;
         }
@@ -679,7 +653,7 @@ class EventController extends AbstractActionController
             ])),
             'submitGroup' => [
                 'status' => $initialData['status'],
-                'sendto' => ['pegasus', 'announce'], // Enable all publicity by default. TODO: Re-enable calendar.
+                'sendto' => ['pegasus', 'calendar', 'announce'], // Enable all publicity by default.
             ],
         ]);
         $viewModel = [
@@ -776,56 +750,56 @@ class EventController extends AbstractActionController
                                                             //----------------------------------------------------------
                                                             // If event not approved, make sure it isn't on the calendar
                                                             //----------------------------------------------------------
-        // if ($values['status'] != 'approved') {
-        //     if (!empty($initialData['googleid'])) {
-        //         $result = $this->deleteCalendar($initialData['googleid']);
+        if ($values['status'] != 'approved') {
+            if (!empty($initialData['googleid'])) {
+                $result = $this->deleteCalendar($initialData['googleid']);
 
-        //         if ($result === false) {
-        //             $this->alert()->bad('Failed to remove event from Kingdom Calendar.');
-        //         } else {
-        //             $this->alert()->good('Removed event from Kingdom Calendar.');
+                if ($result === false) {
+                    $this->alert()->bad('Failed to remove event from Kingdom Calendar.');
+                } else {
+                    $this->alert()->good('Removed event from Kingdom Calendar.');
 
-        //             // store updated googleId
-        //             $db->query(
-        //                 (new Sql($db))->buildSqlString(
-        //                     (new Update('events'))
-        //                         ->set(['googleid' => null])
-        //                         ->where(['eventid' => $eventId])
-        //                 ),
-        //                 $db::QUERY_MODE_EXECUTE
-        //             );
-        //             $this->alert()->good('Removed GCal event ID from database.');
-        //         }
-        //     }
+                    // store updated googleId
+                    $db->query(
+                        (new Sql($db))->buildSqlString(
+                            (new Update('events'))
+                                ->set(['googleid' => null])
+                                ->where(['eventid' => $eventId])
+                        ),
+                        $db::QUERY_MODE_EXECUTE
+                    );
+                    $this->alert()->good('Removed GCal event ID from database.');
+                }
+            }
                                                             //----------------------------------------------------------
                                                             // If event approved and calendar selected, add to calendar
                                                             //----------------------------------------------------------
-        // } else {
-        //     if (in_array('calendar', $sendTo)) {
-        //         $result = $this->updateCalendar(
-        //             $values,
-        //             $hostGroup,
-        //             isset($initialData['googleid']) ? $initialData['googleid'] : null
-        //         );
+        } else {
+            if (in_array('calendar', $sendTo)) {
+                $result = $this->updateCalendar(
+                    $values,
+                    $hostGroup,
+                    isset($initialData['googleid']) ? $initialData['googleid'] : null
+                );
 
-        //         if ($result === false) {
-        //             $this->alert()->bad('Failed to update Kingdom Calendar.');
-        //         } else {
-        //             $this->alert()->good('Updated Kingdom Calendar.');
+                if ($result === false) {
+                    $this->alert()->bad('Failed to update Kingdom Calendar.');
+                } else {
+                    $this->alert()->good('Updated Kingdom Calendar.');
 
-        //             // store updated googleId
-        //             $db->query(
-        //                 (new Sql($db))->buildSqlString(
-        //                     (new Update('events'))
-        //                         ->set(['googleid' => $result])
-        //                         ->where(['eventid' => $eventId])
-        //                 ),
-        //                 $db::QUERY_MODE_EXECUTE
-        //             );
-        //             $this->alert()->good('Stored GCal event ID in database.');
-        //         }
-        //     }
-        // }
+                    // store updated googleId
+                    $db->query(
+                        (new Sql($db))->buildSqlString(
+                            (new Update('events'))
+                                ->set(['googleid' => $result])
+                                ->where(['eventid' => $eventId])
+                        ),
+                        $db::QUERY_MODE_EXECUTE
+                    );
+                    $this->alert()->good('Stored GCal event ID in database.');
+                }
+            }
+        }
 
                                                             //----------------------------------------------------------
                                                             // If event approved and Announce selected, send to Announce

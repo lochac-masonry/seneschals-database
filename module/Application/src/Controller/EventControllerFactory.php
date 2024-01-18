@@ -18,6 +18,7 @@ class EventControllerFactory implements FactoryInterface
             $container->get(AdapterInterface::class),
             $container->get(LazyQuahogClient::class),
             $container->get(PhpRenderer::class),
+            $container->get('config')['google_calendar_id']
         );
     }
 }
