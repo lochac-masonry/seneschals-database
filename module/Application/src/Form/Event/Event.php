@@ -537,7 +537,12 @@ class Event extends Form
                                 'label'         => 'Also: (Can only post to Pegasus or Announce if approved)',
                                 'value_options' => [
                                     'pegasus'  => 'Advertise in Pegasus',
-                                    'calendar' => 'Update the Kingdom Calendar',
+                                    [
+                                        'value'    => 'calendar',
+                                        'label'    => 'Update the Kingdom Calendar '
+                                            . '(Temporarily disabled due to server migration issues)',
+                                        'disabled' => true,
+                                    ],
                                     'announce' => 'Post on Lochac-Announce',
                                 ],
                             ],
