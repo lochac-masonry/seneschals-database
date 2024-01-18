@@ -14,7 +14,7 @@ class ToolsController extends AbstractActionController
 
         return [
             'appVersion'    => \Application\Module::VERSION,
-            'googleVersion' => \Google_Client::LIBVER,
+            'googleVersion' => \Google\Client::LIBVER,
         ];
     }
 

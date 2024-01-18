@@ -22,7 +22,7 @@ class LazyQuahogClient
     public function getClient()
     {
         $socket = (new Factory())->createClient($this->config['clamd_socket']);
-        $quahog = new Client($socket);
+        $quahog = new Client($socket, mode: PHP_NORMAL_READ);
         return $quahog;
     }
 }

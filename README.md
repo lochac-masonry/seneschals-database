@@ -51,25 +51,17 @@ Google Calendar API. This file is not stored in the repository, but should be ad
 
 To set up the necessary credentials:
 
-1. Log into the [Google Cloud Platform console](https://console.developers.google.com) and create a new project (the
+1. Log into the [Google Cloud Platform console](https://console.cloud.google.com) and create a new project (the
    resources we need are free).
-1. From the APIs & Services area, go to the Credentials tab and click "Create credentials > Service account key".
-1. Select "New service account", give it a name, select the "Project > Editor" role (more than needed, but the simplest
-   approach), select the "JSON" key type and click "Create".
-1. Save the generated key file as `google-key.json`, then edit the file to remove some unnecessary properties and add
-   the Calendar ID of the Google Calendar you want to use (typically your email address, this can be found in the
-   calendar's settings screen):
-
-   ```json
-   {
-     "calendar_id": "calendar id",
-     "private_key": "keep this property as set in the generated file",
-     "client_email": "keep this property as set in the generated file"
-   }
-   ```
-
-1. In the settings screen of the Google Calendar you want to you use, add the `client_email` from above to the sharing
-   config with "Make changes to events" access.
+1. From the APIs & Services page, enable the Google Calendar API.
+1. From the Credentials page, click "Create credentials > Service account key".
+1. Provide any name, ID and description. The service account does not need to be granted any project roles, nor do any
+   users need to be granted access to the service account. Click "Done".
+1. Select the newly created service account, go to the Keys tab and click "Add Key > Create new key". Select the JSON
+   type, click "Create" and save the generated key file as `google-key.json` in the project root.
+1. In the settings screen of the Google Calendar you want to you use, add the `client_email` from the JSON key file to
+   the sharing config with "Make changes to events" access. Make a note of the calendar ID, found towards the bottom of
+   the same settings screen, and save this as the `google_calendar_id` in `config/autoload/local.php`.
 
 ## Single Sign-On
 

@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [2.20.2] - 2024-01-18
+
+### Fixed
+
+- Google Calendar integration re-enabled with new version of Google API Client.
+- Undefined variable reference in single sign-on logic (correctly) no longer allows admin logic via SSO.
+
+### Changed
+
+- QuahogClient mode changed to PHP_NORMAL_READ to address deprecation warning.
+
 ## [2.20.1] - 2024-01-18
 
 ### Changed
@@ -383,7 +394,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.1...main
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.2...main
+[2.20.2]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.1...v2.20.2
 [2.20.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.0...v2.20.1
 [2.20.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.19.0...v2.20.0
 [2.19.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.18.0...v2.19.0

@@ -37,6 +37,9 @@ return [
         'audience'  => 'placeholder value', // expected audience
     ],
 
+    // ID of the Google Calendar on which approved events will be created/updated.
+    'google_calendar_id' => 'placeholder value',
+
     // Uncomment the following and provide an email address to redirect all application emails to that address.
     // 'debugEmail' => 'email@address.com',
 
