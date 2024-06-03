@@ -169,7 +169,7 @@ class EventController extends AbstractActionController
 
     public function newAction()
     {
-        $this->layout()->title = 'Submit Event Proposal';
+        $this->layout()->title = 'Submit Lochac Event for Approval';
         $db = $this->db;
 
         $groups = $db->query(

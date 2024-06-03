@@ -380,7 +380,7 @@ return [
                 'privilege' => 'list',
             ],
             [
-                'label'     => 'Submit Event Proposal',
+                'label'     => 'Submit Lochac Event for Approval',
                 'route'     => 'event/new',
                 'resource'  => 'event',
                 'privilege' => 'create',
