@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [2.21.0] - 2024-11-14
+
+### Added
+
+- Checkbox on event form for NZ events that triggers insurance notification to NZ secretary if the event involves
+  animals.
+
 ## [2.20.3] - 2024-06-03
 
 ### Changed
@@ -401,7 +408,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.3...main
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.21.0...main
+[2.21.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.3...v2.21.0
 [2.20.3]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.2...v2.20.3
 [2.20.2]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.1...v2.20.2
 [2.20.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.0...v2.20.1
