@@ -380,13 +380,21 @@ class EventController extends AbstractActionController
     {
         $mailTo = 'secretary@sca.org.nz';
 
-        $mailSubj = 'Event over $5000 requiring insurance notification';
+        $mailSubj = 'Event requiring insurance notification';
 
-        $mailBody = "The steward has advised that this event will likely have more than $5,000 " .
-                    "in income so please advise the insurance company to ensure coverage.\n\n" .
-                    "EVENT DETAILS\n=============\n" .
-                    "Event Name:\t" . $values['name'] . "\n" .
-                    "Host Group:\t" . $hostGroupName . "\n";
+        $mailBody = "The steward has advised that this event meets one or more of the conditions that " .
+                    "require specific insurance coverage. Please advise the insurance company to ensure coverage.\n\n";
+
+        if ($values['meetsInsuranceConditionHighIncome']) {
+            $mailBody .= "Event's estimated total income exceeds $5,000.\n";
+        }
+        if ($values['meetsInsuranceConditionAnimalUse']) {
+            $mailBody .= "Event will involve the use of animals.\n";
+        }
+
+        $mailBody .= "\nEVENT DETAILS\n=============\n" .
+                     "Event Name:\t" . $values['name'] . "\n" .
+                     "Host Group:\t" . $hostGroupName . "\n";
 
         if ($values['startdate'] == $values['enddate']) {
             $mailBody .= "Date:\t\t" . date('l, F jS Y', strtotime($values['startdate'])) . "\n";
@@ -640,7 +648,8 @@ class EventController extends AbstractActionController
                 'description',
                 'price',
                 'website',
-                'notifyInsurer',
+                'meetsInsuranceConditionHighIncome',
+                'meetsInsuranceConditionAnimalUse',
             ])),
             'stewardGroup' => array_intersect_key($initialData, array_flip([
                 'stewardreal',
@@ -813,10 +822,11 @@ class EventController extends AbstractActionController
         }
 
                                                             //----------------------------------------------------------
-                                                            // If event approved and notifyInsurer selected, send to
-                                                            // the secretary.
+                                                            // If event approved and any insurance condition selected,
+                                                            // send to the secretary.
                                                             //----------------------------------------------------------
-        if ($values['notifyInsurer'] && $values['status'] == 'approved') {
+        $notifyInsurer = $values['meetsInsuranceConditionHighIncome'] || $values['meetsInsuranceConditionAnimalUse'];
+        if ($notifyInsurer && $values['status'] == 'approved') {
             if ($this->emailSecretary($values, $groupList[$values['groupid']])) {
                 $this->alert()->good('Notification email sent to SCA NZ Secretary.');
             } else {

@@ -158,13 +158,32 @@ class Event extends Form
                     ]);
                     $this->add([
                         'type'    => 'checkbox',
-                        'name'    => 'notifyInsurer',
+                        'name'    => 'meetsInsuranceConditionHighIncome',
                         'options' => [
                             'label' =>
                                 "This event's total income (before costs) is likely to be " .
                                 'over $5,000 so please notify the SCA NZ insurer to ensure coverage',
                             'label_options' => [
                                 'label_position' => 'append',
+                            ],
+                            'label_attributes' => [
+                                'data-country' => 'NZ',
+                            ],
+                        ],
+                        'attributes' => [],
+                    ]);
+                    $this->add([
+                        'type'    => 'checkbox',
+                        'name'    => 'meetsInsuranceConditionAnimalUse',
+                        'options' => [
+                            'label' =>
+                                'This event will involve the use of animals in some event activities ' .
+                                'e.g equestrian so please notify the SCA NZ insurer to ensure coverage',
+                            'label_options' => [
+                                'label_position' => 'append',
+                            ],
+                            'label_attributes' => [
+                                'data-country' => 'NZ',
                             ],
                         ],
                         'attributes' => [],
@@ -213,7 +232,10 @@ class Event extends Form
                             ],
                         ],
                         'website' => $websiteSpec,
-                        'notifyInsurer' => [
+                        'meetsInsuranceConditionHighIncome' => [
+                            'required' => false,
+                        ],
+                        'meetsInsuranceConditionAnimalUse' => [
                             'required' => false,
                         ],
                     ];

@@ -1,14 +1,18 @@
 (function () {
-    var groupSelect = document.querySelector('select[name="eventGroup[groupid]"]');
-    var notifyInsurerInput = document.querySelector('input[name="eventGroup[notifyInsurer]"]');
-    if (!groups || !groupSelect || !notifyInsurerInput) {
+    const groupSelect = document.querySelector('select[name="eventGroup[groupid]"]');
+    const countrySpecificNodes = document.querySelectorAll('[data-country]');
+    if (!groups || !groupSelect || !countrySpecificNodes.length) {
         return;
     }
 
     function setVisibility() {
-        var country = (groups.find((group) => group.id == Number(groupSelect.value || '0')) || {}).country;
-        // Set the visibility on the parent - the label contains the checkbox.
-        notifyInsurerInput.parentElement.style.display = country === 'NZ' ? 'inherit' : 'none';
+        const country = groups.find((group) => group.id == Number(groupSelect.value || '0'))?.country;
+
+        for (const node of countrySpecificNodes) {
+            if (node instanceof HTMLElement) {
+                node.style.display = node.getAttribute('data-country') === country ? 'inherit' : 'none';
+            }
+        }
     }
 
     groupSelect.addEventListener('change', setVisibility);
