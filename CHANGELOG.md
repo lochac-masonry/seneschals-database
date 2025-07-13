@@ -1,3 +1,4 @@
+<!-- markdownlint-configure-file { "no-duplicate-heading": { "siblings_only": true } } -->
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -6,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.21.1] - 2025-07-13
+
+### Fixed
+
+- Improved validation of file uploads (event attachments) to avoid errors during cleanup after bot requests.
 
 ## [2.21.0] - 2024-11-14
 
@@ -408,7 +415,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.21.0...main
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.21.1...main
+[2.21.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.21.0...v2.21.1
 [2.21.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.3...v2.21.0
 [2.20.3]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.2...v2.20.3
 [2.20.2]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.1...v2.20.2
