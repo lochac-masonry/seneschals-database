@@ -143,10 +143,17 @@ class EventController extends AbstractActionController
         // Ensure data is available by running the validation process - does nothing if already run.
         $form->isValid();
         $files = $form->getData()['attachments']['files'];
-        if (isset($files[0]) && $files[0]['error'] === UPLOAD_ERR_NO_FILE) {
-            $files = [];
+        if (!is_array($files)) {
+            return [];
         }
-        return $files;
+        return array_filter(
+            $files,
+            fn($file) => is_array($file) &&
+                isset($file['tmp_name']) &&
+                isset($file['name']) &&
+                isset($file['size']) &&
+                empty($file['error'])
+        );
     }
 
     /**
