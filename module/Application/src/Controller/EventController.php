@@ -393,7 +393,7 @@ class EventController extends AbstractActionController
                     "require specific insurance coverage. Please advise the insurance company to ensure coverage.\n\n";
 
         if ($values['meetsInsuranceConditionHighIncome']) {
-            $mailBody .= "Event's estimated total income exceeds $5,000.\n";
+            $mailBody .= "Event's estimated total income exceeds $10,000.\n";
         }
         if ($values['meetsInsuranceConditionAnimalUse']) {
             $mailBody .= "Event will involve the use of animals.\n";

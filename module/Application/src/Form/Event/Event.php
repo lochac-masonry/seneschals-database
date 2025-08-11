@@ -162,7 +162,7 @@ class Event extends Form
                         'options' => [
                             'label' =>
                                 "This event's total income (before costs) is likely to be " .
-                                'over $5,000 so please notify the SCA NZ insurer to ensure coverage',
+                                'over $10,000 so please notify the SCA NZ insurer to ensure coverage',
                             'label_options' => [
                                 'label_position' => 'append',
                             ],

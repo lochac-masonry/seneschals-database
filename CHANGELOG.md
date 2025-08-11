@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [2.21.2] - 2025-08-11
+
+### Changed
+
+- Threshold for NZ event income requiring insurer notification increased from $5,000 to $10,000.
+
 ## [2.21.1] - 2025-07-13
 
 ### Fixed
@@ -415,7 +421,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.0.0] - 2015-06-14
 
-[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.21.1...main
+[unreleased]: https://github.com/lochac-masonry/seneschals-database/compare/v2.21.2...main
+[2.21.2]: https://github.com/lochac-masonry/seneschals-database/compare/v2.21.1...v2.21.2
 [2.21.1]: https://github.com/lochac-masonry/seneschals-database/compare/v2.21.0...v2.21.1
 [2.21.0]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.3...v2.21.0
 [2.20.3]: https://github.com/lochac-masonry/seneschals-database/compare/v2.20.2...v2.20.3
