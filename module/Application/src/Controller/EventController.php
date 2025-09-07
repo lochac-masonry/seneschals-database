@@ -475,10 +475,10 @@ class EventController extends AbstractActionController
                      "flu-like symptoms, they must not attend.\n\n";
 
         if ($hostGroup['state'] === 'VIC') {
-            $mailBody .= "As this event is in the state of Victoria, please remember that anyone " .
-                         "carrying or using any kind of sword in the state - including visitors - " .
-                         "must carry proof that they completed the Victorian weapons exemption " .
-                         "application process with the SCA Ltd Registrar - see " .
+            $mailBody .= "As this event is hosted by a group based in the state of Victoria, please " .
+                         "remember that anyone carrying or using any kind of sword in the state - including " .
+                         "visitors and those passing through - must carry proof that they have completed " .
+                         "the Victorian weapons exemption application process with the SCA Ltd Registrar - see " .
                          "https://sca.org.au/victorian-weapons-legislation/ for detailed information.\n\n";
         }
 
@@ -522,9 +522,10 @@ class EventController extends AbstractActionController
             $event->description .= "\n" . $values['description'];
 
             if ($hostGroup['state'] === 'VIC') {
-                $event->description .= "\n\nAs this event is in the state of Victoria, please remember that anyone " .
-                                       "carrying or using any kind of sword in the state - including visitors - " .
-                                       "must carry proof that they completed the Victorian weapons exemption " .
+                $event->description .= "\n\nAs this event is hosted by a group based in the state of " .
+                                       "Victoria, please remember that anyone carrying or using any kind " .
+                                       "of sword in the state - including visitors and those passing through - " .
+                                       "must carry proof that they have completed the Victorian weapons exemption " .
                                        "application process with the SCA Ltd Registrar - see " .
                                        "https://sca.org.au/victorian-weapons-legislation/ for detailed " .
                                        "information.";
