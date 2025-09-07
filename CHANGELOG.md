@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [2.21.3] - 2025-09-07
+
+### Changed
+
+- Adjusted wording of Victorian weapons notice for clarity regarding Bordescros.
+
 ## [2.21.2] - 2025-08-11
 
 ### Changed
