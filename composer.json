@@ -2,7 +2,7 @@
     "name": "lochac/seneschals-database",
     "type": "project",
     "require": {
-        "firebase/php-jwt": "^6.10",
+        "firebase/php-jwt": "^7.0",
         "google/apiclient": "^2.15",
         "laminas/laminas-authentication": "^2.7",
         "laminas/laminas-code": "^4.13",
